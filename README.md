@@ -5,13 +5,16 @@
 ### Usage examples
 
 ```typescript
-interface Data {
-	test: string;
-}
+const dataSchema = zod.object({
+	test: zod.string(),
+});
+
+type Data = zod.infer<typeof dataSchema>;
 
 const bufferSerializer: IPersistSerializer<Data, Buffer> = {
 	serialize: (data: Data) => Buffer.from(JSON.stringify(data)),
 	deserialize: (buffer: Buffer) => JSON.parse(buffer.toString()),
+	validator: (data: Data) => dataSchema.safeParse(data).success, // optional deserialization validation
 };
 ```
 
@@ -20,6 +23,7 @@ const bufferSerializer: IPersistSerializer<Data, Buffer> = {
 ```typescript
 const driver = new MemoryStorageDriver('MemoryStorageDriver', bufferSerializer);
 ```
+
 ### Driver usage
 
 ```typescript

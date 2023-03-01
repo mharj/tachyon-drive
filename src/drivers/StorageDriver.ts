@@ -1,5 +1,5 @@
 import {ILoggerLike} from '../interfaces/ILoggerLike';
-import {IStorageDriver, OnUpdateCallback} from '..';
+import {IHydrateOptions, IStorageDriver, OnUpdateCallback} from '..';
 import {IStoreProcessor} from '../interfaces/IStoreProcessor';
 import {IPersistSerializer} from '../interfaces/IPersistSerializer';
 
@@ -39,7 +39,7 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 	public async store(data: Input): Promise<void> {
 		this.logger?.debug(`${this.name}: store()`);
 		await this.init();
-		let output = this.serializer.serialize(data);
+		let output = this.serializer.serialize(data, this.logger);
 		if (this.processor) {
 			output = await this.processor.preStore(output);
 		}
@@ -47,14 +47,25 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 	}
 
 	/**
-	 * Hydrate the data from store.
+	 * Hydrate the data from store with optional validator callback.
 	 */
-	public async hydrate(): Promise<Input | undefined> {
+	public async hydrate({validationThrowsError}: IHydrateOptions = {}): Promise<Input | undefined> {
 		this.logger?.debug(`${this.name}: hydrate()`);
 		await this.init();
-		return this.doHydrate();
+		const data = await this.doHydrate();
+		if (data && this.serializer.validator && !this.serializer.validator(data)) {
+			if (validationThrowsError) {
+				throw new Error(`${this.name}: hydrate() validator failed`);
+			}
+			this.logger?.debug(`${this.name}: hydrate() validator failed`);
+			return undefined;
+		}
+		return data;
 	}
 
+	/**
+	 * Clear the data from store.
+	 */
 	public async clear(): Promise<void> {
 		this.logger?.debug(`${this.name}: clear()`);
 		this._isInitialized = false;
@@ -65,7 +76,7 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 	 * Clone the data with the same serializer.
 	 */
 	public clone(data: Input): Input {
-		return this.serializer.deserialize(this.serializer.serialize(data));
+		return this.serializer.deserialize(this.serializer.serialize(data, this.logger), this.logger);
 	}
 
 	/**
@@ -91,15 +102,28 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 				output = await this.processor.postHydrate(output);
 			}
 			try {
-				return this.serializer.deserialize(output);
+				return this.serializer.deserialize(output, this.logger);
 			} catch (err) {
 				this.logger?.error(this.name, err);
 			}
 		}
 		return undefined;
 	}
+
+	/**
+	 * Implement this to do the actual initialization of the store driver.
+	 */
 	protected abstract handleInit(): Promise<boolean>;
+	/**
+	 * Implement this to do the actual store of the data.
+	 */
 	protected abstract handleStore(buffer: Output): Promise<void>;
+	/**
+	 * Implement this to do the actual hydrate of the data.
+	 */
 	protected abstract handleHydrate(): Promise<Output | undefined>;
+	/**
+	 * Implement this to do the actual clear of the data.
+	 */
 	protected abstract handleClear(): Promise<void>;
 }

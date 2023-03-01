@@ -1,21 +1,26 @@
+import * as zod from 'zod';
 import * as chai from 'chai';
 import 'mocha';
 import {IStorageDriver, MemoryStorageDriver, IPersistSerializer} from '../src';
 
 const expect = chai.expect;
 
-interface Data {
-	test: string;
-}
+const dataSchema = zod.object({
+	test: zod.string(),
+});
+
+type Data = zod.infer<typeof dataSchema>;
 
 const bufferSerializer: IPersistSerializer<Data, Buffer> = {
 	serialize: (data: Data) => Buffer.from(JSON.stringify(data)),
 	deserialize: (buffer: Buffer) => JSON.parse(buffer.toString()),
+	validator: (data: Data) => dataSchema.safeParse(data).success,
 };
 
 const objectSerializer: IPersistSerializer<Data, Data> = {
 	serialize: (data: Data) => ({...data}),
 	deserialize: (value: Data) => ({...value}),
+	validator: (data: Data) => dataSchema.safeParse(data).success,
 };
 
 const driverSet = new Set<IStorageDriver<Data>>([
@@ -23,7 +28,7 @@ const driverSet = new Set<IStorageDriver<Data>>([
 	new MemoryStorageDriver('MemoryStorageDriver - Buffer', bufferSerializer),
 ]);
 
-const data: Data = {test: 'demo'};
+const data = dataSchema.parse({test: 'demo'});
 
 describe('StorageDriver', () => {
 	driverSet.forEach((currentDriver) => {

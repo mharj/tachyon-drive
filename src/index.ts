@@ -4,6 +4,10 @@ export * from './interfaces/IStoreProcessor';
 export * from './interfaces/IPersistSerializer';
 export * from './interfaces/ILoggerLike';
 
+export interface IHydrateOptions {
+	validationThrowsError?: boolean;
+}
+
 export type OnUpdateCallback<Input> = (data: Input | undefined) => void;
 
 export interface IStorageDriver<Input> {
@@ -11,7 +15,7 @@ export interface IStorageDriver<Input> {
 	readonly name: string;
 	init(): Promise<boolean>;
 	store(data: Input): Promise<void>;
-	hydrate(): Promise<Input | undefined>;
+	hydrate(options?: IHydrateOptions): Promise<Input | undefined>;
 	clear(): Promise<void>;
 	clone(data: Input): Input;
 	onUpdate(callback: OnUpdateCallback<Input>): void;
