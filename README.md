@@ -50,3 +50,8 @@ async function doSomethingWithDriver(driver: IStorageDriver<Data>) {
 	// await driver.clear();
 }
 ```
+
+### Other implementing drivers
+
+- [FileStorageDriver](https://www.npmjs.com/package/tachyon-drive-node-fs) for nodejs + NodeJS AES cryption processor
+- [AzureBlobStorageDriver](https://www.npmjs.com/package/tachyon-drive-blob-storage) for Azure Blob Storage
