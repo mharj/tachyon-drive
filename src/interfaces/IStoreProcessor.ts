@@ -1,5 +1,3 @@
-import {isPromiseFunction} from '../lib/promiseUtils';
-
 export interface IStoreProcessor<Output> {
 	/**
 	 * Pre-process the data before store.
@@ -16,8 +14,8 @@ export function isValidStoreProcessor<Output>(value: unknown): value is IStorePr
 		typeof value === 'object' &&
 		value !== null &&
 		'preStore' in value &&
-		isPromiseFunction(value.preStore) &&
+		typeof value.preStore === 'function' &&
 		'postHydrate' in value &&
-		isPromiseFunction(value.postHydrate)
+		typeof value.postHydrate === 'function'
 	);
 }
