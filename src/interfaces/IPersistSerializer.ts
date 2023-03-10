@@ -14,3 +14,15 @@ export interface IPersistSerializer<Input, Output, ValidateInput = Input> {
 	 */
 	validator?: (data: ValidateInput) => boolean;
 }
+
+export function isValidPersistSerializer<Input, Output, ValidateInput = Input>(value: unknown): value is IPersistSerializer<Input, Output, ValidateInput> {
+	return (
+		typeof value === 'object' &&
+		value !== null &&
+		'serialize' in value &&
+		typeof value.serialize === 'function' &&
+		'deserialize' in value &&
+		typeof value.deserialize === 'function' &&
+		('validator' in value ? typeof value.validator === 'function' : true)
+	);
+}

@@ -1,7 +1,7 @@
 import {ILoggerLike} from '../interfaces/ILoggerLike';
 import {IHydrateOptions, IStorageDriver, OnUpdateCallback} from '..';
-import {IStoreProcessor} from '../interfaces/IStoreProcessor';
-import {IPersistSerializer} from '../interfaces/IPersistSerializer';
+import {IStoreProcessor, isValidStoreProcessor} from '../interfaces/IStoreProcessor';
+import {IPersistSerializer, isValidPersistSerializer} from '../interfaces/IPersistSerializer';
 
 export abstract class StorageDriver<Input, Output> implements IStorageDriver<Input> {
 	public name: string;
@@ -12,6 +12,12 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 	private _isInitialized = false;
 
 	constructor(name: string, serializer: IPersistSerializer<Input, Output>, processor?: IStoreProcessor<Output>, logger?: ILoggerLike | Console) {
+		if (!isValidPersistSerializer(serializer)) {
+			throw new Error('Invalid serializer');
+		}
+		if (processor && !isValidStoreProcessor(processor)) {
+			throw new Error('Invalid processor');
+		}
 		this.name = name;
 		this.serializer = serializer;
 		this.processor = processor;
