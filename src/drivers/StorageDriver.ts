@@ -1,4 +1,4 @@
-import {ILoggerLike} from '../interfaces/ILoggerLike';
+import type {ILoggerLike} from '@avanio/logger-like';
 import {IHydrateOptions, IStorageDriver, OnUpdateCallback} from '..';
 import {IStoreProcessor, isValidStoreProcessor} from '../interfaces/IStoreProcessor';
 import {IPersistSerializer, isValidPersistSerializer} from '../interfaces/IPersistSerializer';

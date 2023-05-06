@@ -2,7 +2,6 @@ export * from './drivers/MemoryStorageDriver';
 export * from './drivers/StorageDriver';
 export * from './interfaces/IStoreProcessor';
 export * from './interfaces/IPersistSerializer';
-export * from './interfaces/ILoggerLike';
 
 export interface IHydrateOptions {
 	validationThrowsError?: boolean;

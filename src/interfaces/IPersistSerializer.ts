@@ -1,4 +1,4 @@
-import {ILoggerLike} from './ILoggerLike';
+import type {ILoggerLike} from '@avanio/logger-like';
 
 export interface IPersistSerializer<Input, Output, ValidateInput = Input> {
 	/**
