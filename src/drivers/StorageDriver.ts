@@ -1,20 +1,35 @@
 import type {ILoggerLike} from '@avanio/logger-like';
-import {IHydrateOptions, IStorageDriver, OnUpdateCallback} from '..';
+import {IHydrateOptions, IStorageDriver, OnUpdateCallback} from '../interfaces/IStorageDriver';
 import {IStoreProcessor, isValidStoreProcessor} from '../interfaces/IStoreProcessor';
 import {IPersistSerializer, isValidPersistSerializer} from '../interfaces/IPersistSerializer';
 
+/**
+ * Abstract class that provides a simple interface for storing and retrieving data using a specified storage mechanism.
+ * @template Input - The type of the data to store and retrieve.
+ * @template Output - The type of the data to serialize and deserialize.
+ */
 export abstract class StorageDriver<Input, Output> implements IStorageDriver<Input> {
 	public name: string;
 	private processor: IStoreProcessor<Output> | undefined;
 	private serializer: IPersistSerializer<Input, Output>;
-	protected readonly logger: ILoggerLike | Console | undefined;
+	protected readonly logger: ILoggerLike | undefined;
 	private onUpdateCallbacks = new Set<OnUpdateCallback<Input>>();
 	private _isInitialized = false;
 
-	constructor(name: string, serializer: IPersistSerializer<Input, Output>, processor?: IStoreProcessor<Output>, logger?: ILoggerLike | Console) {
+	/**
+	 * Creates a new instance of the `StorageDriver` class.
+	 * @param {string} name - The name of the storage driver.
+	 * @param {IPersistSerializer} serializer - The serializer to use for serializing and deserializing data.
+	 * @param {IStoreProcessor} [processor] - The store processor to use for processing data before it is written to storage and after it is loaded from storage.
+	 * @param {ILoggerLike} [logger] - The logger to use for logging messages.
+	 * @throws An error if the serializer or processor is invalid.
+	 */
+	constructor(name: string, serializer: IPersistSerializer<Input, Output>, processor?: IStoreProcessor<Output>, logger?: ILoggerLike) {
+		/* istanbul ignore if */
 		if (!isValidPersistSerializer(serializer)) {
 			throw new Error('Invalid serializer');
 		}
+		/* istanbul ignore if */
 		if (processor && !isValidStoreProcessor(processor)) {
 			throw new Error('Invalid processor');
 		}
@@ -29,7 +44,8 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 	}
 
 	/**
-	 * do pre-initialization of the store driver.
+	 * Initializes the storage driver.
+	 * @returns {Promise<boolean>} A promise that resolves to `true` if the storage driver was successfully initialized, or `false` otherwise.
 	 */
 	public async init(): Promise<boolean> {
 		if (!this._isInitialized) {
@@ -40,7 +56,8 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 	}
 
 	/**
-	 * Store the data to store.
+	 * Stores the given data using the specified key.
+	 * @param {Input} data - The data to store.
 	 */
 	public async store(data: Input): Promise<void> {
 		this.logger?.debug(`${this.name}: store()`);
@@ -53,7 +70,10 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 	}
 
 	/**
-	 * Hydrate the data from store with optional validator callback.
+	 * Retrieves the data stored using the specified key.
+	 * @param {IHydrateOptions} options - The options to use for hydrating the data.
+	 * @returns {Promise<Input | undefined>} The retrieved data, or `undefined` if no data was found.
+	 * @throws An error if the data fails validation.
 	 */
 	public async hydrate({validationThrowsError}: IHydrateOptions = {}): Promise<Input | undefined> {
 		this.logger?.debug(`${this.name}: hydrate()`);
@@ -70,7 +90,7 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 	}
 
 	/**
-	 * Clear the data from store.
+	 * Clear the stored data
 	 */
 	public async clear(): Promise<void> {
 		this.logger?.debug(`${this.name}: clear()`);
@@ -79,14 +99,17 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 	}
 
 	/**
-	 * Clone the data with the same serializer.
+	 * Clones the given data with the serializer.
+	 * @param {Input} data - The data to clone.
+	 * @returns {Input} The cloned data.
 	 */
 	public clone(data: Input): Input {
 		return this.serializer.deserialize(this.serializer.serialize(data, this.logger), this.logger);
 	}
 
 	/**
-	 * Listen for updates to the data.
+	 * Registers a callback that will be called when the data is updated.
+	 * @param {OnUpdateCallback<Input>} callback - The callback to register.
 	 */
 	public onUpdate(callback: OnUpdateCallback<Input>) {
 		this.onUpdateCallbacks.add(callback);
@@ -101,6 +124,10 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 		this.onUpdateCallbacks.forEach((callback) => callback(data));
 	}
 
+	/**
+	 * Retrieves the data, processes it, and then returns the processed data.
+	 * @returns {Promise<Input | undefined>} The retrieved deserialized data, or `undefined` if no data was found.
+	 */
 	private async doHydrate(): Promise<Input | undefined> {
 		let output = await this.handleHydrate();
 		if (output) {
@@ -110,6 +137,7 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 			try {
 				return this.serializer.deserialize(output, this.logger);
 			} catch (err) {
+				/* istanbul ignore next */
 				this.logger?.error(this.name, err);
 			}
 		}
@@ -117,19 +145,24 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 	}
 
 	/**
-	 * Implement this to do the actual initialization of the store driver.
+	 * Initialize the storage driver.
+	 * @returns {Promise<boolean>} A promise that resolves to `true` if the storage driver was successfully initialized, or `false` otherwise.
 	 */
 	protected abstract handleInit(): Promise<boolean>;
 	/**
-	 * Implement this to do the actual store of the data.
+	 * Store the given data to storage.
+	 * @param {Output} buffer - The data to store.
+	 * @returns {Promise<void>} A promise that resolves when the data has been successfully stored.
 	 */
 	protected abstract handleStore(buffer: Output): Promise<void>;
 	/**
-	 * Implement this to do the actual hydrate of the data.
+	 * Retrieve the data from storage.
+	 * @returns {Promise<Output | undefined>} A promise that resolves to the retrieved data, or `undefined` if no data was found.
 	 */
 	protected abstract handleHydrate(): Promise<Output | undefined>;
 	/**
-	 * Implement this to do the actual clear of the data.
+	 * Clear the stored data in storage.
+	 * @returns A promise that resolves when the data has been successfully cleared.
 	 */
 	protected abstract handleClear(): Promise<void>;
 }

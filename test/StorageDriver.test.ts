@@ -1,7 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as zod from 'zod';
 import * as chai from 'chai';
+import * as chaiAsPromised from 'chai-as-promised';
 import 'mocha';
-import {IStorageDriver, MemoryStorageDriver, IPersistSerializer} from '../src';
+import {IStorageDriver, MemoryStorageDriver, IPersistSerializer, isValidPersistSerializer, IStoreProcessor} from '../src';
+
+chai.use(chaiAsPromised);
 
 const expect = chai.expect;
 
@@ -10,6 +14,11 @@ const dataSchema = zod.object({
 });
 
 type Data = zod.infer<typeof dataSchema>;
+
+const nullProcessor: IStoreProcessor<Data> = {
+	preStore: async (data: Data) => data,
+	postHydrate: async (data: Data) => data,
+};
 
 const bufferSerializer: IPersistSerializer<Data, Buffer> = {
 	serialize: (data: Data) => Buffer.from(JSON.stringify(data)),
@@ -23,10 +32,10 @@ const objectSerializer: IPersistSerializer<Data, Data> = {
 	validator: (data: Data) => dataSchema.safeParse(data).success,
 };
 
-const driverSet = new Set<IStorageDriver<Data>>([
-	new MemoryStorageDriver('MemoryStorageDriver - Object', objectSerializer),
-	new MemoryStorageDriver('MemoryStorageDriver - Buffer', bufferSerializer),
-]);
+const memoryObjectDriver = new MemoryStorageDriver('MemoryStorageDriver - Object', objectSerializer, nullProcessor);
+memoryObjectDriver.setData(undefined);
+
+const driverSet = new Set<IStorageDriver<Data>>([memoryObjectDriver, new MemoryStorageDriver('MemoryStorageDriver - Buffer', bufferSerializer)]);
 
 const data = dataSchema.parse({test: 'demo'});
 
@@ -34,28 +43,59 @@ describe('StorageDriver', () => {
 	driverSet.forEach((currentDriver) => {
 		describe(currentDriver.name, () => {
 			before(async () => {
+				currentDriver.onUpdate((data) => {
+					expect(data).to.be.eql(data);
+				});
 				await currentDriver.clear();
 				expect(currentDriver.isInitialized).to.be.eq(false);
 			});
 			it('should be empty store', async () => {
-				expect(await currentDriver.hydrate()).to.eq(undefined);
+				await expect(currentDriver.hydrate()).to.be.eventually.eq(undefined);
 				expect(currentDriver.isInitialized).to.be.eq(true);
 			});
 			it('should store to storage driver', async () => {
 				await currentDriver.store(data);
-				expect(await currentDriver.hydrate()).to.eql(data);
+				await expect(currentDriver.hydrate()).to.be.eventually.eql(data);
 				expect(currentDriver.isInitialized).to.be.eq(true);
 			});
 			it('should restore data from storage driver', async () => {
-				expect(await currentDriver.hydrate()).to.eql(data);
+				await expect(currentDriver.hydrate()).to.be.eventually.eql(data);
 				expect(currentDriver.isInitialized).to.be.eq(true);
 			});
 			it('should clear to storage driver', async () => {
 				await currentDriver.clear();
 				expect(currentDriver.isInitialized).to.be.eq(false);
-				expect(await currentDriver.hydrate()).to.eq(undefined);
+				await expect(currentDriver.hydrate()).to.be.eventually.eq(undefined);
 				expect(currentDriver.isInitialized).to.be.eq(true);
 			});
+			it('should give undefined if not valid data', async () => {
+				await currentDriver.store('ASD' as any);
+				await expect(currentDriver.hydrate()).to.be.eventually.eq(undefined);
+			});
+			it('should throw error when strict validation', async () => {
+				await currentDriver.store('ASD' as any);
+				await expect(currentDriver.hydrate({validationThrowsError: true})).to.eventually.be.rejectedWith(Error);
+			});
+			it('should clone input data', async () => {
+				expect(currentDriver.clone(data)).to.be.eql(data);
+			});
+		});
+	});
+	describe('Serializer validation', () => {
+		it('should be valid serializer', () => {
+			expect(
+				isValidPersistSerializer({
+					serialize: (data: Data) => Buffer.from(JSON.stringify(data)),
+					deserialize: (buffer: Buffer) => JSON.parse(buffer.toString()),
+					validator: (data: Data) => dataSchema.safeParse(data).success,
+				}),
+			).to.be.eq(true);
+			expect(
+				isValidPersistSerializer({
+					serialize: (data: Data) => Buffer.from(JSON.stringify(data)),
+					deserialize: (buffer: Buffer) => JSON.parse(buffer.toString()),
+				}),
+			).to.be.eq(true);
 		});
 	});
 });

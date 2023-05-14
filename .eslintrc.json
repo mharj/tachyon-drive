@@ -5,8 +5,13 @@
         "sourceType": "module",
         "project": "./tsconfig.test.json"
     },
+    "env": {
+        "browser": true,
+        "node": true
+    },
     "plugins": [
         "@typescript-eslint",
+        "jsdoc",
         "prettier",
         "sonarjs",
         "deprecation"
@@ -17,7 +22,8 @@
         "plugin:@typescript-eslint/eslint-recommended",
         "plugin:@typescript-eslint/recommended",
         "plugin:prettier/recommended",
-        "plugin:sonarjs/recommended"
+        "plugin:sonarjs/recommended",
+        "plugin:jsdoc/recommended"
     ],
     "rules": {
         "camelcase": 1,

@@ -1,5 +1,11 @@
 # tachyon-drive
 
+[![TypeScript](https://badges.frapsoft.com/typescript/code/typescript.svg?v=101)](https://github.com/ellerbrock/typescript-badges/)
+[![npm version](https://badge.fury.io/js/tachyon-drive.svg)](https://badge.fury.io/js/tachyon-drive)
+[![Maintainability](https://api.codeclimate.com/v1/badges/03cc4dba13ee3e7eac87/maintainability)](https://codeclimate.com/github/mharj/tachyon-drive/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/03cc4dba13ee3e7eac87/test_coverage)](https://codeclimate.com/github/mharj/tachyon-drive/test_coverage)
+![github action](https://github.com/mharj/tachyon-drive/actions/workflows/main.yml/badge.svg?branch=main)
+
 ## Extendable typescript (javascript) storage driver implementation
 
 ### Usage examples
