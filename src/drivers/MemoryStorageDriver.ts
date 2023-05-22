@@ -32,4 +32,9 @@ export class MemoryStorageDriver<Input, Output> extends StorageDriver<Input, Out
 	protected async handleClear(): Promise<void> {
 		this.data = undefined;
 	}
+
+	protected async handleUnload(): Promise<boolean> {
+		this.data = undefined;
+		return true;
+	}
 }

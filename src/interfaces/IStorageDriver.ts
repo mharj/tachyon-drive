@@ -53,4 +53,10 @@ export interface IStorageDriver<Input> {
 	 * @param {OnUpdateCallback<Input>} callback
 	 */
 	onUpdate(callback: OnUpdateCallback<Input>): void;
+
+	/**
+	 * Unload the storage driver.
+	 * @returns {Promise<boolean>} A promise that resolves to `true` if the storage driver was successfully unloaded, or `false` otherwise.
+	 */
+	unload(): Promise<boolean>;
 }

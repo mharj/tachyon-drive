@@ -56,6 +56,18 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 	}
 
 	/**
+	 * Unload the storage driver.
+	 * @returns {Promise<boolean>} A promise that resolves to `true` if the storage driver was successfully unloaded, or `false` otherwise.
+	 */
+	public async unload(): Promise<boolean> {
+		if (!this._isInitialized) {
+			this.logger?.debug(`${this.name}: unload()`);
+			return this.handleUnload();
+		}
+		return false;
+	}
+
+	/**
 	 * Stores the given data using the specified key.
 	 * @param {Input} data - The data to store.
 	 */
@@ -165,4 +177,10 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 	 * @returns A promise that resolves when the data has been successfully cleared.
 	 */
 	protected abstract handleClear(): Promise<void>;
+
+	/**
+	 * Called when the storage driver is unloaded.
+	 * @returns {Promise<boolean>} A promise that resolves to `true` if the storage driver was successfully unloaded, or `false` otherwise.
+	 */
+	protected abstract handleUnload(): Promise<boolean>;
 }
