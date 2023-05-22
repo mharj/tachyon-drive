@@ -68,6 +68,12 @@ describe('StorageDriver', () => {
 				await expect(currentDriver.hydrate()).to.be.eventually.eq(undefined);
 				expect(currentDriver.isInitialized).to.be.eq(true);
 			});
+			it('should clone input data', async () => {
+				await currentDriver.init();
+				expect(currentDriver.isInitialized).to.be.eq(true);
+				await expect(currentDriver.unload()).to.be.eventually.eq(true);
+				expect(currentDriver.isInitialized).to.be.eq(false);
+			});
 			it('should give undefined if not valid data', async () => {
 				await currentDriver.store('ASD' as any);
 				await expect(currentDriver.hydrate()).to.be.eventually.eq(undefined);

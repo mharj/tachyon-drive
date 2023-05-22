@@ -60,11 +60,10 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 	 * @returns {Promise<boolean>} A promise that resolves to `true` if the storage driver was successfully unloaded, or `false` otherwise.
 	 */
 	public async unload(): Promise<boolean> {
-		if (!this._isInitialized) {
-			this.logger?.debug(`${this.name}: unload()`);
-			return this.handleUnload();
-		}
-		return false;
+		this.logger?.debug(`${this.name}: unload()`);
+		await this.init();
+		this._isInitialized = false;
+		return this.handleUnload();
 	}
 
 	/**
