@@ -10,6 +10,7 @@ export interface IHydrateOptions {
  */
 export type OnUpdateCallback<Input> = (data: Input | undefined) => void;
 
+export type OnActivityCallback = (state: boolean) => void;
 /**
  * Interface for a storage driver that provides a simple interface for storing and retrieving data using a specified storage mechanism.
  * @template Input - The type of the data to store and retrieve.
@@ -59,4 +60,34 @@ export interface IStorageDriver<Input> {
 	 * @returns {Promise<boolean>} A promise that resolves to `true` if the storage driver was successfully unloaded, or `false` otherwise.
 	 */
 	unload(): Promise<boolean>;
+
+	/**
+	 * Event callback to track async driver initialization state changes (begin and end)
+	 * @param {OnActivityCallback} callback - The callback function which tells boolean state of initialization.
+	 */
+	onInit(callback: OnActivityCallback): void;
+
+	/**
+	 * Event callback to track async driver store state changes (begin and end)
+	 * @param {OnActivityCallback} callback - The callback function which tells boolean state of data store.
+	 */
+	onStore(callback: OnActivityCallback): void;
+
+	/**
+	 * Event callback to track async driver hydrate state changes (begin and end)
+	 * @param {OnActivityCallback} callback - The callback function which tells boolean state of data hydrate.
+	 */
+	onHydrate(callback: OnActivityCallback): void;
+
+	/**
+	 * Event callback to track async driver clear state changes (begin and end)
+	 * @param {OnActivityCallback} callback - The callback function which tells boolean state of data clear.
+	 */
+	onClear(callback: OnActivityCallback): void;
+
+	/**
+	 * Event callback to track async driver unload state changes (begin and end)
+	 * @param {OnActivityCallback} callback - The callback function which tells boolean state of unload.
+	 */
+	onUnload(callback: OnActivityCallback): void;
 }

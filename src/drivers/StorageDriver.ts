@@ -1,5 +1,6 @@
+/* eslint-disable n/no-callback-literal */
 import type {ILoggerLike} from '@avanio/logger-like';
-import {IHydrateOptions, IStorageDriver, OnUpdateCallback} from '../interfaces/IStorageDriver';
+import {IHydrateOptions, IStorageDriver, OnActivityCallback, OnUpdateCallback} from '../interfaces/IStorageDriver';
 import {IStoreProcessor, isValidStoreProcessor} from '../interfaces/IStoreProcessor';
 import {IPersistSerializer, isValidPersistSerializer} from '../interfaces/IPersistSerializer';
 
@@ -14,6 +15,11 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 	private serializer: IPersistSerializer<Input, Output>;
 	protected readonly logger: ILoggerLike | undefined;
 	private onUpdateCallbacks = new Set<OnUpdateCallback<Input>>();
+	private onInitCallbacks = new Set<OnActivityCallback>();
+	private onHydrateCallbacks = new Set<OnActivityCallback>();
+	private onStoreCallbacks = new Set<OnActivityCallback>();
+	private onClearCallbacks = new Set<OnActivityCallback>();
+	private onUnloadCallbacks = new Set<OnActivityCallback>();
 	private _isInitialized = false;
 
 	/**
@@ -50,7 +56,12 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 	public async init(): Promise<boolean> {
 		if (!this._isInitialized) {
 			this.logger?.debug(`${this.name}: init()`);
-			this._isInitialized = await this.handleInit();
+			this.onInitCallbacks.forEach((callback) => callback(true));
+			try {
+				this._isInitialized = await this.handleInit();
+			} finally {
+				this.onInitCallbacks.forEach((callback) => callback(false));
+			}
 		}
 		return this._isInitialized;
 	}
@@ -63,7 +74,12 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 		this.logger?.debug(`${this.name}: unload()`);
 		await this.init();
 		this._isInitialized = false;
-		return this.handleUnload();
+		this.onUnloadCallbacks.forEach((callback) => callback(true));
+		try {
+			return this.handleUnload();
+		} finally {
+			this.onUnloadCallbacks.forEach((callback) => callback(false));
+		}
 	}
 
 	/**
@@ -77,7 +93,12 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 		if (this.processor) {
 			output = await this.processor.preStore(output);
 		}
-		await this.handleStore(output);
+		this.onStoreCallbacks.forEach((callback) => callback(true));
+		try {
+			await this.handleStore(output);
+		} finally {
+			this.onStoreCallbacks.forEach((callback) => callback(false));
+		}
 	}
 
 	/**
@@ -89,7 +110,13 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 	public async hydrate({validationThrowsError}: IHydrateOptions = {}): Promise<Input | undefined> {
 		this.logger?.debug(`${this.name}: hydrate()`);
 		await this.init();
-		const data = await this.doHydrate();
+		this.onHydrateCallbacks.forEach((callback) => callback(true));
+		let data: Awaited<Input> | undefined;
+		try {
+			data = await this.doHydrate();
+		} finally {
+			this.onHydrateCallbacks.forEach((callback) => callback(false));
+		}
 		if (data && this.serializer.validator && !this.serializer.validator(data)) {
 			if (validationThrowsError) {
 				throw new Error(`${this.name}: hydrate() validator failed`);
@@ -106,7 +133,12 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 	public async clear(): Promise<void> {
 		this.logger?.debug(`${this.name}: clear()`);
 		this._isInitialized = false;
-		await this.handleClear();
+		this.onClearCallbacks.forEach((callback) => callback(true));
+		try {
+			await this.handleClear();
+		} finally {
+			this.onClearCallbacks.forEach((callback) => callback(false));
+		}
 	}
 
 	/**
@@ -124,6 +156,46 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 	 */
 	public onUpdate(callback: OnUpdateCallback<Input>) {
 		this.onUpdateCallbacks.add(callback);
+	}
+
+	/**
+	 * Registers a callback to track async driver initialization state changes (begin and end)
+	 * @param {OnActivityCallback} callback - The callback to register.
+	 */
+	public onInit(callback: OnActivityCallback): void {
+		this.onInitCallbacks.add(callback);
+	}
+
+	/**
+	 * Registers a callback to track async driver store state changes (begin and end)
+	 * @param {OnActivityCallback} callback - The callback to register.
+	 */
+	public onStore(callback: OnActivityCallback): void {
+		this.onStoreCallbacks.add(callback);
+	}
+
+	/**
+	 * Registers a callback to track async driver hydrate state changes (begin and end)
+	 * @param {OnActivityCallback} callback - The callback to register.
+	 */
+	public onHydrate(callback: OnActivityCallback): void {
+		this.onHydrateCallbacks.add(callback);
+	}
+
+	/**
+	 * Registers a callback to track async driver clear state changes (begin and end)
+	 * @param {OnActivityCallback} callback - The callback to register.
+	 */
+	public onClear(callback: OnActivityCallback): void {
+		this.onClearCallbacks.add(callback);
+	}
+
+	/**
+	 * Registers a callback to track async driver unload state changes (begin and end)
+	 * @param {OnActivityCallback} callback - The callback to register.
+	 */
+	public onUnload(callback: OnActivityCallback): void {
+		this.onUnloadCallbacks.add(callback);
 	}
 
 	/**

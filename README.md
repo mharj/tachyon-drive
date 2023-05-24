@@ -45,6 +45,14 @@ driver.onUpdate((data: Data) => {
 	// listen for updates (if implemeting driver supports this)
 	console.log('data updated', data);
 });
+
+// listen driver state changes
+driver.onHydrate((state: boolean) => {
+	console.log('data hydrate state change', state);
+});
+driver.onStore((state: boolean) => {
+	console.log('data store state change', state);
+});
 ```
 
 ### how to use generic driver type on function calls
