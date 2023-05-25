@@ -6,7 +6,26 @@
 [![Test Coverage](https://api.codeclimate.com/v1/badges/03cc4dba13ee3e7eac87/test_coverage)](https://codeclimate.com/github/mharj/tachyon-drive/test_coverage)
 ![github action](https://github.com/mharj/tachyon-drive/actions/workflows/main.yml/badge.svg?branch=main)
 
-## Extendable typescript (javascript) storage driver implementation
+***tachyon-drive*** is an extendable TypeScript (JavaScript) storage driver implementation that provides a simple interface for storing and retrieving data using a specified storage mechanism.<br/> It includes a built-in memory storage driver, as well as support for other storage drivers such as file storage and Azure Blob Storage module
+
+## Idea behind the Tachyon-Drive
+Tachyon-Drive to be solid basic building block for more complex operations which requires storing data to some storage.<br />
+As example, storing Map of verified user JWT token payloads to storage which is shared with multiple backends for cache and validation purposes (and gets store updates via onUpdate callback from driver).
+
+## Core Parts of the Tachyon-Drive
+The tachyon-drive includes:
+
+- Class [StorageDriver](./src/drivers/StorageDriver.ts): An abstract class that provides a simplified abstraction for storing and retrieving data using a specified storage mechanism.(implements IStorageDriver)
+- Class [MemoryStorageDriver](./src/drivers/MemoryStorageDriver.ts): A built-in storage driver that stores data in memory.
+- Interface [IStorageDriver](./src/interfaces/IStorageDriver.ts): An interface that defines the methods that a storage driver must implement.
+- Interface [IPersistSerializer](./src/interfaces/IPersistSerializer.ts): An interface that defines the methods that a serializer must implement.
+- Interface [IStoreProcessor](./src/interfaces/IStoreProcessor.ts): An interface that defines the methods that a store processor must implement.
+
+## [Serializer](./src/interfaces/IPersistSerializer.ts)
+Core part of the driver is serializer. Serializer is used to serialize and deserialize data to and from storage. Serializer can be optionally used to validate data after deserialization.
+
+## [Store Processor](./src/interfaces/IStoreProcessor.ts) (optional)
+Store processor is used to process data before storing and after hydrating. Store processor can be used as example to encrypt and decrypt data.
 
 ### Usage examples
 
@@ -17,6 +36,7 @@ const dataSchema = zod.object({
 
 type Data = zod.infer<typeof dataSchema>;
 
+// example serializer for Data to Buffer with optional validation
 const bufferSerializer: IPersistSerializer<Data, Buffer> = {
 	serialize: (data: Data) => Buffer.from(JSON.stringify(data)),
 	deserialize: (buffer: Buffer) => JSON.parse(buffer.toString()),
@@ -27,7 +47,7 @@ const bufferSerializer: IPersistSerializer<Data, Buffer> = {
 ### Initialize simple JSON to buffer storage driver
 
 ```typescript
-const driver = new MemoryStorageDriver('MemoryStorageDriver', bufferSerializer);
+const driver = new MemoryStorageDriver('MemoryStorageDriver', bufferSerializer, /* processor */);
 ```
 
 ### Driver usage
