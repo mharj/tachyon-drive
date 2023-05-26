@@ -117,7 +117,7 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 		} finally {
 			this.onHydrateCallbacks.forEach((callback) => callback(false));
 		}
-		if (data && this.serializer.validator && !this.serializer.validator(data)) {
+		if (data && this.serializer.validator && !this.serializer.validator(data, this.logger)) {
 			if (validationThrowsError) {
 				throw new Error(`${this.name}: hydrate() validator failed`);
 			}

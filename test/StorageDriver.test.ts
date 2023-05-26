@@ -5,7 +5,7 @@ import * as chai from 'chai';
 import * as sinon from 'sinon';
 import * as chaiAsPromised from 'chai-as-promised';
 import 'mocha';
-import {IStorageDriver, MemoryStorageDriver, IPersistSerializer, isValidPersistSerializer, IStoreProcessor} from '../src';
+import {IStorageDriver, MemoryStorageDriver, IPersistSerializer, isValidPersistSerializer, IStoreProcessor, nextSerializer} from '../src';
 
 chai.use(chaiAsPromised);
 
@@ -22,17 +22,28 @@ const nullProcessor: IStoreProcessor<Data> = {
 	postHydrate: async (data: Data) => data,
 };
 
-const bufferSerializer: IPersistSerializer<Data, Buffer> = {
-	serialize: (data: Data) => Buffer.from(JSON.stringify(data)),
-	deserialize: (buffer: Buffer) => JSON.parse(buffer.toString()),
-	validator: (data: Data) => dataSchema.safeParse(data).success,
-};
-
 const objectSerializer: IPersistSerializer<Data, Data> = {
 	serialize: (data: Data) => ({...data}),
 	deserialize: (value: Data) => ({...value}),
 	validator: (data: Data) => dataSchema.safeParse(data).success,
 };
+
+const jsonSerializer: IPersistSerializer<Data, string> = {
+	serialize: (data: Data) => JSON.stringify(data),
+	deserialize: (buffer: string) => JSON.parse(buffer),
+	validator: (data: Data) => dataSchema.safeParse(data).success,
+};
+
+const objecToJson: IPersistSerializer<Data, string> = nextSerializer<Data, Data, string>(objectSerializer, jsonSerializer);
+
+const strToBufferSerializer: IPersistSerializer<string, Buffer> = {
+	serialize: (data: string) => Buffer.from(data),
+	deserialize: (buffer: Buffer) => buffer.toString(),
+	validator: (data: string) => typeof data === 'string',
+};
+
+// [Object <=> Object] => [Object <=> JSON] => [JSON <=> Buffer]
+const bufferSerializer: IPersistSerializer<Data, Buffer> = nextSerializer<Data, string, Buffer>(objecToJson, strToBufferSerializer);
 
 const onInitSpy = sinon.spy();
 const onHydrateSpy = sinon.spy();

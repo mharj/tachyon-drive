@@ -20,6 +20,7 @@ The tachyon-drive includes:
 - Interface [IStorageDriver](./src/interfaces/IStorageDriver.ts): An interface that defines the methods that a storage driver must implement.
 - Interface [IPersistSerializer](./src/interfaces/IPersistSerializer.ts): An interface that defines the methods that a serializer must implement.
 - Interface [IStoreProcessor](./src/interfaces/IStoreProcessor.ts): An interface that defines the methods that a store processor must implement.
+- Function [nextSerializer](./src/serializer.ts): A function that chains two serializers together. (example: Data <=> JSON string <=> Buffer>)
 
 ## [Serializer](./src/interfaces/IPersistSerializer.ts)
 Core part of the driver is serializer. Serializer is used to serialize and deserialize data to and from storage. Serializer can be optionally used to validate data after deserialization.
