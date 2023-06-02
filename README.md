@@ -90,3 +90,6 @@ async function doSomethingWithDriver(driver: IStorageDriver<Data>) {
 
 - [FileStorageDriver](https://www.npmjs.com/package/tachyon-drive-node-fs) for nodejs + NodeJS AES cryption processor
 - [AzureBlobStorageDriver](https://www.npmjs.com/package/tachyon-drive-blob-storage) for Azure Blob Storage
+- [MemcachedStorageDriver](https://www.npmjs.com/package/tachyon-drive-memcached) for Memcached
+- [AwsS3StorageDriver](https://www.npmjs.com/package/tachyon-drive-s3) for S3 compatible storage
+- [RedisStorageDriver](https://www.npmjs.com/package/tachyon-drive-redis) for Redis storage
