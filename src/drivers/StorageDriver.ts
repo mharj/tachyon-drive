@@ -3,6 +3,7 @@ import type {ILoggerLike} from '@avanio/logger-like';
 import {IHydrateOptions, IStorageDriver, OnActivityCallback, OnUpdateCallback} from '../interfaces/IStorageDriver';
 import {IStoreProcessor, isValidStoreProcessor} from '../interfaces/IStoreProcessor';
 import {IPersistSerializer, isValidPersistSerializer} from '../interfaces/IPersistSerializer';
+import {IExternalNotify} from '../interfaces/IExternalUpdateNotify';
 
 /**
  * Abstract class that provides a simple interface for storing and retrieving data using a specified storage mechanism.
@@ -14,6 +15,7 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 	private processor: IStoreProcessor<Output> | undefined;
 	private serializer: IPersistSerializer<Input, Output>;
 	protected readonly logger: ILoggerLike | undefined;
+	private extNotify: IExternalNotify | null;
 	private onUpdateCallbacks = new Set<OnUpdateCallback<Input>>();
 	private onInitCallbacks = new Set<OnActivityCallback>();
 	private onHydrateCallbacks = new Set<OnActivityCallback>();
@@ -26,11 +28,18 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 	 * Creates a new instance of the `StorageDriver` class.
 	 * @param {string} name - The name of the storage driver.
 	 * @param {IPersistSerializer} serializer - The serializer to use for serializing and deserializing data.
+	 * @param {IExternalNotify | null} extNotify - If driver does not support onUpdate, this interface is for building external update notifiers if driver does not internally support it.
 	 * @param {IStoreProcessor} [processor] - The store processor to use for processing data before it is written to storage and after it is loaded from storage.
 	 * @param {ILoggerLike} [logger] - The logger to use for logging messages.
 	 * @throws An error if the serializer or processor is invalid.
 	 */
-	constructor(name: string, serializer: IPersistSerializer<Input, Output>, processor?: IStoreProcessor<Output>, logger?: ILoggerLike) {
+	constructor(
+		name: string,
+		serializer: IPersistSerializer<Input, Output>,
+		extNotify: IExternalNotify | null,
+		processor?: IStoreProcessor<Output>,
+		logger?: ILoggerLike,
+	) {
 		/* istanbul ignore if */
 		if (!isValidPersistSerializer(serializer)) {
 			throw new Error('Invalid serializer');
@@ -43,6 +52,9 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 		this.serializer = serializer;
 		this.processor = processor;
 		this.logger = logger;
+		// hook external notifier to handle update
+		this.extNotify = extNotify;
+		this.extNotify?.onUpdate(() => this.handleUpdate());
 	}
 
 	public get isInitialized(): boolean {
@@ -99,6 +111,8 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 		} finally {
 			this.onStoreCallbacks.forEach((callback) => callback(false));
 		}
+		// notify external update if driver does not support it
+		await this.extNotify?.notifyUpdate();
 	}
 
 	/**
@@ -139,6 +153,8 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 		} finally {
 			this.onClearCallbacks.forEach((callback) => callback(false));
 		}
+		// notify external update if driver does not support it
+		await this.extNotify?.notifyUpdate();
 	}
 
 	/**
