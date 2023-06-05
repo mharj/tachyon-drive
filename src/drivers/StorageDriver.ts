@@ -28,7 +28,7 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 	 * Creates a new instance of the `StorageDriver` class.
 	 * @param {string} name - The name of the storage driver.
 	 * @param {IPersistSerializer} serializer - The serializer to use for serializing and deserializing data.
-	 * @param {IExternalNotify | null} extNotify - If driver does not support onUpdate, this interface is for building external update notifiers if driver does not internally support it.
+	 * @param {IExternalNotify | null} extNotify - If driver does not support onUpdate, use this to notify with external event.
 	 * @param {IStoreProcessor} [processor] - The store processor to use for processing data before it is written to storage and after it is loaded from storage.
 	 * @param {ILoggerLike} [logger] - The logger to use for logging messages.
 	 * @throws An error if the serializer or processor is invalid.
@@ -112,7 +112,7 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 			this.onStoreCallbacks.forEach((callback) => callback(false));
 		}
 		// notify external update if driver does not support it
-		await this.extNotify?.notifyUpdate();
+		await this.extNotify?.notifyUpdate(new Date());
 	}
 
 	/**
@@ -154,7 +154,7 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 			this.onClearCallbacks.forEach((callback) => callback(false));
 		}
 		// notify external update if driver does not support it
-		await this.extNotify?.notifyUpdate();
+		await this.extNotify?.notifyUpdate(new Date());
 	}
 
 	/**

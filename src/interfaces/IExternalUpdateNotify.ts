@@ -5,9 +5,9 @@ export interface IExternalNotify {
 	/**
 	 * onUpdate callback registeration
 	 */
-	onUpdate(callback: () => Promise<void>): void;
+	onUpdate(callback: (timeStamp: Date) => Promise<void>): void;
 	/**
 	 * Notify that the data has been updated. (in store and clear methods)
 	 */
-	notifyUpdate(): Promise<void>;
+	notifyUpdate(timeStamp: Date): Promise<void>;
 }
