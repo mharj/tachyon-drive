@@ -6,6 +6,7 @@ import * as sinon from 'sinon';
 import * as chaiAsPromised from 'chai-as-promised';
 import 'mocha';
 import {IStorageDriver, MemoryStorageDriver, IPersistSerializer, isValidPersistSerializer, IStoreProcessor, nextSerializer} from '../src';
+import {IExternalNotify} from '../src/interfaces/IExternalUpdateNotify';
 
 chai.use(chaiAsPromised);
 
@@ -51,10 +52,26 @@ const onStoreSpy = sinon.spy();
 const onClearSpy = sinon.spy();
 const onUnloadSpy = sinon.spy();
 
-const memoryObjectDriver = new MemoryStorageDriver('MemoryStorageDriver - Object', objectSerializer, nullProcessor);
+class SimpleNotify implements IExternalNotify {
+	private callback = new Set<(timeStamp: Date) => Promise<void>>();
+
+	public onUpdate(callback: (timeStamp: Date) => Promise<void>): void {
+		this.callback.add(callback);
+	}
+
+	public async notifyUpdate(timeStamp: Date): Promise<void> {
+		await Promise.all([...this.callback].map((callback) => callback(timeStamp)));
+	}
+}
+
+const notifier = new SimpleNotify();
+const onUpdateRegisterSpy = sinon.spy(notifier, 'onUpdate');
+const onUpdateEmitterSpy = sinon.spy(notifier, 'notifyUpdate');
+
+const memoryObjectDriver = new MemoryStorageDriver('MemoryStorageDriver - Object', objectSerializer, notifier, nullProcessor);
 memoryObjectDriver.setData(undefined);
 
-const driverSet = new Set<IStorageDriver<Data>>([memoryObjectDriver, new MemoryStorageDriver('MemoryStorageDriver - Buffer', bufferSerializer)]);
+const driverSet = new Set<IStorageDriver<Data>>([memoryObjectDriver, new MemoryStorageDriver('MemoryStorageDriver - Buffer', bufferSerializer, notifier)]);
 
 const data = dataSchema.parse({test: 'demo'});
 
@@ -78,6 +95,7 @@ describe('StorageDriver', () => {
 				onStoreSpy.resetHistory();
 				onClearSpy.resetHistory();
 				onUnloadSpy.resetHistory();
+				onUpdateEmitterSpy.resetHistory();
 			});
 			before(async () => {
 				currentDriver.onInit(onInitSpy);
@@ -90,22 +108,26 @@ describe('StorageDriver', () => {
 				});
 				await currentDriver.clear();
 				expect(currentDriver.isInitialized).to.be.eq(false);
+				expect(onUpdateRegisterSpy.callCount).to.be.eq(driverSet.size);
 			});
 			it('should be empty store', async () => {
 				await expect(currentDriver.hydrate()).to.be.eventually.eq(undefined);
 				expect(currentDriver.isInitialized).to.be.eq(true);
 				expectEmitSpy(2, 2, 0, 0, 0);
+				expect(onUpdateEmitterSpy.callCount).to.be.eq(0);
 			});
 			it('should store to storage driver', async () => {
 				await currentDriver.store(data);
 				await expect(currentDriver.hydrate()).to.be.eventually.eql(data);
 				expect(currentDriver.isInitialized).to.be.eq(true);
 				expectEmitSpy(0, 2, 2, 0, 0);
+				expect(onUpdateEmitterSpy.callCount).to.be.eq(1);
 			});
 			it('should restore data from storage driver', async () => {
 				await expect(currentDriver.hydrate()).to.be.eventually.eql(data);
 				expect(currentDriver.isInitialized).to.be.eq(true);
 				expectEmitSpy(0, 2, 0, 0, 0);
+				expect(onUpdateEmitterSpy.callCount).to.be.eq(0);
 			});
 			it('should clear to storage driver', async () => {
 				await currentDriver.clear();
@@ -113,6 +135,7 @@ describe('StorageDriver', () => {
 				await expect(currentDriver.hydrate()).to.be.eventually.eq(undefined);
 				expect(currentDriver.isInitialized).to.be.eq(true);
 				expectEmitSpy(2, 2, 0, 2, 0);
+				expect(onUpdateEmitterSpy.callCount).to.be.eq(1);
 			});
 			it('should unload driver', async () => {
 				expect(currentDriver.isInitialized).to.be.eq(true);
