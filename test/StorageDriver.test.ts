@@ -55,6 +55,14 @@ const onUnloadSpy = sinon.spy();
 class SimpleNotify implements IExternalNotify {
 	private callback = new Set<(timeStamp: Date) => Promise<void>>();
 
+	public init(): Promise<void> {
+		return Promise.resolve();
+	}
+
+	public unload(): Promise<void> {
+		return Promise.resolve();
+	}
+
 	public onUpdate(callback: (timeStamp: Date) => Promise<void>): void {
 		this.callback.add(callback);
 	}

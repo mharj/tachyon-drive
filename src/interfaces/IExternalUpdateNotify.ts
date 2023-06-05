@@ -3,6 +3,18 @@
  */
 export interface IExternalNotify {
 	/**
+	 * Initializes the notifier.
+	 * @returns A promise when the notifier was successfully initialized.
+	 */
+	init(): Promise<void>;
+
+	/**
+	 * Unload the notifier.
+	 * @returns A promise when the notifier was successfully unloaded.
+	 */
+	unload(): Promise<void>;
+
+	/**
 	 * onUpdate callback registeration
 	 */
 	onUpdate(callback: (timeStamp: Date) => Promise<void>): void;

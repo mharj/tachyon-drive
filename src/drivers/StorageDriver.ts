@@ -74,6 +74,7 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 			} finally {
 				this.onInitCallbacks.forEach((callback) => callback(false));
 			}
+			await this.extNotify?.init(); // init external notifier
 		}
 		return this._isInitialized;
 	}
@@ -88,6 +89,7 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 		this._isInitialized = false;
 		this.onUnloadCallbacks.forEach((callback) => callback(true));
 		try {
+			await this.extNotify?.unload(); // unload external notifier
 			return this.handleUnload();
 		} finally {
 			this.onUnloadCallbacks.forEach((callback) => callback(false));
