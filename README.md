@@ -20,6 +20,7 @@ The tachyon-drive includes:
 - Interface [IStorageDriver](./src/interfaces/IStorageDriver.ts): An interface that defines the methods that a storage driver must implement.
 - Interface [IPersistSerializer](./src/interfaces/IPersistSerializer.ts): An interface that defines the methods that a serializer must implement.
 - Interface [IStoreProcessor](./src/interfaces/IStoreProcessor.ts): An interface that defines the methods that a store processor must implement.
+- Interface [IExternalUpdateNotify](./src/interfaces/IExternalUpdateNotify.ts): An interface that defines the methods that a external update notifier must implement.
 - Function [nextSerializer](./src/serializer.ts): A function that chains two serializers together. (example: Data <=> JSON string <=> Buffer>)
 
 ## [Serializer](./src/interfaces/IPersistSerializer.ts)
@@ -27,6 +28,10 @@ Core part of the driver is serializer. Serializer is used to serialize and deser
 
 ## [Store Processor](./src/interfaces/IStoreProcessor.ts) (optional)
 Store processor is used to process data before storing and after hydrating. Store processor can be used as example to encrypt and decrypt data.
+
+## [IExternalUpdateNotify](./src/interfaces/IExternalUpdateNotify.ts) (optional)
+If storage driver itself does not support update events, external update notifier can be utilized to notify driver about store updates.
+As example implementation, FileUpdateNotify in [tachyon-drive-node-fs](https://www.npmjs.com/package/tachyon-drive-node-fs) it's based on file change events and can be used to notify driver about store updates when multiple NodeJS process on same host.
 
 ### Usage examples
 
@@ -48,7 +53,7 @@ const bufferSerializer: IPersistSerializer<Data, Buffer> = {
 ### Initialize simple JSON to buffer storage driver
 
 ```typescript
-const driver = new MemoryStorageDriver('MemoryStorageDriver', bufferSerializer, /* processor */);
+const driver = new MemoryStorageDriver('MemoryStorageDriver', bufferSerializer, /* externalNotify = null, processor */);
 ```
 
 ### Driver usage
