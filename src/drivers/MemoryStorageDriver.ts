@@ -12,7 +12,7 @@ export class MemoryStorageDriver<Input, Output> extends StorageDriver<Input, Out
 	 * Set the data to store and emit an update.
 	 * @param {Output | undefined} data - The data to store.
 	 */
-	public setData(data: Output | undefined): void {
+	public async setData(data: Output | undefined): Promise<void> {
 		this.data = data;
 		this.handleUpdate();
 	}
@@ -23,6 +23,7 @@ export class MemoryStorageDriver<Input, Output> extends StorageDriver<Input, Out
 
 	protected async handleStore(data: Output): Promise<void> {
 		this.data = data;
+		await this.handleUpdate();
 	}
 
 	protected async handleHydrate(): Promise<Output | undefined> {

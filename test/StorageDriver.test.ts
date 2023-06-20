@@ -77,7 +77,6 @@ const onUpdateRegisterSpy = sinon.spy(notifier, 'onUpdate');
 const onUpdateEmitterSpy = sinon.spy(notifier, 'notifyUpdate');
 
 const memoryObjectDriver = new MemoryStorageDriver('MemoryStorageDriver - Object', objectSerializer, notifier, nullProcessor);
-memoryObjectDriver.setData(undefined);
 
 const driverSet = new Set<IStorageDriver<Data>>([memoryObjectDriver, new MemoryStorageDriver('MemoryStorageDriver - Buffer', bufferSerializer, notifier)]);
 
@@ -95,6 +94,9 @@ function expectEmitSpy(initCallCount: number, hydrateCallCount: number, storeCal
 }
 
 describe('StorageDriver', () => {
+	before(async () => {
+		await memoryObjectDriver.setData(undefined);
+	});
 	driverSet.forEach((currentDriver) => {
 		describe(currentDriver.name, () => {
 			beforeEach(() => {
