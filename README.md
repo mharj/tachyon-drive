@@ -12,26 +12,7 @@
 Tachyon-Drive to be solid basic building block for more complex operations which requires storing data to some storage.<br />
 As example, storing Map of verified user JWT token payloads to storage which is shared with multiple backends for cache and validation purposes (and gets store updates via onUpdate callback from driver).
 
-## Core Parts of the Tachyon-Drive
-The tachyon-drive includes:
-
-- Class [StorageDriver](./src/drivers/StorageDriver.ts): An abstract class that provides a simplified abstraction for storing and retrieving data using a specified storage mechanism.(implements IStorageDriver)
-- Class [MemoryStorageDriver](./src/drivers/MemoryStorageDriver.ts): A built-in storage driver that stores data in memory.
-- Interface [IStorageDriver](./src/interfaces/IStorageDriver.ts): An interface that defines the methods that a storage driver must implement.
-- Interface [IPersistSerializer](./src/interfaces/IPersistSerializer.ts): An interface that defines the methods that a serializer must implement.
-- Interface [IStoreProcessor](./src/interfaces/IStoreProcessor.ts): An interface that defines the methods that a store processor must implement.
-- Interface [IExternalUpdateNotify](./src/interfaces/IExternalUpdateNotify.ts): An interface that defines the methods that a external update notifier must implement.
-- Function [nextSerializer](./src/serializer.ts): A function that chains two serializers together. (example: Data <=> JSON string <=> Buffer>)
-
-## [Serializer](./src/interfaces/IPersistSerializer.ts)
-Core part of the driver is serializer. Serializer is used to serialize and deserialize data to and from storage. Serializer can be optionally used to validate data after deserialization.
-
-## [Store Processor](./src/interfaces/IStoreProcessor.ts) (optional)
-Store processor is used to process data before storing and after hydrating. Store processor can be used as example to encrypt and decrypt data.
-
-## [IExternalUpdateNotify](./src/interfaces/IExternalUpdateNotify.ts) (optional)
-If storage driver itself does not support update events, external update notifier can be utilized to notify driver about store updates.
-As example implementation, FileUpdateNotify in [tachyon-drive-node-fs](https://www.npmjs.com/package/tachyon-drive-node-fs) it's based on file change events and can be used to notify driver about store updates when multiple NodeJS process on same host.
+## Detailed [API Documentation](https://mharj.github.io/tachyon-drive/).
 
 ### Usage examples
 

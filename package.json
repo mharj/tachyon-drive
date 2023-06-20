@@ -13,6 +13,7 @@
 		}
 	},
 	"scripts": {
+		"doc": "typedoc",
 		"build": "tsup src/index.ts --format cjs,esm --dts --clean",
 		"prepublishOnly": "npm run build",
 		"test": "nyc mocha",
@@ -75,10 +76,12 @@
 		"sinon": "^15.1.0",
 		"ts-node": "^10.9.1",
 		"tsup": "^6.7.0",
+		"typedoc": "^0.24.8",
 		"typescript": "^5.0.4",
 		"zod": "^3.21.4"
 	},
 	"dependencies": {
-		"@avanio/logger-like": "^0.1.0"
+		"@avanio/logger-like": "^0.1.0",
+		"mharj-result": "^0.2.6"
 	}
 }

@@ -2,16 +2,12 @@
 	"compilerOptions": {
 		"module": "commonjs",
 		"target": "es2020",
-		"lib": [
-			"es2020"
-		],
+		"lib": ["es2020"],
 		"rootDir": "./src",
 		"outDir": "./dist",
 		"moduleResolution": "node",
 		"sourceRoot": "./src",
-		"types": [
-			"node"
-		],
+		"types": ["node"],
 		"sourceMap": true,
 		"strict": true,
 		"declaration": true,
@@ -26,13 +22,10 @@
 		"strictNullChecks": true,
 		"noUnusedLocals": true
 	},
-	"include": [
-		"src/**/*",
-		"src/**/**/*"
-	],
-	"exclude": [
-		"node_modules",
-		"**/*.spec.ts",
-		"test"
-	]
+	"typedocOptions": {
+		"entryPoints": ["src/index.ts"],
+		"out": "docs"
+	},
+	"include": ["src/**/*", "src/**/**/*"],
+	"exclude": ["node_modules", "**/*.spec.ts", "test"]
 }

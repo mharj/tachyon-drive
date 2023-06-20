@@ -4,6 +4,7 @@ import {IHydrateOptions, IStorageDriver, OnActivityCallback, OnUpdateCallback} f
 import {IStoreProcessor, isValidStoreProcessor} from '../interfaces/IStoreProcessor';
 import {IPersistSerializer, isValidPersistSerializer} from '../interfaces/IPersistSerializer';
 import {IExternalNotify} from '../interfaces/IExternalUpdateNotify';
+import {Err, IResult, Ok} from 'mharj-result';
 
 /**
  * Abstract class that provides a simple interface for storing and retrieving data using a specified storage mechanism.
@@ -79,6 +80,15 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 		return this._isInitialized;
 	}
 
+	public async initResult(): Promise<IResult<boolean>> {
+		try {
+			return new Ok(await this.init());
+		} catch (err) {
+			/* istanbul ignore next */
+			return new Err(err);
+		}
+	}
+
 	/**
 	 * Unload the storage driver.
 	 * @returns {Promise<boolean>} A promise that resolves to `true` if the storage driver was successfully unloaded, or `false` otherwise.
@@ -93,6 +103,15 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 			return this.handleUnload();
 		} finally {
 			this.onUnloadCallbacks.forEach((callback) => callback(false));
+		}
+	}
+
+	public async unloadResult(): Promise<IResult<boolean>> {
+		try {
+			return new Ok(await this.unload());
+		} catch (err) {
+			/* istanbul ignore next */
+			return new Err(err);
 		}
 	}
 
@@ -115,6 +134,15 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 		}
 		// notify external update if driver does not support it
 		await this.extNotify?.notifyUpdate(new Date());
+	}
+
+	public async storeResult(data: Input): Promise<IResult<void>> {
+		try {
+			return new Ok(await this.store(data));
+		} catch (err) {
+			/* istanbul ignore next */
+			return new Err(err);
+		}
 	}
 
 	/**
@@ -143,6 +171,15 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 		return data;
 	}
 
+	public async hydrateResult(options?: IHydrateOptions): Promise<IResult<Input | undefined>> {
+		try {
+			return new Ok(await this.hydrate(options));
+		} catch (err) {
+			/* istanbul ignore next */
+			return new Err(err);
+		}
+	}
+
 	/**
 	 * Clear the stored data
 	 */
@@ -157,6 +194,15 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 		}
 		// notify external update if driver does not support it
 		await this.extNotify?.notifyUpdate(new Date());
+	}
+
+	public async clearResult(): Promise<IResult<void>> {
+		try {
+			return new Ok(await this.clear());
+		} catch (err) {
+			/* istanbul ignore next */
+			return new Err(err);
+		}
 	}
 
 	/**
