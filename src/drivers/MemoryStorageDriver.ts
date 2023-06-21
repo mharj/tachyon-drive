@@ -25,7 +25,6 @@ export class MemoryStorageDriver<Input, Output> extends StorageDriver<Input, Out
 
 	protected async handleStore(data: Output): Promise<void> {
 		this.data = data;
-		await this.handleUpdate();
 	}
 
 	protected async handleHydrate(): Promise<Output | undefined> {
