@@ -1,4 +1,4 @@
-import {IResult} from 'mharj-result';
+import {Result} from 'mharj-result';
 
 /**
  * Interface for options to use when hydrating data.
@@ -34,9 +34,9 @@ export interface IStorageDriver<Input> {
 
 	/**
 	 * Initializes the storage driver and returns the Promise of Result.
-	 * @returns {Promise<IResult<boolean>>} Promise of the result object, see [Result](https://mharj.github.io/result/)
+	 * @returns {Promise<Result<boolean>>} Promise of the result object, see [Result](https://mharj.github.io/result/)
 	 */
-	initResult(): Promise<IResult<boolean>>;
+	initResult(): Promise<Result<boolean>>;
 	/**
 	 * Stores the given data using the specified key.
 	 * @param {Input} data - Promise that resolves to the data to store.
@@ -47,9 +47,9 @@ export interface IStorageDriver<Input> {
 	/**
 	 * Stores the given data using the specified key and returns the Promise of Result.
 	 * @param {Input} data - Promise that resolves to the data to store.
-	 * @returns {Promise<IResult<void>>} Promise of the result object, see [Result](https://mharj.github.io/result/)
+	 * @returns {Promise<Result<void>>} Promise of the result object, see [Result](https://mharj.github.io/result/)
 	 */
-	storeResult(data: Input): Promise<IResult<void>>;
+	storeResult(data: Input): Promise<Result<void>>;
 	/**
 	 * Retrieves the stored data.
 	 * @param {IHydrateOptions} options - The options to use for hydrating the data.
@@ -60,9 +60,9 @@ export interface IStorageDriver<Input> {
 	/**
 	 * Retrieves the stored data and returns the Promise of Result.
 	 * @param {IHydrateOptions} options - The options to use for hydrating the data.
-	 * @returns {Promise<IResult<Input | undefined>>} Promise of the result object, see [Result](https://mharj.github.io/result/)
+	 * @returns {Promise<Result<Input | undefined>>} Promise of the result object, see [Result](https://mharj.github.io/result/)
 	 */
-	hydrateResult(options?: IHydrateOptions): Promise<IResult<Input | undefined>>;
+	hydrateResult(options?: IHydrateOptions): Promise<Result<Input | undefined>>;
 	/**
 	 * Clears the stored data.
 	 */
@@ -70,9 +70,9 @@ export interface IStorageDriver<Input> {
 
 	/**
 	 * Clears the stored data and returns the Promise of Result.
-	 * @returns {Promise<IResult<void>>} Promise of the result object, see [Result](https://mharj.github.io/result/)
+	 * @returns {Promise<Result<void>>} Promise of the result object, see [Result](https://mharj.github.io/result/)
 	 */
-	clearResult(): Promise<IResult<void>>;
+	clearResult(): Promise<Result<void>>;
 
 	/**
 	 * Unload the storage driver.
@@ -82,9 +82,9 @@ export interface IStorageDriver<Input> {
 
 	/**
 	 * Unload the storage driver and returns the Promise of Result.
-	 * @returns {Promise<IResult<boolean>>} Promise of the result object, see [Result](https://mharj.github.io/result/)
+	 * @returns {Promise<Result<boolean>>} Promise of the result object, see [Result](https://mharj.github.io/result/)
 	 */
-	unloadResult(): Promise<IResult<boolean>>;
+	unloadResult(): Promise<Result<boolean>>;
 
 	/**
 	 * Clone the data

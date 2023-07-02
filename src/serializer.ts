@@ -1,5 +1,5 @@
-import {IPersistSerializer} from './interfaces/IPersistSerializer';
 import {ILoggerLike} from '@avanio/logger-like';
+import {IPersistSerializer} from './interfaces/IPersistSerializer';
 
 /**
  * Chains two serializers together.

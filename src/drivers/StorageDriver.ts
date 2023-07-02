@@ -1,10 +1,9 @@
-/* eslint-disable n/no-callback-literal */
-import type {ILoggerLike} from '@avanio/logger-like';
+import {Err, Ok, Result} from 'mharj-result';
 import {IHydrateOptions, IStorageDriver, OnActivityCallback, OnUpdateCallback} from '../interfaces/IStorageDriver';
-import {IStoreProcessor, isValidStoreProcessor} from '../interfaces/IStoreProcessor';
 import {IPersistSerializer, isValidPersistSerializer} from '../interfaces/IPersistSerializer';
+import {IStoreProcessor, isValidStoreProcessor} from '../interfaces/IStoreProcessor';
 import {IExternalNotify} from '../interfaces/IExternalUpdateNotify';
-import {Err, IResult, Ok} from 'mharj-result';
+import type {ILoggerLike} from '@avanio/logger-like';
 
 /**
  * Abstract class that provides a simple interface for storing and retrieving data using a specified storage mechanism.
@@ -69,23 +68,23 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 	public async init(): Promise<boolean> {
 		if (!this._isInitialized) {
 			this.logger?.debug(`${this.name}: init()`);
-			this.onInitCallbacks.forEach((callback) => callback(true));
+			this.onInitCallbacks.forEach((currentCallback) => currentCallback(true));
 			try {
 				this._isInitialized = await this.handleInit();
 			} finally {
-				this.onInitCallbacks.forEach((callback) => callback(false));
+				this.onInitCallbacks.forEach((currentCallback) => currentCallback(false));
 			}
 			await this.extNotify?.init(); // init external notifier
 		}
 		return this._isInitialized;
 	}
 
-	public async initResult(): Promise<IResult<boolean>> {
+	public async initResult(): Promise<Result<boolean>> {
 		try {
-			return new Ok(await this.init());
+			return Ok(await this.init());
 		} catch (err) {
 			/* istanbul ignore next */
-			return new Err(err);
+			return Err(err);
 		}
 	}
 
@@ -97,21 +96,21 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 		this.logger?.debug(`${this.name}: unload()`);
 		await this.init();
 		this._isInitialized = false;
-		this.onUnloadCallbacks.forEach((callback) => callback(true));
+		this.onUnloadCallbacks.forEach((currentCallback) => currentCallback(true));
 		try {
 			await this.extNotify?.unload(); // unload external notifier
 			return this.handleUnload();
 		} finally {
-			this.onUnloadCallbacks.forEach((callback) => callback(false));
+			this.onUnloadCallbacks.forEach((currentCallback) => currentCallback(false));
 		}
 	}
 
-	public async unloadResult(): Promise<IResult<boolean>> {
+	public async unloadResult(): Promise<Result<boolean>> {
 		try {
-			return new Ok(await this.unload());
+			return Ok(await this.unload());
 		} catch (err) {
 			/* istanbul ignore next */
-			return new Err(err);
+			return Err(err);
 		}
 	}
 
@@ -126,22 +125,22 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 		if (this.processor) {
 			output = await this.processor.preStore(output);
 		}
-		this.onStoreCallbacks.forEach((callback) => callback(true));
+		this.onStoreCallbacks.forEach((currentCallback) => currentCallback(true));
 		try {
 			await this.handleStore(output);
 		} finally {
-			this.onStoreCallbacks.forEach((callback) => callback(false));
+			this.onStoreCallbacks.forEach((currentCallback) => currentCallback(false));
 		}
 		// notify external update if driver does not support it
 		await this.extNotify?.notifyUpdate(new Date());
 	}
 
-	public async storeResult(data: Input): Promise<IResult<void>> {
+	public async storeResult(data: Input): Promise<Result<void>> {
 		try {
-			return new Ok(await this.store(data));
+			return Ok(await this.store(data));
 		} catch (err) {
 			/* istanbul ignore next */
-			return new Err(err);
+			return Err(err);
 		}
 	}
 
@@ -154,12 +153,12 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 	public async hydrate({validationThrowsError}: IHydrateOptions = {}): Promise<Input | undefined> {
 		this.logger?.debug(`${this.name}: hydrate()`);
 		await this.init();
-		this.onHydrateCallbacks.forEach((callback) => callback(true));
+		this.onHydrateCallbacks.forEach((currentCallback) => currentCallback(true));
 		let data: Awaited<Input> | undefined;
 		try {
 			data = await this.doHydrate();
 		} finally {
-			this.onHydrateCallbacks.forEach((callback) => callback(false));
+			this.onHydrateCallbacks.forEach((currentCallback) => currentCallback(false));
 		}
 		if (data && this.serializer.validator && !this.serializer.validator(data, this.logger)) {
 			if (validationThrowsError) {
@@ -171,12 +170,12 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 		return data;
 	}
 
-	public async hydrateResult(options?: IHydrateOptions): Promise<IResult<Input | undefined>> {
+	public async hydrateResult(options?: IHydrateOptions): Promise<Result<Input | undefined>> {
 		try {
-			return new Ok(await this.hydrate(options));
+			return Ok(await this.hydrate(options));
 		} catch (err) {
 			/* istanbul ignore next */
-			return new Err(err);
+			return Err(err);
 		}
 	}
 
@@ -186,22 +185,22 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 	public async clear(): Promise<void> {
 		this.logger?.debug(`${this.name}: clear()`);
 		this._isInitialized = false;
-		this.onClearCallbacks.forEach((callback) => callback(true));
+		this.onClearCallbacks.forEach((currentCallback) => currentCallback(true));
 		try {
 			await this.handleClear();
 		} finally {
-			this.onClearCallbacks.forEach((callback) => callback(false));
+			this.onClearCallbacks.forEach((currentCallback) => currentCallback(false));
 		}
 		// notify external update if driver does not support it
 		await this.extNotify?.notifyUpdate(new Date());
 	}
 
-	public async clearResult(): Promise<IResult<void>> {
+	public async clearResult(): Promise<Result<void>> {
 		try {
-			return new Ok(await this.clear());
+			return Ok(await this.clear());
 		} catch (err) {
 			/* istanbul ignore next */
-			return new Err(err);
+			return Err(err);
 		}
 	}
 

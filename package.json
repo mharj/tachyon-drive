@@ -59,13 +59,13 @@
 		"@types/mocha": "^10.0.1",
 		"@types/node": "^16.18.26",
 		"@types/sinon": "^10.0.15",
-		"@typescript-eslint/eslint-plugin": "^5.59.5",
-		"@typescript-eslint/parser": "^5.59.5",
+		"@typescript-eslint/eslint-plugin": "^5.60.1",
+		"@typescript-eslint/parser": "^5.60.1",
 		"chai": "^4.3.7",
 		"chai-as-promised": "^7.1.1",
-		"eslint": "^8.40.0",
+		"eslint": "^8.44.0",
 		"eslint-config-prettier": "^8.8.0",
-		"eslint-config-standard": "^17.0.0",
+		"eslint-config-standard": "^17.1.0",
 		"eslint-plugin-deprecation": "^1.4.1",
 		"eslint-plugin-jsdoc": "^44.2.3",
 		"eslint-plugin-prettier": "^4.2.1",
@@ -73,15 +73,15 @@
 		"mocha": "^10.2.0",
 		"nyc": "^15.1.0",
 		"prettier": "^2.8.8",
-		"sinon": "^15.1.0",
+		"sinon": "^15.2.0",
 		"ts-node": "^10.9.1",
 		"tsup": "^6.7.0",
 		"typedoc": "^0.24.8",
-		"typescript": "^5.0.4",
+		"typescript": "^5.1.6",
 		"zod": "^3.21.4"
 	},
 	"dependencies": {
-		"@avanio/logger-like": "^0.1.0",
-		"mharj-result": "^0.2.6"
+		"@avanio/logger-like": "^0.1.1",
+		"mharj-result": "^0.3.0"
 	}
 }

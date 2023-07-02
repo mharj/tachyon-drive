@@ -5,13 +5,8 @@
         "sourceType": "module",
         "project": "./tsconfig.test.json"
     },
-    "env": {
-        "browser": true,
-        "node": true
-    },
     "plugins": [
         "@typescript-eslint",
-        "jsdoc",
         "prettier",
         "sonarjs",
         "deprecation"
@@ -22,11 +17,28 @@
         "plugin:@typescript-eslint/eslint-recommended",
         "plugin:@typescript-eslint/recommended",
         "plugin:prettier/recommended",
-        "plugin:sonarjs/recommended",
-        "plugin:jsdoc/recommended"
+        "plugin:sonarjs/recommended"
     ],
     "rules": {
         "camelcase": 1,
+        "@typescript-eslint/no-this-alias": [
+            "warn",
+            {
+                "allowedNames": [
+                    "self"
+                ]
+            }
+        ],
+        "sort-imports": ["warn", { "ignoreCase": true }],
+        "sort-keys": [
+            "warn",
+            "asc",
+            {
+                "caseSensitive": false,
+                "natural": true,
+                "minKeys": 4
+            }
+        ],
         "no-unused-vars": "off",
         "@typescript-eslint/no-unused-vars": [
             "warn", // or "error"
