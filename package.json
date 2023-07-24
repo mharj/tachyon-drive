@@ -83,6 +83,6 @@
 	},
 	"dependencies": {
 		"@avanio/logger-like": "^0.1.1",
-		"mharj-result": "^0.3.1"
+		"mharj-result": "^0.4.5"
 	}
 }
