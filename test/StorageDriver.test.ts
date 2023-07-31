@@ -1,11 +1,10 @@
-/* eslint-disable jsdoc/require-param */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import * as zod from 'zod';
-import * as chai from 'chai';
-import * as sinon from 'sinon';
-import * as chaiAsPromised from 'chai-as-promised';
 import 'mocha';
-import {IStorageDriver, MemoryStorageDriver, IPersistSerializer, isValidPersistSerializer, IStoreProcessor, nextSerializer} from '../src';
+import * as chai from 'chai';
+import * as chaiAsPromised from 'chai-as-promised';
+import * as sinon from 'sinon';
+import * as zod from 'zod';
+import {IPersistSerializer, IStorageDriver, IStoreProcessor, isValidPersistSerializer, MemoryStorageDriver, nextSerializer} from '../src';
 import {IExternalNotify} from '../src/interfaces/IExternalUpdateNotify';
 
 chai.use(chaiAsPromised);

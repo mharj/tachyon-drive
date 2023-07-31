@@ -1,11 +1,10 @@
-/* eslint-disable jsdoc/require-param */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import * as zod from 'zod';
-import * as chai from 'chai';
-import * as sinon from 'sinon';
-import * as chaiAsPromised from 'chai-as-promised';
 import 'mocha';
-import {IStorageDriver, MemoryStorageDriver, IPersistSerializer, isValidPersistSerializer, IStoreProcessor, nextSerializer} from '../src';
+import * as chai from 'chai';
+import * as chaiAsPromised from 'chai-as-promised';
+import * as sinon from 'sinon';
+import * as zod from 'zod';
+import {IPersistSerializer, IStorageDriver, IStoreProcessor, isValidPersistSerializer, MemoryStorageDriver, nextSerializer} from '../src';
 import {IExternalNotify} from '../src/interfaces/IExternalUpdateNotify';
 
 chai.use(chaiAsPromised);
@@ -116,37 +115,37 @@ describe('StorageDriver', () => {
 				currentDriver.onUpdate((data) => {
 					expect(data).to.be.eql(data);
 				});
-				expect((await currentDriver.clearResult()).isOk()).to.be.eq(true);
+				expect((await currentDriver.clearResult()).isOk).to.be.eq(true);
 				expect(currentDriver.isInitialized).to.be.eq(false);
 				expect(onUpdateRegisterSpy.callCount).to.be.eq(driverSet.size);
 			});
 			it('should be init store', async () => {
 				const initResult = await currentDriver.initResult();
-				expect(initResult.isOk()).to.be.eq(true);
+				expect(initResult.isOk).to.be.eq(true);
 				expect(currentDriver.isInitialized).to.be.eq(true);
 				expectEmitSpy(2, 0, 0, 0, 0);
 				const clearResult = await currentDriver.clearResult();
-				expect(clearResult.isOk()).to.be.eq(true);
+				expect(clearResult.isOk).to.be.eq(true);
 			});
 			it('should be empty store', async () => {
 				const result = await currentDriver.hydrateResult();
-				expect(result.isOk()).to.be.eq(true);
+				expect(result.isOk).to.be.eq(true);
 				expect(currentDriver.isInitialized).to.be.eq(true);
 				expectEmitSpy(2, 2, 0, 0, 0);
 				expect(onUpdateEmitterSpy.callCount).to.be.eq(0);
 			});
 			it('should store to storage driver', async () => {
 				const storeResult = await currentDriver.storeResult(data);
-				expect(storeResult.isOk()).to.be.eq(true);
+				expect(storeResult.isOk).to.be.eq(true);
 				const hydrateResult = await currentDriver.hydrateResult();
-				expect(hydrateResult.isOk()).to.be.eq(true);
+				expect(hydrateResult.isOk).to.be.eq(true);
 				expect(currentDriver.isInitialized).to.be.eq(true);
 				expectEmitSpy(0, 2, 2, 0, 0);
 				expect(onUpdateEmitterSpy.callCount).to.be.eq(1);
 			});
 			it('should restore data from storage driver', async () => {
 				const hydrateResult = await currentDriver.hydrateResult();
-				expect(hydrateResult.isOk()).to.be.eq(true);
+				expect(hydrateResult.isOk).to.be.eq(true);
 				expect(hydrateResult.ok()).to.be.eql(data);
 				expect(currentDriver.isInitialized).to.be.eq(true);
 				expectEmitSpy(0, 2, 0, 0, 0);
@@ -154,7 +153,7 @@ describe('StorageDriver', () => {
 			});
 			it('should clear to storage driver', async () => {
 				const clearResult = await currentDriver.clearResult();
-				expect(clearResult.isOk()).to.be.eq(true);
+				expect(clearResult.isOk).to.be.eq(true);
 				expect(currentDriver.isInitialized).to.be.eq(false);
 				await expect(currentDriver.hydrate()).to.be.eventually.eq(undefined);
 				expect(currentDriver.isInitialized).to.be.eq(true);
@@ -164,7 +163,7 @@ describe('StorageDriver', () => {
 			it('should unload driver', async () => {
 				expect(currentDriver.isInitialized).to.be.eq(true);
 				const unloadResult = await currentDriver.unloadResult();
-				expect(unloadResult.isOk()).to.be.eq(true);
+				expect(unloadResult.isOk).to.be.eq(true);
 				expect(unloadResult.ok()).to.be.eq(true);
 				expect(currentDriver.isInitialized).to.be.eq(false);
 				expectEmitSpy(0, 0, 0, 0, 2);
