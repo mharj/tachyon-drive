@@ -42,7 +42,7 @@
 <ul class="tsd-hierarchy">
 <li><span class="target">MemoryStorageDriver</span></li></ul></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/4e39d7f/src/drivers/MemoryStorageDriver.ts#L10">drivers/MemoryStorageDriver.ts:10</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/da40e85/src/drivers/MemoryStorageDriver.ts#L10">drivers/MemoryStorageDriver.ts:10</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-index-accordion" open><summary class="tsd-accordion-summary tsd-index-summary">
@@ -111,48 +111,43 @@
 <li>
 <h5><span class="tsd-kind-parameter">name</span>: <span class="tsd-signature-type">string</span></h5>
 <div class="tsd-comment tsd-typography"><p>The name of the storage driver.</p>
-</div>
-<div class="tsd-comment tsd-typography"></div></li>
+</div></li>
 <li>
 <h5><span class="tsd-kind-parameter">serializer</span>: <a href="../interfaces/IPersistSerializer.html" class="tsd-signature-type tsd-kind-interface">IPersistSerializer</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">Input</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">Output</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">Input</span><span class="tsd-signature-symbol">&gt;</span></h5>
 <div class="tsd-comment tsd-typography"><p>The serializer to use for serializing and deserializing data.</p>
-</div>
-<div class="tsd-comment tsd-typography"></div></li>
+</div></li>
 <li>
 <h5><span class="tsd-kind-parameter">extNotify</span>: <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/IExternalNotify.html" class="tsd-signature-type tsd-kind-interface">IExternalNotify</a></h5>
 <div class="tsd-comment tsd-typography"><p>If driver does not support onUpdate, use this to notify with external event.</p>
-</div>
-<div class="tsd-comment tsd-typography"></div></li>
+</div></li>
 <li>
 <h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-parameter">processor</span>: <a href="../interfaces/IStoreProcessor.html" class="tsd-signature-type tsd-kind-interface">IStoreProcessor</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">Output</span><span class="tsd-signature-symbol">&gt;</span></h5>
 <div class="tsd-comment tsd-typography"><p>The store processor to use for processing data before it is written to storage and after it is loaded from storage.</p>
-</div>
-<div class="tsd-comment tsd-typography"></div></li>
+</div><code class="tsd-tag ts-flagOptional">Optional</code> </li>
 <li>
 <h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-parameter">logger</span>: <span class="tsd-signature-type ">ILoggerLike</span></h5>
 <div class="tsd-comment tsd-typography"><p>The logger to use for logging messages.</p>
-</div>
-<div class="tsd-comment tsd-typography"></div></li></ul></div>
+</div><code class="tsd-tag ts-flagOptional">Optional</code> </li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="MemoryStorageDriver.html" class="tsd-signature-type tsd-kind-class">MemoryStorageDriver</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">Input</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">Output</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography">
 <h4>Throws</h4><p>An error if the serializer or processor is invalid.</p>
 </div><aside class="tsd-sources">
 <p>Inherited from <a href="StorageDriver.html">StorageDriver</a>.<a href="StorageDriver.html#constructor">constructor</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/4e39d7f/src/drivers/StorageDriver.ts#L37">drivers/StorageDriver.ts:37</a></li></ul></aside></li></ul></section></section>
+<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/da40e85/src/drivers/StorageDriver.ts#L36">drivers/StorageDriver.ts:36</a></li></ul></aside></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Properties</h2>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="data" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>data</span><a href="#data" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">data</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type tsd-kind-type-parameter">Output</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/4e39d7f/src/drivers/MemoryStorageDriver.ts#L11">drivers/MemoryStorageDriver.ts:11</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/da40e85/src/drivers/MemoryStorageDriver.ts#L11">drivers/MemoryStorageDriver.ts:11</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited"><a id="logger" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>logger</span><a href="#logger" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">logger</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type ">ILoggerLike</span></div><aside class="tsd-sources">
 <p>Inherited from <a href="StorageDriver.html">StorageDriver</a>.<a href="StorageDriver.html#logger">logger</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/4e39d7f/src/drivers/StorageDriver.ts#L18">drivers/StorageDriver.ts:18</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/da40e85/src/drivers/StorageDriver.ts#L17">drivers/StorageDriver.ts:17</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="name" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>name</span><a href="#name" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">name</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
@@ -161,7 +156,7 @@
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <p>Inherited from <a href="StorageDriver.html">StorageDriver</a>.<a href="StorageDriver.html#name">name</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/4e39d7f/src/drivers/StorageDriver.ts#L15">drivers/StorageDriver.ts:15</a></li></ul></aside></section></section>
+<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/da40e85/src/drivers/StorageDriver.ts#L14">drivers/StorageDriver.ts:14</a></li></ul></aside></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Accessors</h2>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="isInitialized" class="tsd-anchor"></a>
@@ -175,7 +170,7 @@
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <p>Inherited from StorageDriver.isInitialized</p>
 <ul>
-<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/4e39d7f/src/drivers/StorageDriver.ts#L61">drivers/StorageDriver.ts:61</a></li></ul></aside></li></ul></section></section>
+<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/da40e85/src/drivers/StorageDriver.ts#L60">drivers/StorageDriver.ts:60</a></li></ul></aside></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Methods</h2>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="clear" class="tsd-anchor"></a>
@@ -189,20 +184,20 @@
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <p>Inherited from <a href="StorageDriver.html">StorageDriver</a>.<a href="StorageDriver.html#clear">clear</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/4e39d7f/src/drivers/StorageDriver.ts#L186">drivers/StorageDriver.ts:186</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/da40e85/src/drivers/StorageDriver.ts#L185">drivers/StorageDriver.ts:185</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="clearResult" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>clear<wbr/>Result</span><a href="#clearResult" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
-<li class="tsd-signature tsd-anchor-link" id="clearResult.clearResult-1"><span class="tsd-kind-call-signature">clear<wbr/>Result</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type ">IResult</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><a href="#clearResult.clearResult-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="clearResult.clearResult-1"><span class="tsd-kind-call-signature">clear<wbr/>Result</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type ">Result</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><a href="#clearResult.clearResult-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Clears the stored data and returns the Promise of Result.</p>
 </div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type ">IResult</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4><p>Promise of the result object, see <a href="https://mharj.github.io/result/">Result</a></p>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type ">Result</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4><p>Promise of the result object, see <a href="https://mharj.github.io/result/">Result</a></p>
 
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <p>Inherited from <a href="StorageDriver.html">StorageDriver</a>.<a href="StorageDriver.html#clearResult">clearResult</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/4e39d7f/src/drivers/StorageDriver.ts#L199">drivers/StorageDriver.ts:199</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/da40e85/src/drivers/StorageDriver.ts#L198">drivers/StorageDriver.ts:198</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="clone" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>clone</span><a href="#clone" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -216,14 +211,13 @@
 <li>
 <h5><span class="tsd-kind-parameter">data</span>: <span class="tsd-signature-type tsd-kind-type-parameter">Input</span></h5>
 <div class="tsd-comment tsd-typography"><p>The data to clone.</p>
-</div>
-<div class="tsd-comment tsd-typography"></div></li></ul></div>
+</div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type tsd-kind-type-parameter">Input</span></h4><p>The cloned data.</p>
 
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <p>Inherited from <a href="StorageDriver.html">StorageDriver</a>.<a href="StorageDriver.html#clone">clone</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/4e39d7f/src/drivers/StorageDriver.ts#L213">drivers/StorageDriver.ts:213</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/da40e85/src/drivers/StorageDriver.ts#L212">drivers/StorageDriver.ts:212</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-protected"><a id="handleClear" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <span>handle<wbr/>Clear</span><a href="#handleClear" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-protected">
@@ -236,7 +230,7 @@
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <p>Overrides <a href="StorageDriver.html">StorageDriver</a>.<a href="StorageDriver.html#handleClear">handleClear</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/4e39d7f/src/drivers/MemoryStorageDriver.ts#L35">drivers/MemoryStorageDriver.ts:35</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/da40e85/src/drivers/MemoryStorageDriver.ts#L34">drivers/MemoryStorageDriver.ts:34</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-protected"><a id="handleHydrate" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <span>handle<wbr/>Hydrate</span><a href="#handleHydrate" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-protected">
@@ -249,7 +243,7 @@
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <p>Overrides <a href="StorageDriver.html">StorageDriver</a>.<a href="StorageDriver.html#handleHydrate">handleHydrate</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/4e39d7f/src/drivers/MemoryStorageDriver.ts#L31">drivers/MemoryStorageDriver.ts:31</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/da40e85/src/drivers/MemoryStorageDriver.ts#L30">drivers/MemoryStorageDriver.ts:30</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-protected"><a id="handleInit" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <span>handle<wbr/>Init</span><a href="#handleInit" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-protected">
@@ -262,7 +256,7 @@
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <p>Overrides <a href="StorageDriver.html">StorageDriver</a>.<a href="StorageDriver.html#handleInit">handleInit</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/4e39d7f/src/drivers/MemoryStorageDriver.ts#L22">drivers/MemoryStorageDriver.ts:22</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/da40e85/src/drivers/MemoryStorageDriver.ts#L22">drivers/MemoryStorageDriver.ts:22</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-protected"><a id="handleStore" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <span>handle<wbr/>Store</span><a href="#handleStore" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-protected">
@@ -276,14 +270,13 @@
 <li>
 <h5><span class="tsd-kind-parameter">data</span>: <span class="tsd-signature-type tsd-kind-type-parameter">Output</span></h5>
 <div class="tsd-comment tsd-typography"><p>The data to store.</p>
-</div>
-<div class="tsd-comment tsd-typography"></div></li></ul></div>
+</div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4><p>A promise that resolves when the data has been successfully stored.</p>
 
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <p>Overrides <a href="StorageDriver.html">StorageDriver</a>.<a href="StorageDriver.html#handleStore">handleStore</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/4e39d7f/src/drivers/MemoryStorageDriver.ts#L26">drivers/MemoryStorageDriver.ts:26</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/da40e85/src/drivers/MemoryStorageDriver.ts#L26">drivers/MemoryStorageDriver.ts:26</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-protected"><a id="handleUnload" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <span>handle<wbr/>Unload</span><a href="#handleUnload" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-protected">
@@ -296,7 +289,7 @@
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <p>Overrides <a href="StorageDriver.html">StorageDriver</a>.<a href="StorageDriver.html#handleUnload">handleUnload</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/4e39d7f/src/drivers/MemoryStorageDriver.ts#L39">drivers/MemoryStorageDriver.ts:39</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/da40e85/src/drivers/MemoryStorageDriver.ts#L38">drivers/MemoryStorageDriver.ts:38</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited"><a id="handleUpdate" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <span>handle<wbr/>Update</span><a href="#handleUpdate" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-protected tsd-is-inherited">
@@ -308,7 +301,7 @@
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <p>Inherited from <a href="StorageDriver.html">StorageDriver</a>.<a href="StorageDriver.html#handleUpdate">handleUpdate</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/4e39d7f/src/drivers/StorageDriver.ts#L268">drivers/StorageDriver.ts:268</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/da40e85/src/drivers/StorageDriver.ts#L267">drivers/StorageDriver.ts:267</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="hydrate" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>hydrate</span><a href="#hydrate" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -322,8 +315,7 @@
 <li>
 <h5><span class="tsd-kind-parameter">options</span>: <a href="../interfaces/IHydrateOptions.html" class="tsd-signature-type tsd-kind-interface">IHydrateOptions</a><span class="tsd-signature-symbol"> = {}</span></h5>
 <div class="tsd-comment tsd-typography"><p>The options to use for hydrating the data.</p>
-</div>
-<div class="tsd-comment tsd-typography"></div></li></ul></div>
+</div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type tsd-kind-type-parameter">Input</span><span class="tsd-signature-symbol">&gt;</span></h4><p>The retrieved data, or <code>undefined</code> if no data was found.</p>
 
 <div class="tsd-comment tsd-typography">
@@ -331,11 +323,11 @@
 </div><aside class="tsd-sources">
 <p>Inherited from <a href="StorageDriver.html">StorageDriver</a>.<a href="StorageDriver.html#hydrate">hydrate</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/4e39d7f/src/drivers/StorageDriver.ts#L154">drivers/StorageDriver.ts:154</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/da40e85/src/drivers/StorageDriver.ts#L153">drivers/StorageDriver.ts:153</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="hydrateResult" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>hydrate<wbr/>Result</span><a href="#hydrateResult" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
-<li class="tsd-signature tsd-anchor-link" id="hydrateResult.hydrateResult-1"><span class="tsd-kind-call-signature">hydrate<wbr/>Result</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">options</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type ">IResult</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type tsd-kind-type-parameter">Input</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><a href="#hydrateResult.hydrateResult-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="hydrateResult.hydrateResult-1"><span class="tsd-kind-call-signature">hydrate<wbr/>Result</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">options</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type ">Result</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type tsd-kind-type-parameter">Input</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><a href="#hydrateResult.hydrateResult-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Retrieves the stored data and returns the Promise of Result.</p>
 </div>
@@ -345,14 +337,13 @@
 <li>
 <h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-parameter">options</span>: <a href="../interfaces/IHydrateOptions.html" class="tsd-signature-type tsd-kind-interface">IHydrateOptions</a></h5>
 <div class="tsd-comment tsd-typography"><p>The options to use for hydrating the data.</p>
-</div>
-<div class="tsd-comment tsd-typography"></div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type ">IResult</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type tsd-kind-type-parameter">Input</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4><p>Promise of the result object, see <a href="https://mharj.github.io/result/">Result</a></p>
+</div><code class="tsd-tag ts-flagOptional">Optional</code> </li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type ">Result</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type tsd-kind-type-parameter">Input</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4><p>Promise of the result object, see <a href="https://mharj.github.io/result/">Result</a></p>
 
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <p>Inherited from <a href="StorageDriver.html">StorageDriver</a>.<a href="StorageDriver.html#hydrateResult">hydrateResult</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/4e39d7f/src/drivers/StorageDriver.ts#L174">drivers/StorageDriver.ts:174</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/da40e85/src/drivers/StorageDriver.ts#L173">drivers/StorageDriver.ts:173</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="init" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>init</span><a href="#init" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -365,20 +356,20 @@
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <p>Inherited from <a href="StorageDriver.html">StorageDriver</a>.<a href="StorageDriver.html#init">init</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/4e39d7f/src/drivers/StorageDriver.ts#L69">drivers/StorageDriver.ts:69</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/da40e85/src/drivers/StorageDriver.ts#L68">drivers/StorageDriver.ts:68</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="initResult" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>init<wbr/>Result</span><a href="#initResult" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
-<li class="tsd-signature tsd-anchor-link" id="initResult.initResult-1"><span class="tsd-kind-call-signature">init<wbr/>Result</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type ">IResult</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><a href="#initResult.initResult-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="initResult.initResult-1"><span class="tsd-kind-call-signature">init<wbr/>Result</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type ">Result</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><a href="#initResult.initResult-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Initializes the storage driver and returns the Promise of Result.</p>
 </div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type ">IResult</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4><p>Promise of the result object, see <a href="https://mharj.github.io/result/">Result</a></p>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type ">Result</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4><p>Promise of the result object, see <a href="https://mharj.github.io/result/">Result</a></p>
 
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <p>Inherited from <a href="StorageDriver.html">StorageDriver</a>.<a href="StorageDriver.html#initResult">initResult</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/4e39d7f/src/drivers/StorageDriver.ts#L83">drivers/StorageDriver.ts:83</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/da40e85/src/drivers/StorageDriver.ts#L82">drivers/StorageDriver.ts:82</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="onClear" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>on<wbr/>Clear</span><a href="#onClear" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -392,13 +383,12 @@
 <li>
 <h5><span class="tsd-kind-parameter">callback</span>: <a href="../types/OnActivityCallback.html" class="tsd-signature-type tsd-kind-type-alias">OnActivityCallback</a></h5>
 <div class="tsd-comment tsd-typography"><p>The callback to register.</p>
-</div>
-<div class="tsd-comment tsd-typography"></div></li></ul></div>
+</div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <p>Inherited from <a href="StorageDriver.html">StorageDriver</a>.<a href="StorageDriver.html#onClear">onClear</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/4e39d7f/src/drivers/StorageDriver.ts#L253">drivers/StorageDriver.ts:253</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/da40e85/src/drivers/StorageDriver.ts#L252">drivers/StorageDriver.ts:252</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="onHydrate" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>on<wbr/>Hydrate</span><a href="#onHydrate" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -412,13 +402,12 @@
 <li>
 <h5><span class="tsd-kind-parameter">callback</span>: <a href="../types/OnActivityCallback.html" class="tsd-signature-type tsd-kind-type-alias">OnActivityCallback</a></h5>
 <div class="tsd-comment tsd-typography"><p>The callback to register.</p>
-</div>
-<div class="tsd-comment tsd-typography"></div></li></ul></div>
+</div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <p>Inherited from <a href="StorageDriver.html">StorageDriver</a>.<a href="StorageDriver.html#onHydrate">onHydrate</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/4e39d7f/src/drivers/StorageDriver.ts#L245">drivers/StorageDriver.ts:245</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/da40e85/src/drivers/StorageDriver.ts#L244">drivers/StorageDriver.ts:244</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="onInit" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>on<wbr/>Init</span><a href="#onInit" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -432,13 +421,12 @@
 <li>
 <h5><span class="tsd-kind-parameter">callback</span>: <a href="../types/OnActivityCallback.html" class="tsd-signature-type tsd-kind-type-alias">OnActivityCallback</a></h5>
 <div class="tsd-comment tsd-typography"><p>The callback to register.</p>
-</div>
-<div class="tsd-comment tsd-typography"></div></li></ul></div>
+</div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <p>Inherited from <a href="StorageDriver.html">StorageDriver</a>.<a href="StorageDriver.html#onInit">onInit</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/4e39d7f/src/drivers/StorageDriver.ts#L229">drivers/StorageDriver.ts:229</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/da40e85/src/drivers/StorageDriver.ts#L228">drivers/StorageDriver.ts:228</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="onStore" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>on<wbr/>Store</span><a href="#onStore" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -452,13 +440,12 @@
 <li>
 <h5><span class="tsd-kind-parameter">callback</span>: <a href="../types/OnActivityCallback.html" class="tsd-signature-type tsd-kind-type-alias">OnActivityCallback</a></h5>
 <div class="tsd-comment tsd-typography"><p>The callback to register.</p>
-</div>
-<div class="tsd-comment tsd-typography"></div></li></ul></div>
+</div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <p>Inherited from <a href="StorageDriver.html">StorageDriver</a>.<a href="StorageDriver.html#onStore">onStore</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/4e39d7f/src/drivers/StorageDriver.ts#L237">drivers/StorageDriver.ts:237</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/da40e85/src/drivers/StorageDriver.ts#L236">drivers/StorageDriver.ts:236</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="onUnload" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>on<wbr/>Unload</span><a href="#onUnload" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -472,13 +459,12 @@
 <li>
 <h5><span class="tsd-kind-parameter">callback</span>: <a href="../types/OnActivityCallback.html" class="tsd-signature-type tsd-kind-type-alias">OnActivityCallback</a></h5>
 <div class="tsd-comment tsd-typography"><p>The callback to register.</p>
-</div>
-<div class="tsd-comment tsd-typography"></div></li></ul></div>
+</div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <p>Inherited from <a href="StorageDriver.html">StorageDriver</a>.<a href="StorageDriver.html#onUnload">onUnload</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/4e39d7f/src/drivers/StorageDriver.ts#L261">drivers/StorageDriver.ts:261</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/da40e85/src/drivers/StorageDriver.ts#L260">drivers/StorageDriver.ts:260</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="onUpdate" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>on<wbr/>Update</span><a href="#onUpdate" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -492,13 +478,12 @@
 <li>
 <h5><span class="tsd-kind-parameter">callback</span>: <a href="../types/OnUpdateCallback.html" class="tsd-signature-type tsd-kind-type-alias">OnUpdateCallback</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">Input</span><span class="tsd-signature-symbol">&gt;</span></h5>
 <div class="tsd-comment tsd-typography"><p>The callback to register.</p>
-</div>
-<div class="tsd-comment tsd-typography"></div></li></ul></div>
+</div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <p>Inherited from <a href="StorageDriver.html">StorageDriver</a>.<a href="StorageDriver.html#onUpdate">onUpdate</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/4e39d7f/src/drivers/StorageDriver.ts#L221">drivers/StorageDriver.ts:221</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/da40e85/src/drivers/StorageDriver.ts#L220">drivers/StorageDriver.ts:220</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="setData" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>set<wbr/>Data</span><a href="#setData" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -512,12 +497,11 @@
 <li>
 <h5><span class="tsd-kind-parameter">data</span>: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type tsd-kind-type-parameter">Output</span></h5>
 <div class="tsd-comment tsd-typography"><p>The data to store.</p>
-</div>
-<div class="tsd-comment tsd-typography"></div></li></ul></div>
+</div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/4e39d7f/src/drivers/MemoryStorageDriver.ts#L17">drivers/MemoryStorageDriver.ts:17</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/da40e85/src/drivers/MemoryStorageDriver.ts#L17">drivers/MemoryStorageDriver.ts:17</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="store" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>store</span><a href="#store" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -531,17 +515,16 @@
 <li>
 <h5><span class="tsd-kind-parameter">data</span>: <span class="tsd-signature-type tsd-kind-type-parameter">Input</span></h5>
 <div class="tsd-comment tsd-typography"><p>The data to store.</p>
-</div>
-<div class="tsd-comment tsd-typography"></div></li></ul></div>
+</div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <p>Inherited from <a href="StorageDriver.html">StorageDriver</a>.<a href="StorageDriver.html#store">store</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/4e39d7f/src/drivers/StorageDriver.ts#L122">drivers/StorageDriver.ts:122</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/da40e85/src/drivers/StorageDriver.ts#L121">drivers/StorageDriver.ts:121</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="storeResult" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>store<wbr/>Result</span><a href="#storeResult" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
-<li class="tsd-signature tsd-anchor-link" id="storeResult.storeResult-1"><span class="tsd-kind-call-signature">store<wbr/>Result</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">data</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type ">IResult</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><a href="#storeResult.storeResult-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="storeResult.storeResult-1"><span class="tsd-kind-call-signature">store<wbr/>Result</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">data</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type ">Result</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><a href="#storeResult.storeResult-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Stores the given data using the specified key and returns the Promise of Result.</p>
 </div>
@@ -551,14 +534,13 @@
 <li>
 <h5><span class="tsd-kind-parameter">data</span>: <span class="tsd-signature-type tsd-kind-type-parameter">Input</span></h5>
 <div class="tsd-comment tsd-typography"><p>Promise that resolves to the data to store.</p>
-</div>
-<div class="tsd-comment tsd-typography"></div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type ">IResult</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4><p>Promise of the result object, see <a href="https://mharj.github.io/result/">Result</a></p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type ">Result</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4><p>Promise of the result object, see <a href="https://mharj.github.io/result/">Result</a></p>
 
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <p>Inherited from <a href="StorageDriver.html">StorageDriver</a>.<a href="StorageDriver.html#storeResult">storeResult</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/4e39d7f/src/drivers/StorageDriver.ts#L139">drivers/StorageDriver.ts:139</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/da40e85/src/drivers/StorageDriver.ts#L138">drivers/StorageDriver.ts:138</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="unload" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>unload</span><a href="#unload" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -571,20 +553,20 @@
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <p>Inherited from <a href="StorageDriver.html">StorageDriver</a>.<a href="StorageDriver.html#unload">unload</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/4e39d7f/src/drivers/StorageDriver.ts#L96">drivers/StorageDriver.ts:96</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/da40e85/src/drivers/StorageDriver.ts#L95">drivers/StorageDriver.ts:95</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="unloadResult" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>unload<wbr/>Result</span><a href="#unloadResult" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
-<li class="tsd-signature tsd-anchor-link" id="unloadResult.unloadResult-1"><span class="tsd-kind-call-signature">unload<wbr/>Result</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type ">IResult</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><a href="#unloadResult.unloadResult-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="unloadResult.unloadResult-1"><span class="tsd-kind-call-signature">unload<wbr/>Result</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type ">Result</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><a href="#unloadResult.unloadResult-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Unload the storage driver and returns the Promise of Result.</p>
 </div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type ">IResult</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4><p>Promise of the result object, see <a href="https://mharj.github.io/result/">Result</a></p>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type ">Result</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4><p>Promise of the result object, see <a href="https://mharj.github.io/result/">Result</a></p>
 
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <p>Inherited from <a href="StorageDriver.html">StorageDriver</a>.<a href="StorageDriver.html#unloadResult">unloadResult</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/4e39d7f/src/drivers/StorageDriver.ts#L109">drivers/StorageDriver.ts:109</a></li></ul></aside></li></ul></section></section></div>
+<li>Defined in <a href="https://github.com/mharj/tachyon-drive/blob/da40e85/src/drivers/StorageDriver.ts#L108">drivers/StorageDriver.ts:108</a></li></ul></aside></li></ul></section></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -643,11 +625,11 @@
 <li><a href="../interfaces/IPersistSerializer.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>IPersist<wbr/>Serializer</span></a></li>
 <li><a href="../interfaces/IStorageDriver.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>IStorage<wbr/>Driver</span></a></li>
 <li><a href="../interfaces/IStoreProcessor.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>IStore<wbr/>Processor</span></a></li>
-<li><a href="../types/OnActivityCallback.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-4194304"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-type-alias)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M11.31 16V8.224H8.91V7.24H14.79V8.224H12.39V16H11.31Z" fill="var(--color-text)"></path></g></svg><span>On<wbr/>Activity<wbr/>Callback</span></a></li>
-<li><a href="../types/OnUpdateCallback.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>On<wbr/>Update<wbr/>Callback</span></a></li>
+<li><a href="../types/OnActivityCallback.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-2097152"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-type-alias)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M11.31 16V8.224H8.91V7.24H14.79V8.224H12.39V16H11.31Z" fill="var(--color-text)"></path></g></svg><span>On<wbr/>Activity<wbr/>Callback</span></a></li>
+<li><a href="../types/OnUpdateCallback.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2097152"></use></svg><span>On<wbr/>Update<wbr/>Callback</span></a></li>
 <li><a href="../functions/isValidPersistSerializer.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-64"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-function)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M9.39 16V7.24H14.55V8.224H10.446V11.128H14.238V12.112H10.47V16H9.39Z" fill="var(--color-text)"></path></g></svg><span>is<wbr/>Valid<wbr/>Persist<wbr/>Serializer</span></a></li>
 <li><a href="../functions/isValidStoreProcessor.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>is<wbr/>Valid<wbr/>Store<wbr/>Processor</span></a></li>
 <li><a href="../functions/nextSerializer.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>next<wbr/>Serializer</span></a></li></ul></nav></div></div></div>
 <div class="tsd-generator">
-<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></div>
+<p>Generated using <a href="https://typedoc.org/" rel="noopener" target="_blank">TypeDoc</a></p></div>
 <div class="overlay"></div></body></html>
