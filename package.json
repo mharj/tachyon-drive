@@ -83,6 +83,7 @@
 	},
 	"dependencies": {
 		"@avanio/logger-like": "^0.1.1",
-		"mharj-result": "^0.5.1"
+		"mharj-result": "^0.5.1",
+		"tslib": "^2.6.2"
 	}
 }
