@@ -1,11 +1,8 @@
 {
+	"extends": "@tsconfig/node16/tsconfig.json",
 	"compilerOptions": {
-		"module": "commonjs",
-		"target": "es2020",
-		"lib": ["es2020"],
 		"rootDir": "./src",
 		"outDir": "./dist",
-		"moduleResolution": "node",
 		"sourceRoot": "./src",
 		"types": ["node"],
 		"sourceMap": true,
@@ -20,7 +17,8 @@
 		"noImplicitAny": true,
 		"importHelpers": true,
 		"strictNullChecks": true,
-		"noUnusedLocals": true
+		"noUnusedLocals": true,
+		"esModuleInterop": false
 	},
 	"typedocOptions": {
 		"entryPoints": ["src/index.ts"],
