@@ -1,4 +1,4 @@
-import {Result} from 'mharj-result';
+import type {Result} from '@luolapeikko/result-option';
 
 /**
  * Interface for options to use when hydrating data.
