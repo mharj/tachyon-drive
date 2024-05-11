@@ -1,27 +1,42 @@
-import {Err, Ok, Result} from '@luolapeikko/result-option';
-import {IHydrateOptions, IStorageDriver, OnActivityCallback, OnUpdateCallback} from '../interfaces/IStorageDriver';
-import {IPersistSerializer, isValidPersistSerializer} from '../interfaces/IPersistSerializer';
-import {IStoreProcessor, isValidStoreProcessor} from '../interfaces/IStoreProcessor';
-import {IExternalNotify} from '../interfaces/IExternalUpdateNotify';
-import type {ILoggerLike} from '@avanio/logger-like';
+import {Err, Ok, type Result} from '@luolapeikko/result-option';
+import {type IHydrateOptions, type IStorageDriver, type StorageDriverEventEmitterConstructor} from '../interfaces/IStorageDriver';
+import {type ILoggerLike, type ISetOptionalLogger, LogLevel, type LogMapping, MapLogger} from '@avanio/logger-like';
+import {type IPersistSerializer, isValidPersistSerializer} from '../interfaces/IPersistSerializer';
+import {type IStoreProcessor, isValidStoreProcessor} from '../interfaces/IStoreProcessor';
+import {EventEmitter} from 'events';
+import {type IExternalNotify} from '../interfaces/IExternalUpdateNotify';
+import type {Loadable} from '@luolapeikko/ts-common';
+
+/**
+ * The default log levels for the storage driver.
+ */
+export const defaultLogLevels = {
+	clear: LogLevel.None,
+	deserialize: LogLevel.Warn,
+	hydrate: LogLevel.Debug,
+	init: LogLevel.None,
+	store: LogLevel.Debug,
+	unload: LogLevel.None,
+	update: LogLevel.None,
+	validator: LogLevel.Warn,
+};
+
+export type LogMappingType = LogMapping<keyof typeof defaultLogLevels>; // build type
 
 /**
  * Abstract class that provides a simple interface for storing and retrieving data using a specified storage mechanism.
  * @template Input - The type of the data to store and retrieve.
  * @template Output - The type of the data to serialize and deserialize.
  */
-export abstract class StorageDriver<Input, Output> implements IStorageDriver<Input> {
+export abstract class StorageDriver<Input, Output>
+	extends (EventEmitter as StorageDriverEventEmitterConstructor)<Input>
+	implements IStorageDriver<Input>, ISetOptionalLogger
+{
 	public name: string;
-	private processor: IStoreProcessor<Output> | undefined;
+	private processor: Loadable<IStoreProcessor<Output>> | undefined;
 	private serializer: IPersistSerializer<Input, Output>;
-	protected readonly logger: ILoggerLike | undefined;
+	protected logger: MapLogger<LogMappingType>;
 	private extNotify: IExternalNotify | null;
-	private onUpdateCallbacks = new Set<OnUpdateCallback<Input>>();
-	private onInitCallbacks = new Set<OnActivityCallback>();
-	private onHydrateCallbacks = new Set<OnActivityCallback>();
-	private onStoreCallbacks = new Set<OnActivityCallback>();
-	private onClearCallbacks = new Set<OnActivityCallback>();
-	private onUnloadCallbacks = new Set<OnActivityCallback>();
 	private _isInitialized = false;
 
 	/**
@@ -37,24 +52,37 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 		name: string,
 		serializer: IPersistSerializer<Input, Output>,
 		extNotify: IExternalNotify | null,
-		processor?: IStoreProcessor<Output>,
+		processor?: Loadable<IStoreProcessor<Output>>,
 		logger?: ILoggerLike,
 	) {
+		super();
 		/* istanbul ignore if */
 		if (!isValidPersistSerializer(serializer)) {
 			throw new Error('Invalid serializer');
 		}
-		/* istanbul ignore if */
-		if (processor && !isValidStoreProcessor(processor)) {
-			throw new Error('Invalid processor');
-		}
 		this.name = name;
 		this.serializer = serializer;
 		this.processor = processor;
-		this.logger = logger;
+		this.logger = new MapLogger(logger, defaultLogLevels);
 		// hook external notifier to handle update
 		this.extNotify = extNotify;
-		this.extNotify?.onUpdate(() => this.handleUpdate());
+		this.extNotify?.on('update', () => this.handleUpdate());
+	}
+
+	/**
+	 * Set the logger for the storage driver.
+	 * @param logger - The logger to use for logging messages.
+	 */
+	public setLogger(logger: ILoggerLike | undefined): void {
+		this.logger.setLogger(logger);
+	}
+
+	/**
+	 * Change log levels for the storage driver.
+	 * @param map - The log key mapping to use for logging messages.
+	 */
+	public setLogMapping(map: Partial<LogMappingType>): void {
+		this.logger.setLogMapping(map);
 	}
 
 	public get isInitialized(): boolean {
@@ -67,12 +95,12 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 	 */
 	public async init(): Promise<boolean> {
 		if (!this._isInitialized) {
-			this.logger?.debug(`${this.name}: init()`);
-			this.onInitCallbacks.forEach((currentCallback) => currentCallback(true));
+			this.logger.logKey('init', `${this.name}: init()`);
+			this.emit('init', true);
 			try {
 				this._isInitialized = await this.handleInit();
 			} finally {
-				this.onInitCallbacks.forEach((currentCallback) => currentCallback(false));
+				this.emit('init', false);
 			}
 			await this.extNotify?.init(); // init external notifier
 		}
@@ -93,15 +121,15 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 	 * @returns {Promise<boolean>} A promise that resolves to `true` if the storage driver was successfully unloaded, or `false` otherwise.
 	 */
 	public async unload(): Promise<boolean> {
-		this.logger?.debug(`${this.name}: unload()`);
+		this.logger.logKey('unload', `${this.name}: unload()`);
 		await this.init();
 		this._isInitialized = false;
-		this.onUnloadCallbacks.forEach((currentCallback) => currentCallback(true));
+		this.emit('unload', true);
 		try {
 			await this.extNotify?.unload(); // unload external notifier
 			return this.handleUnload();
 		} finally {
-			this.onUnloadCallbacks.forEach((currentCallback) => currentCallback(false));
+			this.emit('unload', false);
 		}
 	}
 
@@ -119,17 +147,18 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 	 * @param {Input} data - The data to store.
 	 */
 	public async store(data: Input): Promise<void> {
-		this.logger?.debug(`${this.name}: store()`);
+		this.logger.logKey('store', `${this.name}: store()`);
 		await this.init();
 		let output = this.serializer.serialize(data, this.logger);
-		if (this.processor) {
-			output = await this.processor.preStore(output);
+		const processor = await this.getProcessor();
+		if (processor) {
+			output = await processor.preStore(output);
 		}
-		this.onStoreCallbacks.forEach((currentCallback) => currentCallback(true));
+		this.emit('store', true);
 		try {
 			await this.handleStore(output);
 		} finally {
-			this.onStoreCallbacks.forEach((currentCallback) => currentCallback(false));
+			this.emit('store', false);
 		}
 		// notify external update if driver does not support it
 		await this.extNotify?.notifyUpdate(new Date());
@@ -151,20 +180,20 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 	 * @throws An error if the data fails validation.
 	 */
 	public async hydrate({validationThrowsError}: IHydrateOptions = {}): Promise<Input | undefined> {
-		this.logger?.debug(`${this.name}: hydrate()`);
+		this.logger.logKey('hydrate', `${this.name}: hydrate()`);
 		await this.init();
-		this.onHydrateCallbacks.forEach((currentCallback) => currentCallback(true));
+		this.emit('hydrate', true);
 		let data: Awaited<Input> | undefined;
 		try {
 			data = await this.doHydrate();
 		} finally {
-			this.onHydrateCallbacks.forEach((currentCallback) => currentCallback(false));
+			this.emit('hydrate', false);
 		}
 		if (data && this.serializer.validator && !this.serializer.validator(data, this.logger)) {
 			if (validationThrowsError) {
 				throw new Error(`${this.name}: hydrate() validator failed`);
 			}
-			this.logger?.debug(`${this.name}: hydrate() validator failed`);
+			this.logger.logKey('validator', `${this.name}: hydrate() validator failed`);
 			return undefined;
 		}
 		return data;
@@ -183,13 +212,13 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 	 * Clear the stored data
 	 */
 	public async clear(): Promise<void> {
-		this.logger?.debug(`${this.name}: clear()`);
+		this.logger.logKey('clear', `${this.name}: clear()`);
 		this._isInitialized = false;
-		this.onClearCallbacks.forEach((currentCallback) => currentCallback(true));
+		this.emit('clear', true);
 		try {
 			await this.handleClear();
 		} finally {
-			this.onClearCallbacks.forEach((currentCallback) => currentCallback(false));
+			this.emit('clear', false);
 		}
 		// notify external update if driver does not support it
 		await this.extNotify?.notifyUpdate(new Date());
@@ -214,60 +243,12 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 	}
 
 	/**
-	 * Registers a callback that will be called when the data is updated.
-	 * @param {OnUpdateCallback<Input>} callback - The callback to register.
-	 */
-	public onUpdate(callback: OnUpdateCallback<Input>) {
-		this.onUpdateCallbacks.add(callback);
-	}
-
-	/**
-	 * Registers a callback to track async driver initialization state changes (begin and end)
-	 * @param {OnActivityCallback} callback - The callback to register.
-	 */
-	public onInit(callback: OnActivityCallback): void {
-		this.onInitCallbacks.add(callback);
-	}
-
-	/**
-	 * Registers a callback to track async driver store state changes (begin and end)
-	 * @param {OnActivityCallback} callback - The callback to register.
-	 */
-	public onStore(callback: OnActivityCallback): void {
-		this.onStoreCallbacks.add(callback);
-	}
-
-	/**
-	 * Registers a callback to track async driver hydrate state changes (begin and end)
-	 * @param {OnActivityCallback} callback - The callback to register.
-	 */
-	public onHydrate(callback: OnActivityCallback): void {
-		this.onHydrateCallbacks.add(callback);
-	}
-
-	/**
-	 * Registers a callback to track async driver clear state changes (begin and end)
-	 * @param {OnActivityCallback} callback - The callback to register.
-	 */
-	public onClear(callback: OnActivityCallback): void {
-		this.onClearCallbacks.add(callback);
-	}
-
-	/**
-	 * Registers a callback to track async driver unload state changes (begin and end)
-	 * @param {OnActivityCallback} callback - The callback to register.
-	 */
-	public onUnload(callback: OnActivityCallback): void {
-		this.onUnloadCallbacks.add(callback);
-	}
-
-	/**
 	 * Use this to indicate that the data has been updated.
 	 */
 	protected async handleUpdate(): Promise<void> {
-		this.logger?.debug(`${this.name}: onUpdate()`);
+		this.logger.logKey('update', `${this.name}: onUpdate()`);
 		const data = await this.doHydrate();
-		this.onUpdateCallbacks.forEach((callback) => callback(data));
+		this.emit('update', data);
 	}
 
 	/**
@@ -277,44 +258,60 @@ export abstract class StorageDriver<Input, Output> implements IStorageDriver<Inp
 	private async doHydrate(): Promise<Input | undefined> {
 		let output = await this.handleHydrate();
 		if (output) {
-			if (this.processor) {
-				output = await this.processor.postHydrate(output);
+			const processor = await this.getProcessor();
+			if (processor) {
+				output = await processor.postHydrate(output);
 			}
 			try {
 				return this.serializer.deserialize(output, this.logger);
 			} catch (err) {
 				/* istanbul ignore next */
-				this.logger?.error(this.name, err);
+				this.logger.logKey('deserialize', this.name, err);
 			}
 		}
 		return undefined;
+	}
+
+	private async getProcessor(): Promise<IStoreProcessor<Output> | undefined> {
+		if (!this.processor) {
+			return undefined;
+		}
+		// allow loading processor only once
+		if (typeof this.processor === 'function') {
+			this.processor = await this.processor();
+		}
+		await this.processor;
+		if (!isValidStoreProcessor(this.processor)) {
+			throw new Error('Invalid processor');
+		}
+		return this.processor;
 	}
 
 	/**
 	 * Initialize the storage driver.
 	 * @returns {Promise<boolean>} A promise that resolves to `true` if the storage driver was successfully initialized, or `false` otherwise.
 	 */
-	protected abstract handleInit(): Promise<boolean>;
+	protected abstract handleInit(): Promise<boolean> | boolean;
 	/**
 	 * Store the given data to storage.
 	 * @param {Output} buffer - The data to store.
 	 * @returns {Promise<void>} A promise that resolves when the data has been successfully stored.
 	 */
-	protected abstract handleStore(buffer: Output): Promise<void>;
+	protected abstract handleStore(buffer: Output): Promise<void> | void;
 	/**
 	 * Retrieve the data from storage.
 	 * @returns {Promise<Output | undefined>} A promise that resolves to the retrieved data, or `undefined` if no data was found.
 	 */
-	protected abstract handleHydrate(): Promise<Output | undefined>;
+	protected abstract handleHydrate(): Promise<Output | undefined> | Output | undefined;
 	/**
 	 * Clear the stored data in storage.
 	 * @returns A promise that resolves when the data has been successfully cleared.
 	 */
-	protected abstract handleClear(): Promise<void>;
+	protected abstract handleClear(): Promise<void> | void;
 
 	/**
 	 * Called when the storage driver is unloaded.
 	 * @returns {Promise<boolean>} A promise that resolves to `true` if the storage driver was successfully unloaded, or `false` otherwise.
 	 */
-	protected abstract handleUnload(): Promise<boolean>;
+	protected abstract handleUnload(): Promise<boolean> | boolean;
 }

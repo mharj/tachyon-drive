@@ -1,11 +1,34 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import 'mocha';
-import * as chai from 'chai';
-import * as chaiAsPromised from 'chai-as-promised';
-import * as sinon from 'sinon';
-import * as zod from 'zod';
-import {IPersistSerializer, IStorageDriver, IStoreProcessor, isValidPersistSerializer, MemoryStorageDriver, nextSerializer} from '../src';
-import {IExternalNotify} from '../src/interfaces/IExternalUpdateNotify';
+import {type ExternalNotifyEventEmitterConstructor, type IExternalNotify} from '../src/interfaces/IExternalUpdateNotify';
+import {
+	type IPersistSerializer,
+	type IStorageDriver,
+	type IStoreProcessor,
+	isValidPersistSerializer,
+	type LogMappingType,
+	MemoryStorageDriver,
+	nextSerializer,
+	StorageDriver,
+} from '../src';
+import {resetLoggerSpies, sinonLoggerSpy} from './lib/loggerSpy';
+import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+import {EventEmitter} from 'events';
+import {LogLevel} from '@avanio/logger-like';
+import sinon from 'sinon';
+import zod from 'zod';
+
+const unitTestLogMap: LogMappingType = {
+	clear: LogLevel.Debug,
+	deserialize: LogLevel.Debug,
+	hydrate: LogLevel.Debug,
+	init: LogLevel.Debug,
+	store: LogLevel.Debug,
+	unload: LogLevel.Debug,
+	update: LogLevel.Debug,
+	validator: LogLevel.Debug,
+};
 
 chai.use(chaiAsPromised);
 
@@ -51,28 +74,22 @@ const onStoreSpy = sinon.spy();
 const onClearSpy = sinon.spy();
 const onUnloadSpy = sinon.spy();
 
-class SimpleNotify implements IExternalNotify {
-	private callback = new Set<(timeStamp: Date) => Promise<void>>();
-
-	public init(): Promise<void> {
-		return Promise.resolve();
+class SimpleNotify extends (EventEmitter as ExternalNotifyEventEmitterConstructor) implements IExternalNotify {
+	public init() {
+		// init
 	}
 
-	public unload(): Promise<void> {
-		return Promise.resolve();
+	public unload() {
+		// unload
 	}
 
-	public onUpdate(callback: (timeStamp: Date) => Promise<void>): void {
-		this.callback.add(callback);
-	}
-
-	public async notifyUpdate(timeStamp: Date): Promise<void> {
-		await Promise.all([...this.callback].map((callback) => callback(timeStamp)));
+	public notifyUpdate(timeStamp: Date) {
+		this.emit('update', timeStamp);
 	}
 }
 
 const notifier = new SimpleNotify();
-const onUpdateRegisterSpy = sinon.spy(notifier, 'onUpdate');
+const onUpdateRegisterSpy = sinon.spy(notifier, 'on');
 const onUpdateEmitterSpy = sinon.spy(notifier, 'notifyUpdate');
 
 const memoryObjectDriver = new MemoryStorageDriver('MemoryStorageDriver - Object', objectSerializer, notifier, nullProcessor);
@@ -105,14 +122,19 @@ describe('StorageDriver', () => {
 				onClearSpy.resetHistory();
 				onUnloadSpy.resetHistory();
 				onUpdateEmitterSpy.resetHistory();
+				resetLoggerSpies();
 			});
 			before(async () => {
-				currentDriver.onInit(onInitSpy);
-				currentDriver.onHydrate(onHydrateSpy);
-				currentDriver.onStore(onStoreSpy);
-				currentDriver.onClear(onClearSpy);
-				currentDriver.onUnload(onUnloadSpy);
-				currentDriver.onUpdate((data) => {
+				if (currentDriver instanceof StorageDriver) {
+					currentDriver.setLogger(sinonLoggerSpy);
+					currentDriver.setLogMapping(unitTestLogMap);
+				}
+				currentDriver.on('init', onInitSpy);
+				currentDriver.on('hydrate', onHydrateSpy);
+				currentDriver.on('store', onStoreSpy);
+				currentDriver.on('clear', onClearSpy);
+				currentDriver.on('unload', onUnloadSpy);
+				currentDriver.on('update', (data) => {
 					expect(data).to.be.eql(data);
 				});
 				await currentDriver.clear();
@@ -124,6 +146,7 @@ describe('StorageDriver', () => {
 				expect(currentDriver.isInitialized).to.be.eq(true);
 				expectEmitSpy(2, 2, 0, 0, 0);
 				expect(onUpdateEmitterSpy.callCount).to.be.eq(0);
+				expect(sinonLoggerSpy.debug.callCount).to.be.eq(2);
 			});
 			it('should store to storage driver', async () => {
 				await currentDriver.store(data);
@@ -131,12 +154,14 @@ describe('StorageDriver', () => {
 				expect(currentDriver.isInitialized).to.be.eq(true);
 				expectEmitSpy(0, 2, 2, 0, 0);
 				expect(onUpdateEmitterSpy.callCount).to.be.eq(1);
+				expect(sinonLoggerSpy.debug.callCount).to.be.greaterThanOrEqual(3);
 			});
 			it('should restore data from storage driver', async () => {
 				await expect(currentDriver.hydrate()).to.be.eventually.eql(data);
 				expect(currentDriver.isInitialized).to.be.eq(true);
 				expectEmitSpy(0, 2, 0, 0, 0);
 				expect(onUpdateEmitterSpy.callCount).to.be.eq(0);
+				expect(sinonLoggerSpy.debug.callCount).to.be.eq(1);
 			});
 			it('should clear to storage driver', async () => {
 				await currentDriver.clear();
@@ -145,20 +170,24 @@ describe('StorageDriver', () => {
 				expect(currentDriver.isInitialized).to.be.eq(true);
 				expectEmitSpy(2, 2, 0, 2, 0);
 				expect(onUpdateEmitterSpy.callCount).to.be.eq(1);
+				expect(sinonLoggerSpy.debug.callCount).to.be.greaterThanOrEqual(4);
 			});
 			it('should unload driver', async () => {
 				expect(currentDriver.isInitialized).to.be.eq(true);
 				await expect(currentDriver.unload()).to.be.eventually.eq(true);
 				expect(currentDriver.isInitialized).to.be.eq(false);
 				expectEmitSpy(0, 0, 0, 0, 2);
+				expect(sinonLoggerSpy.debug.callCount).to.be.eq(1);
 			});
 			it('should give undefined if not valid data', async () => {
 				await currentDriver.store('ASD' as any);
 				await expect(currentDriver.hydrate()).to.be.eventually.eq(undefined);
+				expect(sinonLoggerSpy.debug.callCount).to.be.greaterThanOrEqual(5);
 			});
 			it('should throw error when strict validation', async () => {
 				await currentDriver.store('ASD' as any);
 				await expect(currentDriver.hydrate({validationThrowsError: true})).to.eventually.be.rejectedWith(Error);
+				expect(sinonLoggerSpy.debug.callCount).to.be.greaterThanOrEqual(3);
 			});
 			it('should clone input data', async () => {
 				expect(currentDriver.clone(data)).to.be.eql(data);

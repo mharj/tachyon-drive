@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import 'mocha';
-import * as chai from 'chai';
-import * as chaiAsPromised from 'chai-as-promised';
-import * as sinon from 'sinon';
-import * as zod from 'zod';
-import {IPersistSerializer, IStorageDriver, IStoreProcessor, isValidPersistSerializer, MemoryStorageDriver, nextSerializer} from '../src';
-import {IExternalNotify} from '../src/interfaces/IExternalUpdateNotify';
+import {type ExternalNotifyEventEmitterConstructor, type IExternalNotify} from '../src/interfaces/IExternalUpdateNotify';
+import {type IPersistSerializer, type IStorageDriver, type IStoreProcessor, isValidPersistSerializer, MemoryStorageDriver, nextSerializer} from '../src';
+import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+import {EventEmitter} from 'events';
+import sinon from 'sinon';
+import zod from 'zod';
 
 chai.use(chaiAsPromised);
 
@@ -51,28 +52,22 @@ const onStoreSpy = sinon.spy();
 const onClearSpy = sinon.spy();
 const onUnloadSpy = sinon.spy();
 
-class SimpleNotify implements IExternalNotify {
-	private callback = new Set<(timeStamp: Date) => Promise<void>>();
-
-	public init(): Promise<void> {
-		return Promise.resolve();
+class SimpleNotify extends (EventEmitter as ExternalNotifyEventEmitterConstructor) implements IExternalNotify {
+	public init() {
+		// init
 	}
 
-	public unload(): Promise<void> {
-		return Promise.resolve();
+	public unload() {
+		// unload
 	}
 
-	public onUpdate(callback: (timeStamp: Date) => Promise<void>): void {
-		this.callback.add(callback);
-	}
-
-	public async notifyUpdate(timeStamp: Date): Promise<void> {
-		await Promise.all([...this.callback].map((callback) => callback(timeStamp)));
+	public notifyUpdate(timeStamp: Date) {
+		this.emit('update', timeStamp);
 	}
 }
 
 const notifier = new SimpleNotify();
-const onUpdateRegisterSpy = sinon.spy(notifier, 'onUpdate');
+const onUpdateRegisterSpy = sinon.spy(notifier, 'on');
 const onUpdateEmitterSpy = sinon.spy(notifier, 'notifyUpdate');
 
 const memoryObjectDriver = new MemoryStorageDriver('MemoryStorageDriver - Object', objectSerializer, notifier, nullProcessor);
@@ -107,12 +102,12 @@ describe('StorageDriver', () => {
 				onUpdateEmitterSpy.resetHistory();
 			});
 			before(async () => {
-				currentDriver.onInit(onInitSpy);
-				currentDriver.onHydrate(onHydrateSpy);
-				currentDriver.onStore(onStoreSpy);
-				currentDriver.onClear(onClearSpy);
-				currentDriver.onUnload(onUnloadSpy);
-				currentDriver.onUpdate((data) => {
+				currentDriver.on('init', onInitSpy);
+				currentDriver.on('hydrate', onHydrateSpy);
+				currentDriver.on('store', onStoreSpy);
+				currentDriver.on('clear', onClearSpy);
+				currentDriver.on('unload', onUnloadSpy);
+				currentDriver.on('update', (data) => {
 					expect(data).to.be.eql(data);
 				});
 				expect((await currentDriver.clearResult()).isOk).to.be.eq(true);

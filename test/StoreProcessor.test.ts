@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-expressions */
 import 'mocha';
-import * as chai from 'chai';
-import {IStoreProcessor, isValidStoreProcessor} from '../src';
+import {type IStoreProcessor, isValidStoreProcessor} from '../src';
+import chai from 'chai';
 
 const expect = chai.expect;
 

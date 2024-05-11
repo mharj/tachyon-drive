@@ -6,11 +6,11 @@ export interface IStoreProcessor<Output> {
 	/**
 	 * Pre-process the data before it is stored to storage.
 	 */
-	preStore(data: Output): Promise<Output>;
+	preStore(data: Output): Output | Promise<Output>;
 	/**
 	 * Post-process the data after it is hydrated from storage.
 	 */
-	postHydrate(data: Output): Promise<Output>;
+	postHydrate(data: Output): Output | Promise<Output>;
 }
 
 /**
