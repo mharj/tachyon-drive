@@ -1,4 +1,5 @@
 import type {Result} from '@luolapeikko/result-option';
+import type {TachyonBandwidth} from '../types/TachyonBandwidth';
 import type TypedEmitter from 'typed-emitter';
 
 export type StorageDriverEvents<Input> = {
@@ -34,6 +35,10 @@ export interface IHydrateOptions {
  * @template Input - The type of the data to store and retrieve.
  */
 export interface IStorageDriver<Input> extends StorageDriverEventEmitter<Input> {
+	/**
+	 * Indicates the speed of the storage driver.
+	 */
+	readonly bandwidth: TachyonBandwidth;
 	/**
 	 * Indicates whether or not the storage driver has been initialized.
 	 */

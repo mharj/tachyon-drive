@@ -1,4 +1,5 @@
 import {StorageDriver} from './StorageDriver';
+import {TachyonBandwidth} from '../types/TachyonBandwidth';
 
 /**
  * A storage driver that stores data in memory.
@@ -8,6 +9,7 @@ import {StorageDriver} from './StorageDriver';
  * const driver: IStorageDriver<SomeType> = new MemoryStorageDriver<SomeType>('MemoryStorageDriver', serializer, null);
  */
 export class MemoryStorageDriver<Input, Output> extends StorageDriver<Input, Output> {
+	public readonly bandwidth = TachyonBandwidth.VeryLarge;
 	private data: Output | undefined;
 
 	/**

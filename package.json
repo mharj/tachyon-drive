@@ -14,7 +14,7 @@
 	},
 	"scripts": {
 		"doc": "typedoc",
-		"build": "tsup src/index.ts --sourcemap --format cjs,esm --dts --clean",
+		"build": "tsup src/index.ts --minify --sourcemap --format cjs,esm --dts --clean",
 		"prepublishOnly": "npm run build",
 		"test": "nyc mocha",
 		"coverage": "nyc report --reporter=lcovonly",

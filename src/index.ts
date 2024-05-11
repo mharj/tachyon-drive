@@ -4,4 +4,5 @@ export * from './interfaces/IStoreProcessor';
 export * from './interfaces/IPersistSerializer';
 export * from './interfaces/IStorageDriver';
 export * from './interfaces/IExternalUpdateNotify';
+export * from './types/TachyonBandwidth';
 export * from './serializer';

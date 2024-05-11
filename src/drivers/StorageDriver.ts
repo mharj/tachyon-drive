@@ -6,6 +6,7 @@ import {type IStoreProcessor, isValidStoreProcessor} from '../interfaces/IStoreP
 import {EventEmitter} from 'events';
 import {type IExternalNotify} from '../interfaces/IExternalUpdateNotify';
 import type {Loadable} from '@luolapeikko/ts-common';
+import type {TachyonBandwidth} from '../types/TachyonBandwidth';
 
 /**
  * The default log levels for the storage driver.
@@ -32,6 +33,7 @@ export abstract class StorageDriver<Input, Output>
 	extends (EventEmitter as StorageDriverEventEmitterConstructor)<Input>
 	implements IStorageDriver<Input>, ISetOptionalLogger
 {
+	public abstract readonly bandwidth: TachyonBandwidth;
 	public name: string;
 	private processor: Loadable<IStoreProcessor<Output>> | undefined;
 	private serializer: IPersistSerializer<Input, Output>;
