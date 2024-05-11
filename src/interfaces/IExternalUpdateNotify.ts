@@ -3,7 +3,7 @@ import type TypedEmitter from 'typed-emitter';
 /**
  * The events that the external notify event emitter can emit.
  */
-type ExternalNotifyEvents = {
+export type ExternalNotifyEvents = {
 	update: (timeStamp: Date) => void;
 };
 
