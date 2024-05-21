@@ -5,4 +5,5 @@ export * from './interfaces/IPersistSerializer';
 export * from './interfaces/IStorageDriver';
 export * from './interfaces/IExternalUpdateNotify';
 export * from './types/TachyonBandwidth';
+export * from './types/StorageDriverJson';
 export * from './serializer';
