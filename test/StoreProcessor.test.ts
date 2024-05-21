@@ -6,11 +6,13 @@ import chai from 'chai';
 const expect = chai.expect;
 
 const asyncProcessor: IStoreProcessor<string> = {
+	name: 'AsyncProcessor',
 	preStore: async (data) => data,
 	postHydrate: async (data) => data,
 };
 
 const promiseProcessor: IStoreProcessor<string> = {
+	name: 'PromiseProcessor',
 	preStore: (data) => Promise.resolve(data),
 	postHydrate: (data) => Promise.resolve(data),
 };

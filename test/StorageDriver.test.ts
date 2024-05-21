@@ -1,9 +1,10 @@
+/* eslint-disable no-unused-expressions */
+/* eslint-disable sort-keys */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import 'mocha';
 import {type ExternalNotifyEventEmitterConstructor, type IExternalNotify} from '../src/interfaces/IExternalUpdateNotify';
 import {
 	type IPersistSerializer,
-	type IStorageDriver,
 	type IStoreProcessor,
 	isValidPersistSerializer,
 	type LogMappingType,
@@ -41,17 +42,20 @@ const dataSchema = zod.object({
 type Data = zod.infer<typeof dataSchema>;
 
 const nullProcessor: IStoreProcessor<Data> = {
+	name: 'NullProcessor',
 	preStore: async (data: Data) => data,
 	postHydrate: async (data: Data) => data,
 };
 
 const objectSerializer: IPersistSerializer<Data, Data> = {
+	name: 'ObjectSerializer',
 	serialize: (data: Data) => ({...data}),
 	deserialize: (value: Data) => ({...value}),
 	validator: (data: Data) => dataSchema.safeParse(data).success,
 };
 
 const jsonSerializer: IPersistSerializer<Data, string> = {
+	name: 'JsonSerializer',
 	serialize: (data: Data) => JSON.stringify(data),
 	deserialize: (buffer: string) => JSON.parse(buffer),
 	validator: (data: Data) => dataSchema.safeParse(data).success,
@@ -60,6 +64,7 @@ const jsonSerializer: IPersistSerializer<Data, string> = {
 const objecToJson: IPersistSerializer<Data, string> = nextSerializer<Data, Data, string>(objectSerializer, jsonSerializer);
 
 const strToBufferSerializer: IPersistSerializer<string, Buffer> = {
+	name: 'StrToBufferSerializer',
 	serialize: (data: string) => Buffer.from(data),
 	deserialize: (buffer: Buffer) => buffer.toString(),
 	validator: (data: string) => typeof data === 'string',
@@ -94,7 +99,11 @@ const onUpdateEmitterSpy = sinon.spy(notifier, 'notifyUpdate');
 
 const memoryObjectDriver = new MemoryStorageDriver('MemoryStorageDriver - Object', objectSerializer, notifier, nullProcessor);
 
-const driverSet = new Set<IStorageDriver<Data>>([memoryObjectDriver, new MemoryStorageDriver('MemoryStorageDriver - Buffer', bufferSerializer, notifier)]);
+const driverSet = new Set([
+	memoryObjectDriver,
+	new MemoryStorageDriver('MemoryStorageDriver - Buffer', bufferSerializer, notifier),
+	new MemoryStorageDriver('MemoryStorageDriver - Object', objectSerializer, notifier, () => nullProcessor),
+]);
 
 const data = dataSchema.parse({test: 'demo'});
 
@@ -192,6 +201,21 @@ describe('StorageDriver', () => {
 			it('should clone input data', async () => {
 				expect(currentDriver.clone(data)).to.be.eql(data);
 			});
+			it('should get processor result', async () => {
+				const processor = await currentDriver.getProcessorResult();
+				expect(processor.isOk).to.be.eq(true);
+			});
+			it('should toString()', async () => {
+				expect(currentDriver.toString()).to.be.string;
+			});
+			it('should toJSON()', async () => {
+				expect(currentDriver.toJSON()).to.be.eql({
+					name: currentDriver.name,
+					bandwidth: currentDriver.bandwidth,
+					processor: (await currentDriver.getProcessor())?.name,
+					serializer: currentDriver.getSerializer().name,
+				});
+			});
 		});
 	});
 	describe('Serializer validation', () => {
@@ -209,6 +233,15 @@ describe('StorageDriver', () => {
 					deserialize: (buffer: Buffer) => JSON.parse(buffer.toString()),
 				}),
 			).to.be.eq(true);
+		});
+	});
+	describe('broken processor', () => {
+		it('should throw error when broken processor', async () => {
+			const brokenProcessor = {} as IStoreProcessor<Data>;
+			const brokenDriver = new MemoryStorageDriver('BrokenProcessor', objectSerializer, notifier, brokenProcessor);
+			await expect(brokenDriver.getProcessor()).to.eventually.be.rejectedWith(Error);
+			const processor = await brokenDriver.getProcessorResult();
+			expect(processor.isOk).to.be.eq(false);
 		});
 	});
 });

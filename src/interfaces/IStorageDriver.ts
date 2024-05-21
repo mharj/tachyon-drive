@@ -1,4 +1,6 @@
+import type {AsJson} from '@luolapeikko/ts-common';
 import type {Result} from '@luolapeikko/result-option';
+import type {StorageDriverJson} from '../types/StorageDriverJson';
 import type {TachyonBandwidth} from '../types/TachyonBandwidth';
 import type TypedEmitter from 'typed-emitter';
 
@@ -34,7 +36,7 @@ export interface IHydrateOptions {
  * Interface for a storage driver that provides a simple interface for storing and retrieving data using a specified storage mechanism.
  * @template Input - The type of the data to store and retrieve.
  */
-export interface IStorageDriver<Input> extends StorageDriverEventEmitter<Input> {
+export interface IStorageDriver<Input, JsonOutput extends StorageDriverJson = StorageDriverJson> extends StorageDriverEventEmitter<Input> {
 	/**
 	 * Indicates the speed of the storage driver.
 	 */
@@ -112,4 +114,6 @@ export interface IStorageDriver<Input> extends StorageDriverEventEmitter<Input> 
 	 * @param {Input} data
 	 */
 	clone(data: Input): Input;
+
+	toJSON(): AsJson<JsonOutput>;
 }

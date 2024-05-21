@@ -1,4 +1,5 @@
 import {Err, Ok, type Result} from '@luolapeikko/result-option';
+import {getTachyonBandwidthName, type TachyonBandwidth} from '../types/TachyonBandwidth';
 import {type IHydrateOptions, type IStorageDriver, type StorageDriverEventEmitterConstructor} from '../interfaces/IStorageDriver';
 import {type ILoggerLike, type ISetOptionalLogger, LogLevel, type LogMapping, MapLogger} from '@avanio/logger-like';
 import {type IPersistSerializer, isValidPersistSerializer} from '../interfaces/IPersistSerializer';
@@ -6,7 +7,7 @@ import {type IStoreProcessor, isValidStoreProcessor} from '../interfaces/IStoreP
 import {EventEmitter} from 'events';
 import {type IExternalNotify} from '../interfaces/IExternalUpdateNotify';
 import type {Loadable} from '@luolapeikko/ts-common';
-import type {TachyonBandwidth} from '../types/TachyonBandwidth';
+import {type StorageDriverJson} from '../types/StorageDriverJson';
 
 /**
  * The default log levels for the storage driver.
@@ -35,7 +36,8 @@ export abstract class StorageDriver<Input, Output>
 {
 	public abstract readonly bandwidth: TachyonBandwidth;
 	public name: string;
-	private processor: Loadable<IStoreProcessor<Output>> | undefined;
+	private loadableProcessor: Loadable<IStoreProcessor<Output>> | undefined;
+	private processor: IStoreProcessor<Output> | undefined;
 	private serializer: IPersistSerializer<Input, Output>;
 	protected logger: MapLogger<LogMappingType>;
 	private extNotify: IExternalNotify | null;
@@ -64,7 +66,7 @@ export abstract class StorageDriver<Input, Output>
 		}
 		this.name = name;
 		this.serializer = serializer;
-		this.processor = processor;
+		this.loadableProcessor = processor;
 		this.logger = new MapLogger(logger, defaultLogLevels);
 		// hook external notifier to handle update
 		this.extNotify = extNotify;
@@ -105,6 +107,7 @@ export abstract class StorageDriver<Input, Output>
 				this.emit('init', false);
 			}
 			await this.extNotify?.init(); // init external notifier
+			await this.getProcessor(); // load processor
 		}
 		return this._isInitialized;
 	}
@@ -245,6 +248,49 @@ export abstract class StorageDriver<Input, Output>
 	}
 
 	/**
+	 * Retrieves the processor for the storage driver if it is available.
+	 * @returns {Promise<IStoreProcessor | undefined>} The processor for the storage driver, or `undefined` if no processor is available.
+	 */
+	public async getProcessor(): Promise<IStoreProcessor<Output> | undefined> {
+		if (!this.loadableProcessor) {
+			return undefined;
+		}
+		if (this.processor) {
+			return this.processor;
+		}
+		// allow loading processor only once
+		if (typeof this.loadableProcessor === 'function') {
+			this.loadableProcessor = await this.loadableProcessor();
+		}
+		await this.loadableProcessor;
+		if (!isValidStoreProcessor(this.loadableProcessor)) {
+			throw new TypeError('Invalid processor');
+		}
+		this.processor = this.loadableProcessor;
+		return this.loadableProcessor;
+	}
+
+	/**
+	 * Retrieves the processor for the storage driver if it is available and returns the Promise of Result.
+	 * @returns {Promise<Result<IStoreProcessor<Output> | undefined>>} The processor for the storage driver, or `undefined` if no processor is available.
+	 */
+	public async getProcessorResult(): Promise<Result<IStoreProcessor<Output> | undefined>> {
+		try {
+			return Ok(await this.getProcessor());
+		} catch (err) {
+			return Err(err);
+		}
+	}
+
+	/**
+	 * Get the serializer for the storage driver.
+	 * @returns {IPersistSerializer} The serializer for the storage driver.
+	 */
+	public getSerializer(): IPersistSerializer<Input, Output> {
+		return this.serializer;
+	}
+
+	/**
 	 * Use this to indicate that the data has been updated.
 	 */
 	protected async handleUpdate(): Promise<void> {
@@ -274,19 +320,29 @@ export abstract class StorageDriver<Input, Output>
 		return undefined;
 	}
 
-	private async getProcessor(): Promise<IStoreProcessor<Output> | undefined> {
-		if (!this.processor) {
-			return undefined;
-		}
-		// allow loading processor only once
-		if (typeof this.processor === 'function') {
-			this.processor = await this.processor();
-		}
-		await this.processor;
-		if (!isValidStoreProcessor(this.processor)) {
-			throw new Error('Invalid processor');
-		}
-		return this.processor;
+	public override toString(): string {
+		return `${this.constructor.name}(${this.name}): serializer=${!!this.serializer}, processor=${!!this.loadableProcessor}, bandwidth=${getTachyonBandwidthName(this.bandwidth)}`;
+	}
+
+	/**
+	 * Build the default JSON representation of the storage driver.
+	 * @returns {StorageDriverJson} The JSON representation of the storage driver.
+	 * @example
+	 * // override the toJSON method to include additional (typed) properties
+	 * public override toJSON(): FooStorageDriverJson {
+	 * 	return {
+	 * 		...super.toJSON(),
+	 * 		foo: this.foo,
+	 * 	};
+	 * }
+	 */
+	public toJSON(): StorageDriverJson {
+		return {
+			bandwidth: this.bandwidth,
+			name: this.name,
+			processor: this.processor?.name,
+			serializer: this.serializer?.name,
+		};
 	}
 
 	/**

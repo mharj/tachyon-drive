@@ -29,6 +29,7 @@ export function nextSerializer<CurrentInput, CurrentOutput, TargetOutput>(
 	nextSer: IPersistSerializer<CurrentOutput, TargetOutput>,
 ): IPersistSerializer<CurrentInput, TargetOutput> {
 	return {
+		name: `${current.name} => ${nextSer.name}`,
 		serialize: (data: CurrentInput, logger: ILoggerLike | undefined): TargetOutput => {
 			return nextSer.serialize(current.serialize(data, logger), logger);
 		},

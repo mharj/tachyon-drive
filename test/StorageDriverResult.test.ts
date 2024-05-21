@@ -1,3 +1,4 @@
+/* eslint-disable sort-keys */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import 'mocha';
 import {type ExternalNotifyEventEmitterConstructor, type IExternalNotify} from '../src/interfaces/IExternalUpdateNotify';
@@ -19,17 +20,20 @@ const dataSchema = zod.object({
 type Data = zod.infer<typeof dataSchema>;
 
 const nullProcessor: IStoreProcessor<Data> = {
+	name: 'NullProcessor',
 	preStore: async (data: Data) => data,
 	postHydrate: async (data: Data) => data,
 };
 
 const objectSerializer: IPersistSerializer<Data, Data> = {
+	name: 'ObjectSerializer',
 	serialize: (data: Data) => ({...data}),
 	deserialize: (value: Data) => ({...value}),
 	validator: (data: Data) => dataSchema.safeParse(data).success,
 };
 
 const jsonSerializer: IPersistSerializer<Data, string> = {
+	name: 'JsonSerializer',
 	serialize: (data: Data) => JSON.stringify(data),
 	deserialize: (buffer: string) => JSON.parse(buffer),
 	validator: (data: Data) => dataSchema.safeParse(data).success,
@@ -38,6 +42,7 @@ const jsonSerializer: IPersistSerializer<Data, string> = {
 const objecToJson: IPersistSerializer<Data, string> = nextSerializer<Data, Data, string>(objectSerializer, jsonSerializer);
 
 const strToBufferSerializer: IPersistSerializer<string, Buffer> = {
+	name: 'StrToBufferSerializer',
 	serialize: (data: string) => Buffer.from(data),
 	deserialize: (buffer: Buffer) => buffer.toString(),
 	validator: (data: string) => typeof data === 'string',

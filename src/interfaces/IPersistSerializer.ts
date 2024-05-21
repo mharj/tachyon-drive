@@ -7,6 +7,7 @@ import type {ILoggerLike} from '@avanio/logger-like';
  * @template ValidateInput - The type of the data that is validated.
  */
 export interface IPersistSerializer<Input, Output, ValidateInput = Input> {
+	readonly name: string;
 	/**
 	 * Serialize data for store.
 	 */

@@ -13,3 +13,20 @@ export const enum TachyonBandwidth {
 	/** use when driver uses API which have cost for operations */
 	VerySmall = 4,
 }
+
+export function getTachyonBandwidthName(bandwidth: TachyonBandwidth): 'VeryLarge' | 'Large' | 'Normal' | 'Small' | 'VerySmall' {
+	switch (bandwidth) {
+		case TachyonBandwidth.VeryLarge:
+			return 'VeryLarge';
+		case TachyonBandwidth.Large:
+			return 'Large';
+		case TachyonBandwidth.Normal:
+			return 'Normal';
+		case TachyonBandwidth.Small:
+			return 'Small';
+		case TachyonBandwidth.VerySmall:
+			return 'VerySmall';
+		default:
+			throw new TypeError(`Unknown TachyonBandwidth: '${bandwidth}'`);
+	}
+}
