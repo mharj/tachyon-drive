@@ -11,12 +11,14 @@ import {type IPersistSerializer} from './interfaces/IPersistSerializer';
  * @returns {IPersistSerializer} The chained serializer.
  * @example
  * const baseSerializer: IPersistSerializer<Data, string> = {
+ *   name: 'BaseSerializer',
  *   serialize: (data: Data) => JSON.stringify(data),
  *   deserialize: (buffer: string) => JSON.parse(buffer),
  *   validator: (data: Data) => dataSchema.safeParse(data).success,
  * };
  *
  * const strToBufferSerializer: IPersistSerializer<string, Buffer> = {
+ *   name: 'StrToBufferSerializer',
  *   serialize: (data: string) => Buffer.from(data),
  *   deserialize: (buffer: Buffer) => buffer.toString(),
  *   validator: (data: string) => typeof data === 'string', // optional deserialization validation

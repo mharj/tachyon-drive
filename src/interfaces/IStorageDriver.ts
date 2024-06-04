@@ -115,5 +115,11 @@ export interface IStorageDriver<Input, JsonOutput extends StorageDriverJson = St
 	 */
 	clone(data: Input): Input;
 
+	/**
+	 * Clone the data and return the Result
+	 * @param {Input} data
+	 */
+	cloneResult(data: Input): Result<Input>;
+
 	toJSON(): AsJson<JsonOutput>;
 }

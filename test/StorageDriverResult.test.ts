@@ -1,3 +1,7 @@
+/* eslint-disable no-unused-expressions */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/require-await */
 /* eslint-disable sort-keys */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import 'mocha';
@@ -6,6 +10,7 @@ import {type IPersistSerializer, type IStorageDriver, type IStoreProcessor, isVa
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {EventEmitter} from 'events';
+import type {Result} from '@luolapeikko/result-option';
 import sinon from 'sinon';
 import zod from 'zod';
 
@@ -180,6 +185,11 @@ describe('StorageDriver', () => {
 			});
 			it('should clone input data', async () => {
 				expect(currentDriver.clone(data)).to.be.eql(data);
+			});
+			it('should clone Result input data', async () => {
+				const cloneResult: Result<{test: string}> = currentDriver.cloneResult(data);
+				expect(cloneResult.isOk).to.be.eq(true);
+				expect(cloneResult.ok()).to.be.eql(data);
 			});
 		});
 	});

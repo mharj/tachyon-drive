@@ -35,7 +35,7 @@ export abstract class StorageDriver<Input, Output>
 	implements IStorageDriver<Input>, ISetOptionalLogger
 {
 	public abstract readonly bandwidth: TachyonBandwidth;
-	public name: string;
+	public readonly name: string;
 	private loadableProcessor: Loadable<IStoreProcessor<Output>> | undefined;
 	private processor: IStoreProcessor<Output> | undefined;
 	private serializer: IPersistSerializer<Input, Output>;
@@ -68,9 +68,11 @@ export abstract class StorageDriver<Input, Output>
 		this.serializer = serializer;
 		this.loadableProcessor = processor;
 		this.logger = new MapLogger(logger, defaultLogLevels);
+		// bind update handler
+		this.handleUpdate = this.handleUpdate.bind(this);
 		// hook external notifier to handle update
 		this.extNotify = extNotify;
-		this.extNotify?.on('update', () => this.handleUpdate());
+		this.extNotify?.on('update', this.handleUpdate);
 	}
 
 	/**
@@ -138,6 +140,10 @@ export abstract class StorageDriver<Input, Output>
 		}
 	}
 
+	/**
+	 * Unload the storage driver and return the Promise of Result.
+	 * @returns {Promise<Result<boolean>>} A promise of Result that resolves to `true` if the storage driver was successfully unloaded, or `false` otherwise.
+	 */
 	public async unloadResult(): Promise<Result<boolean>> {
 		try {
 			return Ok(await this.unload());
@@ -169,6 +175,11 @@ export abstract class StorageDriver<Input, Output>
 		await this.extNotify?.notifyUpdate(new Date());
 	}
 
+	/**
+	 * Stores the given data using the specified key and returns the Promise of Result.
+	 * @param {Input} data - The data to store.
+	 * @returns {Promise<Result<void>>} A promise of Result that resolves when the data has been successfully stored.
+	 */
 	public async storeResult(data: Input): Promise<Result<void>> {
 		try {
 			return Ok(await this.store(data));
@@ -204,6 +215,11 @@ export abstract class StorageDriver<Input, Output>
 		return data;
 	}
 
+	/**
+	 * Retrieves the data stored using the specified key and returns the Promise of Result.
+	 * @param {IHydrateOptions} options - The options to use for hydrating the data.
+	 * @returns {Promise<Result<Input | undefined>>}  Promise of Result that resolves to the retrieved data, or `undefined` if no data was found.
+	 */
 	public async hydrateResult(options?: IHydrateOptions): Promise<Result<Input | undefined>> {
 		try {
 			return Ok(await this.hydrate(options));
@@ -229,6 +245,9 @@ export abstract class StorageDriver<Input, Output>
 		await this.extNotify?.notifyUpdate(new Date());
 	}
 
+	/**
+	 * Clear the stored data and return the Promise of Result.
+	 */
 	public async clearResult(): Promise<Result<void>> {
 		try {
 			return Ok(await this.clear());
@@ -245,6 +264,20 @@ export abstract class StorageDriver<Input, Output>
 	 */
 	public clone(data: Input): Input {
 		return this.serializer.deserialize(this.serializer.serialize(data, this.logger), this.logger);
+	}
+
+	/**
+	 * Clone the given data with the serializer and return Result of the cloned data.
+	 * @param {Input} data - The data to clone.
+	 * @returns {Result<Input>} The cloned data.
+	 */
+	public cloneResult(data: Input): Result<Input> {
+		try {
+			return Ok(this.clone(data));
+		} catch (err) {
+			/* istanbul ignore next */
+			return Err(err);
+		}
 	}
 
 	/**
@@ -321,7 +354,7 @@ export abstract class StorageDriver<Input, Output>
 	}
 
 	public override toString(): string {
-		return `${this.constructor.name}(${this.name}): serializer=${!!this.serializer}, processor=${!!this.loadableProcessor}, bandwidth=${getTachyonBandwidthName(this.bandwidth)}`;
+		return `${this.constructor.name}(${this.name}): serializer=${this.serializer.name}, processor=${this.processor?.name || 'undefined'}, bandwidth=${getTachyonBandwidthName(this.bandwidth)}`;
 	}
 
 	/**
@@ -341,7 +374,7 @@ export abstract class StorageDriver<Input, Output>
 			bandwidth: this.bandwidth,
 			name: this.name,
 			processor: this.processor?.name,
-			serializer: this.serializer?.name,
+			serializer: this.serializer.name,
 		};
 	}
 

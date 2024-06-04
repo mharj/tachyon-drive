@@ -27,6 +27,6 @@ export function getTachyonBandwidthName(bandwidth: TachyonBandwidth): 'VeryLarge
 		case TachyonBandwidth.VerySmall:
 			return 'VerySmall';
 		default:
-			throw new TypeError(`Unknown TachyonBandwidth: '${bandwidth}'`);
+			throw new TypeError(`Unknown TachyonBandwidth: '${String(bandwidth)}'`);
 	}
 }
