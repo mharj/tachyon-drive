@@ -15,8 +15,8 @@ importers:
         specifier: ^0.5.3
         version: 0.5.3
       '@luolapeikko/ts-common':
-        specifier: ^0.0.5
-        version: 0.0.5
+        specifier: ^0.2.0
+        version: 0.2.0
       tslib:
         specifier: ^2.6.2
         version: 2.6.2
@@ -372,6 +372,7 @@ packages:
   '@humanwhocodes/config-array@0.11.14':
     resolution: {integrity: sha512-3T8LkOmg45BV5FICb15QQMsyUSWrQ8AygVfC7ZG32zOalnqrilm018ZVCw0eapXux8FtA33q8PSRSstjee3jSg==}
     engines: {node: '>=10.10.0'}
+    deprecated: Use @eslint/config-array instead
 
   '@humanwhocodes/module-importer@1.0.1':
     resolution: {integrity: sha512-bxveV4V8v5Yb4ncFTT3rPSgZBOpCkjfK0y4oVVVJwIuDVBRMDXrPyXRL988i5ap9m9bnyEEjWfm5WkBmtffLfA==}
@@ -379,6 +380,7 @@ packages:
 
   '@humanwhocodes/object-schema@2.0.3':
     resolution: {integrity: sha512-93zYdMES/c1D69yZiKDBj0V24vqNzB/koF26KPaagAfd3P/4gUlh3Dys5ogAK+Exi9QyzlD8x/08Zt7wIKcDcA==}
+    deprecated: Use @eslint/object-schema instead
 
   '@isaacs/cliui@8.0.2':
     resolution: {integrity: sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA==}
@@ -416,8 +418,8 @@ packages:
   '@luolapeikko/result-option@0.5.3':
     resolution: {integrity: sha512-M+lLIgKbdsGzIEsHX3Jl+W96wveaEkJobo+iuw4vRfkKkkdbt0qfyDBB23eIuLw3hdgH8IMopSIjrE/jukgIMg==}
 
-  '@luolapeikko/ts-common@0.0.5':
-    resolution: {integrity: sha512-eqytgxJwblDAEvnn1fssNDHQVfcysGU/Z/oE8ufKG6zodc1t7pi0y8iT5iH1jP3j+eXFxjWQQcNl7cI9FYqsPg==}
+  '@luolapeikko/ts-common@0.2.0':
+    resolution: {integrity: sha512-wVVday7XKRfVu1y5imjOFyoWmUOWhSTOsU+1E8SwmSWaXKclr3xrLgs4FQ4LxV5AbHzPZvkYgK+8qloN5uo+8w==}
 
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
@@ -2705,7 +2707,7 @@ snapshots:
 
   '@luolapeikko/result-option@0.5.3': {}
 
-  '@luolapeikko/ts-common@0.0.5': {}
+  '@luolapeikko/ts-common@0.2.0': {}
 
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
