@@ -1,4 +1,4 @@
-import type {TachyonBandwidth} from './TachyonBandwidth';
+import type {TachyonBandwidth} from './TachyonBandwidth.js';
 
 export type StorageDriverJson = {
 	name: string;

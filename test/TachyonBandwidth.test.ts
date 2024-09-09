@@ -1,6 +1,6 @@
 import 'mocha';
 import * as chai from 'chai';
-import {getTachyonBandwidthName, TachyonBandwidth} from '../src';
+import {getTachyonBandwidthName, TachyonBandwidth} from '../src/index.js';
 
 const expect = chai.expect;
 

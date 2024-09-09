@@ -1,13 +1,13 @@
-import {Err, Ok, type Result} from '@luolapeikko/result-option';
-import {getTachyonBandwidthName, type TachyonBandwidth} from '../types/TachyonBandwidth';
-import {type IHydrateOptions, type IStorageDriver, type StorageDriverEventEmitterConstructor} from '../interfaces/IStorageDriver';
+import {Err, type IResult, Ok} from '@luolapeikko/result-option';
+import {getTachyonBandwidthName, type TachyonBandwidth} from '../types/TachyonBandwidth.js';
+import {type IHydrateOptions, type IStorageDriver, type StorageDriverEventsMap} from '../interfaces/IStorageDriver.js';
 import {type ILoggerLike, type ISetOptionalLogger, LogLevel, type LogMapping, MapLogger} from '@avanio/logger-like';
-import {type IPersistSerializer, isValidPersistSerializer} from '../interfaces/IPersistSerializer';
-import {type IStoreProcessor, isValidStoreProcessor} from '../interfaces/IStoreProcessor';
+import {type IPersistSerializer, isValidPersistSerializer} from '../interfaces/IPersistSerializer.js';
+import {type IStoreProcessor, isValidStoreProcessor} from '../interfaces/IStoreProcessor.js';
 import {EventEmitter} from 'events';
-import {type IExternalNotify} from '../interfaces/IExternalUpdateNotify';
+import {type IExternalNotify} from '../interfaces/IExternalUpdateNotify.js';
 import type {Loadable} from '@luolapeikko/ts-common';
-import {type StorageDriverJson} from '../types/StorageDriverJson';
+import {type StorageDriverJson} from '../types/StorageDriverJson.js';
 
 /**
  * The default log levels for the storage driver.
@@ -30,10 +30,7 @@ export type LogMappingType = LogMapping<keyof typeof defaultLogLevels>; // build
  * @template Input - The type of the data to store and retrieve.
  * @template Output - The type of the data to serialize and deserialize.
  */
-export abstract class StorageDriver<Input, Output>
-	extends (EventEmitter as StorageDriverEventEmitterConstructor)<Input>
-	implements IStorageDriver<Input>, ISetOptionalLogger
-{
+export abstract class StorageDriver<Input, Output> extends EventEmitter<StorageDriverEventsMap<Input>> implements IStorageDriver<Input>, ISetOptionalLogger {
 	public abstract readonly bandwidth: TachyonBandwidth;
 	public readonly name: string;
 	private loadableProcessor: Loadable<IStoreProcessor<Output>> | undefined;
@@ -60,7 +57,7 @@ export abstract class StorageDriver<Input, Output>
 		logger?: ILoggerLike,
 	) {
 		super();
-		/* istanbul ignore if */
+		/* c8 ignore next 3 */
 		if (!isValidPersistSerializer(serializer)) {
 			throw new Error('Invalid serializer');
 		}
@@ -72,7 +69,6 @@ export abstract class StorageDriver<Input, Output>
 		this.handleUpdate = this.handleUpdate.bind(this);
 		// hook external notifier to handle update
 		this.extNotify = extNotify;
-		this.extNotify?.on('update', this.handleUpdate);
 	}
 
 	/**
@@ -101,6 +97,8 @@ export abstract class StorageDriver<Input, Output>
 	 */
 	public async init(): Promise<boolean> {
 		if (!this._isInitialized) {
+			this.extNotify?.removeListener('update', this.handleUpdate);
+			this.extNotify?.addListener('update', this.handleUpdate);
 			this.logger.logKey('init', `${this.name}: init()`);
 			this.emit('init', true);
 			try {
@@ -114,11 +112,10 @@ export abstract class StorageDriver<Input, Output>
 		return this._isInitialized;
 	}
 
-	public async initResult(): Promise<Result<boolean>> {
+	public async initResult(): Promise<IResult<boolean>> {
 		try {
 			return Ok(await this.init());
 		} catch (err) {
-			/* istanbul ignore next */
 			return Err(err);
 		}
 	}
@@ -134,8 +131,9 @@ export abstract class StorageDriver<Input, Output>
 		this.emit('unload', true);
 		try {
 			await this.extNotify?.unload(); // unload external notifier
-			return this.handleUnload();
+			return await this.handleUnload();
 		} finally {
+			this.extNotify?.removeListener('update', this.handleUpdate); // remove external notifier callback
 			this.emit('unload', false);
 		}
 	}
@@ -144,11 +142,10 @@ export abstract class StorageDriver<Input, Output>
 	 * Unload the storage driver and return the Promise of Result.
 	 * @returns {Promise<Result<boolean>>} A promise of Result that resolves to `true` if the storage driver was successfully unloaded, or `false` otherwise.
 	 */
-	public async unloadResult(): Promise<Result<boolean>> {
+	public async unloadResult(): Promise<IResult<boolean>> {
 		try {
 			return Ok(await this.unload());
 		} catch (err) {
-			/* istanbul ignore next */
 			return Err(err);
 		}
 	}
@@ -180,11 +177,10 @@ export abstract class StorageDriver<Input, Output>
 	 * @param {Input} data - The data to store.
 	 * @returns {Promise<Result<void>>} A promise of Result that resolves when the data has been successfully stored.
 	 */
-	public async storeResult(data: Input): Promise<Result<void>> {
+	public async storeResult(data: Input): Promise<IResult<void>> {
 		try {
 			return Ok(await this.store(data));
 		} catch (err) {
-			/* istanbul ignore next */
 			return Err(err);
 		}
 	}
@@ -195,13 +191,13 @@ export abstract class StorageDriver<Input, Output>
 	 * @returns {Promise<Input | undefined>} The retrieved data, or `undefined` if no data was found.
 	 * @throws An error if the data fails validation.
 	 */
-	public async hydrate({validationThrowsError}: IHydrateOptions = {}): Promise<Input | undefined> {
+	public async hydrate({validationThrowsError, deserializationThrowsError}: IHydrateOptions = {}): Promise<Input | undefined> {
 		this.logger.logKey('hydrate', `${this.name}: hydrate()`);
 		await this.init();
 		this.emit('hydrate', true);
 		let data: Awaited<Input> | undefined;
 		try {
-			data = await this.doHydrate();
+			data = await this.doHydrate({deserializationThrowsError});
 		} finally {
 			this.emit('hydrate', false);
 		}
@@ -220,11 +216,10 @@ export abstract class StorageDriver<Input, Output>
 	 * @param {IHydrateOptions} options - The options to use for hydrating the data.
 	 * @returns {Promise<Result<Input | undefined>>}  Promise of Result that resolves to the retrieved data, or `undefined` if no data was found.
 	 */
-	public async hydrateResult(options?: IHydrateOptions): Promise<Result<Input | undefined>> {
+	public async hydrateResult(options?: IHydrateOptions): Promise<IResult<Input | undefined>> {
 		try {
 			return Ok(await this.hydrate(options));
 		} catch (err) {
-			/* istanbul ignore next */
 			return Err(err);
 		}
 	}
@@ -248,11 +243,10 @@ export abstract class StorageDriver<Input, Output>
 	/**
 	 * Clear the stored data and return the Promise of Result.
 	 */
-	public async clearResult(): Promise<Result<void>> {
+	public async clearResult(): Promise<IResult<void>> {
 		try {
 			return Ok(await this.clear());
 		} catch (err) {
-			/* istanbul ignore next */
 			return Err(err);
 		}
 	}
@@ -271,11 +265,10 @@ export abstract class StorageDriver<Input, Output>
 	 * @param {Input} data - The data to clone.
 	 * @returns {Result<Input>} The cloned data.
 	 */
-	public cloneResult(data: Input): Result<Input> {
+	public cloneResult(data: Input): IResult<Input> {
 		try {
 			return Ok(this.clone(data));
 		} catch (err) {
-			/* istanbul ignore next */
 			return Err(err);
 		}
 	}
@@ -307,7 +300,7 @@ export abstract class StorageDriver<Input, Output>
 	 * Retrieves the processor for the storage driver if it is available and returns the Promise of Result.
 	 * @returns {Promise<Result<IStoreProcessor<Output> | undefined>>} The processor for the storage driver, or `undefined` if no processor is available.
 	 */
-	public async getProcessorResult(): Promise<Result<IStoreProcessor<Output> | undefined>> {
+	public async getProcessorResult(): Promise<IResult<IStoreProcessor<Output> | undefined>> {
 		try {
 			return Ok(await this.getProcessor());
 		} catch (err) {
@@ -336,7 +329,7 @@ export abstract class StorageDriver<Input, Output>
 	 * Retrieves the data, processes it, and then returns the processed data.
 	 * @returns {Promise<Input | undefined>} The retrieved deserialized data, or `undefined` if no data was found.
 	 */
-	private async doHydrate(): Promise<Input | undefined> {
+	private async doHydrate({deserializationThrowsError}: {deserializationThrowsError?: boolean} = {}): Promise<Input | undefined> {
 		let output = await this.handleHydrate();
 		if (output) {
 			const processor = await this.getProcessor();
@@ -346,7 +339,9 @@ export abstract class StorageDriver<Input, Output>
 			try {
 				return this.serializer.deserialize(output, this.logger);
 			} catch (err) {
-				/* istanbul ignore next */
+				if (deserializationThrowsError) {
+					throw err;
+				}
 				this.logger.logKey('deserialize', this.name, err);
 			}
 		}

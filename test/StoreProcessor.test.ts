@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/require-await */
-/* eslint-disable no-unused-expressions */
 import 'mocha';
-import {type IStoreProcessor, isValidStoreProcessor} from '../src';
+import {type IStoreProcessor, isValidStoreProcessor} from '../src/index.js';
 import chai from 'chai';
 
 const expect = chai.expect;
@@ -20,7 +19,7 @@ const promiseProcessor: IStoreProcessor<string> = {
 
 describe('IStoreProcessor', () => {
 	it('should be valid Store Processor', async () => {
-		expect(isValidStoreProcessor(asyncProcessor)).to.be.true;
-		expect(isValidStoreProcessor(promiseProcessor)).to.be.true;
+		expect(isValidStoreProcessor(asyncProcessor)).to.be.eq(true);
+		expect(isValidStoreProcessor(promiseProcessor)).to.be.eq(true);
 	});
 });

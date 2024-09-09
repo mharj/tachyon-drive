@@ -1,5 +1,5 @@
 import {type ILoggerLike} from '@avanio/logger-like';
-import {type IPersistSerializer} from './interfaces/IPersistSerializer';
+import {type IPersistSerializer} from './interfaces/IPersistSerializer.js';
 
 /**
  * Chains two serializers together.

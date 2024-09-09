@@ -1,42 +1,31 @@
 import type {AsJson} from '@luolapeikko/ts-common';
-import type {Result} from '@luolapeikko/result-option';
-import type {StorageDriverJson} from '../types/StorageDriverJson';
-import type {TachyonBandwidth} from '../types/TachyonBandwidth';
-import type TypedEmitter from 'typed-emitter';
+import type EventEmitter from 'events';
+import type {IResult} from '@luolapeikko/result-option';
+import type {StorageDriverJson} from '../types/StorageDriverJson.js';
+import type {TachyonBandwidth} from '../types/TachyonBandwidth.js';
 
-export type StorageDriverEvents<Input> = {
-	hydrate: (isHydrating: boolean) => void;
-	init: (isInitializing: boolean) => void;
-	store: (isWriting: boolean) => void;
-	update: (data: Input | undefined) => void;
-	clear: (isClearing: boolean) => void;
-	unload: (isUnloading: boolean) => void;
+export type StorageDriverEventsMap<Input> = {
+	hydrate: [isHydrating: boolean];
+	init: [isInitializing: boolean];
+	store: [isWriting: boolean];
+	update: [data: Input | undefined];
+	clear: [isClearing: boolean];
+	unload: [isUnloading: boolean];
 };
-
-/**
- * Event emitter for the storage driver.
- */
-export type StorageDriverEventEmitter<Input> = TypedEmitter<StorageDriverEvents<Input>>;
-
-/**
- * Constructor for the storage driver event emitter.
- * @example
- * (EventEmitter as StorageDriverEventEmitterConstructor)<Input>
- */
-export type StorageDriverEventEmitterConstructor = {new <Input>(): StorageDriverEventEmitter<Input>};
 
 /**
  * Interface for options to use when hydrating data.
  */
 export interface IHydrateOptions {
 	validationThrowsError?: boolean;
+	deserializationThrowsError?: boolean;
 }
 
 /**
  * Interface for a storage driver that provides a simple interface for storing and retrieving data using a specified storage mechanism.
  * @template Input - The type of the data to store and retrieve.
  */
-export interface IStorageDriver<Input, JsonOutput extends StorageDriverJson = StorageDriverJson> extends StorageDriverEventEmitter<Input> {
+export interface IStorageDriver<Input, JsonOutput extends StorageDriverJson = StorageDriverJson> extends EventEmitter<StorageDriverEventsMap<Input>> {
 	/**
 	 * Indicates the speed of the storage driver.
 	 */
@@ -59,7 +48,7 @@ export interface IStorageDriver<Input, JsonOutput extends StorageDriverJson = St
 	 * Initializes the storage driver and returns the Promise of Result.
 	 * @returns {Promise<Result<boolean>>} Promise of the result object, see [Result](https://mharj.github.io/result/)
 	 */
-	initResult(): Result<boolean> | Promise<Result<boolean>>;
+	initResult(): IResult<boolean> | Promise<IResult<boolean>>;
 	/**
 	 * Stores the given data using the specified key.
 	 * @param {Input} data - Promise that resolves to the data to store.
@@ -72,7 +61,7 @@ export interface IStorageDriver<Input, JsonOutput extends StorageDriverJson = St
 	 * @param {Input} data - Promise that resolves to the data to store.
 	 * @returns {Promise<Result<void>>} Promise of the result object, see [Result](https://mharj.github.io/result/)
 	 */
-	storeResult(data: Input): Result<void> | Promise<Result<void>>;
+	storeResult(data: Input): IResult<void> | Promise<IResult<void>>;
 	/**
 	 * Retrieves the stored data.
 	 * @param {IHydrateOptions} options - The options to use for hydrating the data.
@@ -85,7 +74,7 @@ export interface IStorageDriver<Input, JsonOutput extends StorageDriverJson = St
 	 * @param {IHydrateOptions} options - The options to use for hydrating the data.
 	 * @returns {Promise<Result<Input | undefined>>} Promise of the result object, see [Result](https://mharj.github.io/result/)
 	 */
-	hydrateResult(options?: IHydrateOptions): Result<Input | undefined> | Promise<Result<Input | undefined>>;
+	hydrateResult(options?: IHydrateOptions): IResult<Input | undefined> | Promise<IResult<Input | undefined>>;
 	/**
 	 * Clears the stored data.
 	 */
@@ -95,7 +84,7 @@ export interface IStorageDriver<Input, JsonOutput extends StorageDriverJson = St
 	 * Clears the stored data and returns the Promise of Result.
 	 * @returns {Promise<Result<void>>} Promise of the result object, see [Result](https://mharj.github.io/result/)
 	 */
-	clearResult(): Result<void> | Promise<Result<void>>;
+	clearResult(): IResult<void> | Promise<IResult<void>>;
 
 	/**
 	 * Unload the storage driver.
@@ -107,7 +96,7 @@ export interface IStorageDriver<Input, JsonOutput extends StorageDriverJson = St
 	 * Unload the storage driver and returns the Promise of Result.
 	 * @returns {Promise<Result<boolean>>} Promise of the result object, see [Result](https://mharj.github.io/result/)
 	 */
-	unloadResult(): Result<boolean> | Promise<Result<boolean>>;
+	unloadResult(): IResult<boolean> | Promise<IResult<boolean>>;
 
 	/**
 	 * Clone the data
@@ -119,7 +108,7 @@ export interface IStorageDriver<Input, JsonOutput extends StorageDriverJson = St
 	 * Clone the data and return the Result
 	 * @param {Input} data
 	 */
-	cloneResult(data: Input): Result<Input>;
+	cloneResult(data: Input): IResult<Input>;
 
 	toJSON(): AsJson<JsonOutput>;
 }

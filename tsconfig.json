@@ -18,12 +18,16 @@
 		"importHelpers": true,
 		"strictNullChecks": true,
 		"noUnusedLocals": true,
-		"noUncheckedIndexedAccess": true
+		"noUncheckedIndexedAccess": true,
+		"esModuleInterop": true
 	},
 	"typedocOptions": {
 		"entryPoints": ["src/index.ts"],
 		"out": "docs"
 	},
 	"include": ["src/"],
-	"exclude": ["node_modules", "**/*.spec.ts", "test"]
+	"exclude": ["node_modules", "**/*.spec.ts", "test"],
+	"ts-node": {
+		"esm": true
+	}
 }
