@@ -5,6 +5,7 @@
 /* eslint-disable sort-keys */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import 'mocha';
+import * as chai from 'chai';
 import {
 	type ExternalNotifyEventsMap,
 	type IExternalNotify,
@@ -14,22 +15,21 @@ import {
 	MemoryStorageDriver,
 	nextSerializer,
 } from '../src/index.js';
-import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {EventEmitter} from 'events';
 import type {IResult} from '@luolapeikko/result-option';
 import sinon from 'sinon';
-import zod from 'zod';
+import {z} from 'zod';
 
 chai.use(chaiAsPromised);
 
 const expect = chai.expect;
 
-const dataSchema = zod.object({
-	test: zod.string(),
+const dataSchema = z.object({
+	test: z.string(),
 });
 
-type Data = zod.infer<typeof dataSchema>;
+type Data = z.infer<typeof dataSchema>;
 
 const nullProcessor: IStoreProcessor<Data> = {
 	name: 'NullProcessor',

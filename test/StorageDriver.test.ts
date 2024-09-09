@@ -4,6 +4,7 @@
 /* eslint-disable sort-keys */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import 'mocha';
+import * as chai from 'chai';
 import {
 	type ExternalNotifyEventsMap,
 	type IExternalNotify,
@@ -16,7 +17,6 @@ import {
 	StorageDriver,
 } from '../src/index.js';
 import {resetLoggerSpies, sinonLoggerSpy} from './lib/loggerSpy.js';
-import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {ControlledJsonSerializer} from './lib/testSerializer.js';
 import {EventEmitter} from 'events';

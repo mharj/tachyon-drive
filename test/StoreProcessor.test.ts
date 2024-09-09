@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/require-await */
 import 'mocha';
+import * as chai from 'chai';
 import {type IStoreProcessor, isValidStoreProcessor} from '../src/index.js';
-import chai from 'chai';
 
 const expect = chai.expect;
 
