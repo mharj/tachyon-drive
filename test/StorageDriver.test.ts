@@ -197,7 +197,6 @@ describe('StorageDriver', () => {
 				expect(driver.isInitialized).to.be.eq(false);
 				expect(getCallCounts()).to.be.eql({init: 2, hydrate: 0, store: 0, clear: 0, unload: 2});
 				expect(sinonLoggerSpy.debug.callCount).to.be.eq(2);
-				console.log('ok');
 			});
 			it('should give undefined if not valid data', async () => {
 				await driver.store('ASD' as any);
@@ -219,6 +218,7 @@ describe('StorageDriver', () => {
 			});
 			it('should toString()', async () => {
 				expect(driver.toString()).to.be.an('string');
+				expect(driver.toString()).to.satisfies((value: string) => value.startsWith(`${driver.name}(`));
 			});
 			it('should toJSON()', async () => {
 				expect(driver.toJSON()).to.be.eql({
