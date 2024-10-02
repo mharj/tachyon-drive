@@ -4,7 +4,7 @@ import {defineConfig} from 'vite';
 
 export default defineConfig({
 	test: {
-		reporters: process.env.GITHUB_ACTIONS ? ['github-actions'] : ['verbose', 'github-actions', 'junit'],
+		reporters: process.env.GITHUB_ACTIONS ? ['github-actions', 'junit'] : ['verbose', 'github-actions', 'junit'],
     outputFile: {
       junit: './test-results.xml',
     },
