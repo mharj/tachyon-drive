@@ -4,8 +4,7 @@
 /* eslint-disable @typescript-eslint/require-await */
 /* eslint-disable sort-keys */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import 'mocha';
-import * as chai from 'chai';
+import {afterEach, beforeAll, beforeEach, describe, expect, it} from 'vitest';
 import {
 	type ExternalNotifyEventsMap,
 	type IExternalNotify,
@@ -15,15 +14,10 @@ import {
 	MemoryStorageDriver,
 	nextSerializer,
 } from '../src/index.js';
-import chaiAsPromised from 'chai-as-promised';
 import {EventEmitter} from 'events';
 import type {IResult} from '@luolapeikko/result-option';
 import sinon from 'sinon';
 import {z} from 'zod';
-
-chai.use(chaiAsPromised);
-
-const expect = chai.expect;
 
 const dataSchema = z.object({
 	test: z.string(),
@@ -110,7 +104,7 @@ const driverSet = new Set([
 ]);
 
 describe('StorageDriver Result', () => {
-	before(async () => {
+	beforeAll(async () => {
 		await memoryObjectDriver.setData(undefined);
 	});
 	driverSet.forEach(({driver, initValue}) => {
@@ -123,73 +117,73 @@ describe('StorageDriver Result', () => {
 				onUnloadSpy.resetHistory();
 				onUpdateEmitterSpy.resetHistory();
 			});
-			before(async () => {
+			beforeAll(async () => {
 				driver.on('init', onInitSpy);
 				driver.on('hydrate', onHydrateSpy);
 				driver.on('store', onStoreSpy);
 				driver.on('clear', onClearSpy);
 				driver.on('unload', onUnloadSpy);
 				driver.on('update', (data) => {
-					expect(data).to.be.eql(data);
+					expect(data).toStrictEqual(data);
 				});
-				expect((await driver.clearResult()).isOk).to.be.eq(true);
-				expect(driver.isInitialized).to.be.eq(false);
+				expect((await driver.clearResult()).isOk).equals(true);
+				expect(driver.isInitialized).equals(false);
 			});
 			it('should be init store', async () => {
 				const initResult = await driver.initResult();
-				expect(initResult.isOk).to.be.eq(true);
-				expect(driver.isInitialized).to.be.eq(true);
-				expect(getCallCounts()).to.be.eql({init: 2, hydrate: 0, store: 0, clear: 0, unload: 0});
+				expect(initResult.isOk).equals(true);
+				expect(driver.isInitialized).equals(true);
+				expect(getCallCounts()).toStrictEqual({init: 2, hydrate: 0, store: 0, clear: 0, unload: 0});
 				const clearResult = await driver.clearResult();
-				expect(clearResult.isOk).to.be.eq(true);
+				expect(clearResult.isOk).equals(true);
 			});
 			it('should be empty store', async () => {
 				const result = await driver.hydrateResult();
-				expect(result.isOk).to.be.eq(true);
-				expect(driver.isInitialized).to.be.eq(true);
-				expect(getCallCounts()).to.be.eql({init: 2, hydrate: 2, store: 0, clear: 0, unload: 0});
-				expect(onUpdateEmitterSpy.callCount).to.be.eq(0);
+				expect(result.isOk).equals(true);
+				expect(driver.isInitialized).equals(true);
+				expect(getCallCounts()).toStrictEqual({init: 2, hydrate: 2, store: 0, clear: 0, unload: 0});
+				expect(onUpdateEmitterSpy.callCount).equals(0);
 			});
 			it('should store to storage driver', async () => {
 				const storeResult = await driver.storeResult(data);
-				expect(storeResult.isOk).to.be.eq(true);
+				expect(storeResult.isOk).equals(true);
 				const hydrateResult = await driver.hydrateResult();
-				expect(hydrateResult.isOk).to.be.eq(true);
-				expect(driver.isInitialized).to.be.eq(true);
-				expect(getCallCounts()).to.be.eql({init: 2, hydrate: 2, store: 2, clear: 0, unload: 0});
-				expect(onUpdateEmitterSpy.callCount).to.be.eq(1);
+				expect(hydrateResult.isOk).equals(true);
+				expect(driver.isInitialized).equals(true);
+				expect(getCallCounts()).toStrictEqual({init: 2, hydrate: 2, store: 2, clear: 0, unload: 0});
+				expect(onUpdateEmitterSpy.callCount).equals(1);
 			});
 			it('should restore data from storage driver', async () => {
 				await driver.setData(initValue as any);
 				const hydrateResult = await driver.hydrateResult();
-				expect(hydrateResult.isOk).to.be.eq(true);
-				expect(hydrateResult.ok()).to.be.eql(data);
-				expect(driver.isInitialized).to.be.eq(true);
-				expect(getCallCounts()).to.be.eql({init: 2, hydrate: 2, store: 0, clear: 0, unload: 0});
-				expect(onUpdateEmitterSpy.callCount).to.be.eq(0);
+				expect(hydrateResult.isOk).equals(true);
+				expect(hydrateResult.ok()).toStrictEqual(data);
+				expect(driver.isInitialized).equals(true);
+				expect(getCallCounts()).toStrictEqual({init: 2, hydrate: 2, store: 0, clear: 0, unload: 0});
+				expect(onUpdateEmitterSpy.callCount).equals(0);
 			});
 			it('should clear to storage driver', async () => {
 				const clearResult = await driver.clearResult();
-				expect(clearResult.isOk).to.be.eq(true);
-				expect(driver.isInitialized).to.be.eq(false);
-				await expect(driver.hydrate()).to.be.eventually.eq(undefined);
-				expect(driver.isInitialized).to.be.eq(true);
-				expect(getCallCounts()).to.be.eql({init: 2, hydrate: 2, store: 0, clear: 2, unload: 0});
-				expect(onUpdateEmitterSpy.callCount).to.be.eq(1);
+				expect(clearResult.isOk).equals(true);
+				expect(driver.isInitialized).equals(false);
+				await expect(driver.hydrate()).resolves.toEqual(undefined);
+				expect(driver.isInitialized).equals(true);
+				expect(getCallCounts()).toStrictEqual({init: 2, hydrate: 2, store: 0, clear: 2, unload: 0});
+				expect(onUpdateEmitterSpy.callCount).equals(1);
 			});
 			it('should unload driver', async () => {
 				await driver.init();
-				expect(driver.isInitialized).to.be.eq(true);
+				expect(driver.isInitialized).equals(true);
 				const unloadResult = await driver.unloadResult();
-				expect(unloadResult.isOk).to.be.eq(true);
-				expect(unloadResult.ok()).to.be.eq(true);
-				expect(driver.isInitialized).to.be.eq(false);
-				expect(getCallCounts()).to.be.eql({init: 2, hydrate: 0, store: 0, clear: 0, unload: 2});
+				expect(unloadResult.isOk).equals(true);
+				expect(unloadResult.ok()).equals(true);
+				expect(driver.isInitialized).equals(false);
+				expect(getCallCounts()).toStrictEqual({init: 2, hydrate: 0, store: 0, clear: 0, unload: 2});
 			});
 			it('should give undefined if not valid data', async () => {
 				await driver.store('ASD' as any);
 				const hydrateResult = await driver.hydrateResult();
-				expect(hydrateResult.ok()).to.be.eq(undefined);
+				expect(hydrateResult.ok()).equals(undefined);
 			});
 			it('should throw error when strict validation', async () => {
 				await driver.store('ASD' as any);
@@ -197,12 +191,12 @@ describe('StorageDriver Result', () => {
 				expect(() => hydrateResult.unwrap()).to.throw(Error);
 			});
 			it('should clone input data', async () => {
-				expect(driver.clone(data)).to.be.eql(data);
+				expect(driver.clone(data)).toStrictEqual(data);
 			});
 			it('should clone Result input data', async () => {
 				const cloneResult: IResult<{test: string}> = driver.cloneResult(data);
-				expect(cloneResult.isOk).to.be.eq(true);
-				expect(cloneResult.ok()).to.be.eql(data);
+				expect(cloneResult.isOk).equals(true);
+				expect(cloneResult.ok()).toStrictEqual(data);
 			});
 			afterEach(async () => {
 				await driver.unload();
@@ -217,13 +211,13 @@ describe('StorageDriver Result', () => {
 					deserialize: (buffer: Buffer) => JSON.parse(buffer.toString()),
 					validator: (data: Data) => dataSchema.safeParse(data).success,
 				}),
-			).to.be.eq(true);
+			).equals(true);
 			expect(
 				isValidPersistSerializer({
 					serialize: (data: Data) => Buffer.from(JSON.stringify(data)),
 					deserialize: (buffer: Buffer) => JSON.parse(buffer.toString()),
 				}),
-			).to.be.eq(true);
+			).equals(true);
 		});
 	});
 });

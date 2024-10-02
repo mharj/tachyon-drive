@@ -3,3 +3,4 @@ node_modules
 .github
 docs
 coverage
+vite.config.ts

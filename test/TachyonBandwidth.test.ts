@@ -1,8 +1,5 @@
-import 'mocha';
-import * as chai from 'chai';
+import {describe, expect, it} from 'vitest';
 import {getTachyonBandwidthName, TachyonBandwidth} from '../src/index.js';
-
-const expect = chai.expect;
 
 describe('TachyonBandwidth', function () {
 	describe('getTachyonBandwidthName', function () {

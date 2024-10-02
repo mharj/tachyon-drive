@@ -1,9 +1,6 @@
 /* eslint-disable @typescript-eslint/require-await */
-import 'mocha';
-import * as chai from 'chai';
+import {describe, expect, it} from 'vitest';
 import {type IStoreProcessor, isValidStoreProcessor} from '../src/index.js';
-
-const expect = chai.expect;
 
 const asyncProcessor: IStoreProcessor<string> = {
 	name: 'AsyncProcessor',
@@ -19,7 +16,7 @@ const promiseProcessor: IStoreProcessor<string> = {
 
 describe('IStoreProcessor', () => {
 	it('should be valid Store Processor', async () => {
-		expect(isValidStoreProcessor(asyncProcessor)).to.be.eq(true);
-		expect(isValidStoreProcessor(promiseProcessor)).to.be.eq(true);
+		expect(isValidStoreProcessor(asyncProcessor)).equals(true);
+		expect(isValidStoreProcessor(promiseProcessor)).equals(true);
 	});
 });

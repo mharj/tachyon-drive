@@ -3,8 +3,7 @@
 /* eslint-disable @typescript-eslint/require-await */
 /* eslint-disable sort-keys */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import 'mocha';
-import * as chai from 'chai';
+import {afterEach, beforeAll, beforeEach, describe, expect, it} from 'vitest';
 import {
 	type ExternalNotifyEventsMap,
 	type IExternalNotify,
@@ -17,7 +16,6 @@ import {
 	StorageDriver,
 } from '../src/index.js';
 import {resetLoggerSpies, sinonLoggerSpy} from './lib/loggerSpy.js';
-import chaiAsPromised from 'chai-as-promised';
 import {ControlledJsonSerializer} from './lib/testSerializer.js';
 import {EventEmitter} from 'events';
 import {LogLevel} from '@avanio/logger-like';
@@ -35,10 +33,6 @@ const unitTestLogMap: LogMappingType = {
 	update: LogLevel.Debug,
 	validator: LogLevel.Debug,
 };
-
-chai.use(chaiAsPromised);
-
-const expect = chai.expect;
 
 const dataSchema = zod.object({
 	test: zod.string(),
@@ -128,7 +122,7 @@ let brokenTestDriver: TestMemoryStorageDriver<Data, Buffer>;
 const brokenTestSerializer = new ControlledJsonSerializer<Data>(dataSchema);
 
 describe('StorageDriver', () => {
-	before(async () => {
+	beforeAll(async () => {
 		await memoryObjectDriver.setData(undefined);
 	});
 	driverSet.forEach(({driver, initValue}) => {
@@ -141,9 +135,9 @@ describe('StorageDriver', () => {
 				onUnloadSpy.resetHistory();
 				onUpdateEmitterSpy.resetHistory();
 				resetLoggerSpies();
-				expect(notifier.listenerCount('update'), 'notifier listener count').to.be.eq(0);
+				expect(notifier.listenerCount('update'), 'notifier listener count').equals(0);
 			});
-			before(async () => {
+			beforeAll(async () => {
 				if (driver instanceof StorageDriver) {
 					driver.setLogger(sinonLoggerSpy);
 					driver.setLogMapping(unitTestLogMap);
@@ -154,74 +148,74 @@ describe('StorageDriver', () => {
 				driver.on('clear', onClearSpy);
 				driver.on('unload', onUnloadSpy);
 				driver.on('update', (data) => {
-					expect(data).to.be.eql(data);
+					expect(data).toStrictEqual(data);
 				});
-				expect(driver.isInitialized).to.be.eq(false);
+				expect(driver.isInitialized).equals(false);
 			});
 			it('should be empty store', async () => {
-				await expect(driver.hydrate()).to.be.eventually.eq(undefined);
-				expect(driver.isInitialized).to.be.eq(true);
-				expect(getCallCounts()).to.be.eql({init: 2, hydrate: 2, store: 0, clear: 0, unload: 0});
-				expect(onUpdateEmitterSpy.callCount).to.be.eq(0);
-				expect(sinonLoggerSpy.debug.callCount).to.be.eq(2);
+				await expect(driver.hydrate()).resolves.toEqual(undefined);
+				expect(driver.isInitialized).equals(true);
+				expect(getCallCounts()).toStrictEqual({init: 2, hydrate: 2, store: 0, clear: 0, unload: 0});
+				expect(onUpdateEmitterSpy.callCount).equals(0);
+				expect(sinonLoggerSpy.debug.callCount).equals(2);
 			});
 			it('should store to storage driver', async () => {
 				await driver.store(data);
-				await expect(driver.hydrate()).to.be.eventually.eql(data);
-				expect(driver.isInitialized).to.be.eq(true);
-				expect(getCallCounts()).to.be.eql({init: 2, hydrate: 2, store: 2, clear: 0, unload: 0});
-				expect(onUpdateEmitterSpy.callCount).to.be.eq(1);
+				await expect(driver.hydrate()).resolves.toEqual(data);
+				expect(driver.isInitialized).equals(true);
+				expect(getCallCounts()).toStrictEqual({init: 2, hydrate: 2, store: 2, clear: 0, unload: 0});
+				expect(onUpdateEmitterSpy.callCount).equals(1);
 				expect(sinonLoggerSpy.debug.callCount).to.be.greaterThanOrEqual(3);
 			});
 			it('should restore data from storage driver', async () => {
 				await driver.setData(initValue as any);
-				await expect(driver.hydrate()).to.be.eventually.eql(data);
-				expect(driver.isInitialized).to.be.eq(true);
-				expect(getCallCounts()).to.be.eql({init: 2, hydrate: 2, store: 0, clear: 0, unload: 0});
-				expect(onUpdateEmitterSpy.callCount).to.be.eq(0);
-				expect(sinonLoggerSpy.debug.callCount).to.be.eq(3);
+				await expect(driver.hydrate()).resolves.toEqual(data);
+				expect(driver.isInitialized).equals(true);
+				expect(getCallCounts()).toStrictEqual({init: 2, hydrate: 2, store: 0, clear: 0, unload: 0});
+				expect(onUpdateEmitterSpy.callCount).equals(0);
+				expect(sinonLoggerSpy.debug.callCount).equals(3);
 			});
 			it('should clear to storage driver', async () => {
 				await driver.clear();
-				expect(driver.isInitialized).to.be.eq(false);
-				await expect(driver.hydrate()).to.be.eventually.eq(undefined);
-				expect(driver.isInitialized).to.be.eq(true);
-				expect(getCallCounts()).to.be.eql({init: 2, hydrate: 2, store: 0, clear: 2, unload: 0});
-				expect(onUpdateEmitterSpy.callCount).to.be.eq(1);
-				expect(sinonLoggerSpy.debug.callCount).to.be.eq(3);
+				expect(driver.isInitialized).equals(false);
+				await expect(driver.hydrate()).resolves.toEqual(undefined);
+				expect(driver.isInitialized).equals(true);
+				expect(getCallCounts()).toStrictEqual({init: 2, hydrate: 2, store: 0, clear: 2, unload: 0});
+				expect(onUpdateEmitterSpy.callCount).equals(1);
+				expect(sinonLoggerSpy.debug.callCount).equals(3);
 			});
 			it('should unload driver', async () => {
 				await driver.init();
-				expect(driver.isInitialized).to.be.eq(true);
-				await expect(driver.unload()).to.be.eventually.eq(true);
-				expect(driver.isInitialized).to.be.eq(false);
-				expect(getCallCounts()).to.be.eql({init: 2, hydrate: 0, store: 0, clear: 0, unload: 2});
-				expect(sinonLoggerSpy.debug.callCount).to.be.eq(2);
+				expect(driver.isInitialized).equals(true);
+				await expect(driver.unload()).resolves.toEqual(true);
+				expect(driver.isInitialized).equals(false);
+				expect(getCallCounts()).toStrictEqual({init: 2, hydrate: 0, store: 0, clear: 0, unload: 2});
+				expect(sinonLoggerSpy.debug.callCount).equals(2);
 			});
 			it('should give undefined if not valid data', async () => {
 				await driver.store('ASD' as any);
-				await expect(driver.hydrate()).to.be.eventually.eq(undefined);
-				expect(sinonLoggerSpy.debug.callCount).to.be.eq(5);
+				await expect(driver.hydrate()).resolves.toEqual(undefined);
+				expect(sinonLoggerSpy.debug.callCount).equals(5);
 			});
 			it('should throw error when strict validation', async () => {
 				await driver.store('ASD' as any);
-				await expect(driver.hydrate({validationThrowsError: true})).to.eventually.be.rejectedWith(Error);
-				expect(sinonLoggerSpy.debug.callCount).to.be.eq(4);
+				await expect(driver.hydrate({validationThrowsError: true})).to.rejects.toThrow(Error);
+				expect(sinonLoggerSpy.debug.callCount).equals(4);
 			});
 			it('should clone input data', async () => {
-				expect(driver.clone(data)).to.be.eql(data);
-				expect(driver.cloneResult(data).ok()).to.be.eql(data);
+				expect(driver.clone(data)).toStrictEqual(data);
+				expect(driver.cloneResult(data).ok()).toStrictEqual(data);
 			});
 			it('should get processor result', async () => {
 				const processor = await driver.getProcessorResult();
-				expect(processor.isOk).to.be.eq(true);
+				expect(processor.isOk).equals(true);
 			});
 			it('should toString()', async () => {
 				expect(driver.toString()).to.be.an('string');
 				expect(driver.toString()).to.satisfies((value: string) => value.startsWith(`${driver.name}(`));
 			});
 			it('should toJSON()', async () => {
-				expect(driver.toJSON()).to.be.eql({
+				expect(driver.toJSON()).toStrictEqual({
 					name: driver.name,
 					bandwidth: driver.bandwidth,
 					processor: (await driver.getProcessor())?.name,
@@ -241,22 +235,22 @@ describe('StorageDriver', () => {
 					deserialize: (buffer: Buffer) => JSON.parse(buffer.toString()),
 					validator: (data: Data) => dataSchema.safeParse(data).success,
 				}),
-			).to.be.eq(true);
+			).equals(true);
 			expect(
 				isValidPersistSerializer({
 					serialize: (data: Data) => Buffer.from(JSON.stringify(data)),
 					deserialize: (buffer: Buffer) => JSON.parse(buffer.toString()),
 				}),
-			).to.be.eq(true);
+			).equals(true);
 		});
 	});
 	describe('broken processor', () => {
 		it('should throw error when broken processor', async () => {
 			const brokenProcessor = {} as IStoreProcessor<Data>;
 			const brokenDriver = new MemoryStorageDriver('BrokenProcessor', objectSerializer, notifier, brokenProcessor);
-			await expect(brokenDriver.getProcessor()).to.eventually.be.rejectedWith(Error);
+			await expect(brokenDriver.getProcessor()).to.rejects.toThrow(Error);
 			const processor = await brokenDriver.getProcessorResult();
-			expect(processor.isOk).to.be.eq(false);
+			expect(processor.isOk).equals(false);
 		});
 	});
 	describe('broken driver', () => {
@@ -265,50 +259,50 @@ describe('StorageDriver', () => {
 		});
 		it('should throw error when init', async () => {
 			brokenTestDriver.setThrows('init');
-			await expect(brokenTestDriver.init()).to.eventually.be.rejectedWith(Error);
+			await expect(brokenTestDriver.init()).to.rejects.toThrow(Error);
 			expect((await brokenTestDriver.initResult()).err()).to.be.instanceOf(Error);
 		});
 		it('should throw error when hydrate', async () => {
 			brokenTestDriver.setThrows('hydrate');
-			await expect(brokenTestDriver.hydrate()).to.eventually.be.rejectedWith(Error);
+			await expect(brokenTestDriver.hydrate()).to.rejects.toThrow(Error);
 			expect((await brokenTestDriver.hydrateResult()).err()).to.be.instanceOf(Error);
 		});
 		it('should throw error when store', async () => {
 			brokenTestDriver.setThrows('store');
-			await expect(brokenTestDriver.store({test: 'value'})).to.eventually.be.rejectedWith(Error);
+			await expect(brokenTestDriver.store({test: 'value'})).to.rejects.toThrow(Error);
 			expect((await brokenTestDriver.storeResult({test: 'value'})).err()).to.be.instanceOf(Error);
 		});
 		it('should throw error when clear', async () => {
 			brokenTestDriver.setThrows('clear');
-			await expect(brokenTestDriver.clear()).to.eventually.be.rejectedWith(Error);
+			await expect(brokenTestDriver.clear()).to.rejects.toThrow(Error);
 			expect((await brokenTestDriver.clearResult()).err()).to.be.instanceOf(Error);
 		});
 		it('should throw error when unload', async () => {
 			brokenTestDriver.setThrows('unload');
-			await expect(brokenTestDriver.unload()).to.eventually.be.rejectedWith(Error);
+			await expect(brokenTestDriver.unload()).to.rejects.toThrow(Error);
 			expect((await brokenTestDriver.unloadResult()).err()).to.be.instanceOf(Error);
 		});
 		it('should throw error when unload', async () => {
 			brokenTestDriver.setThrows('unload');
-			await expect(brokenTestDriver.unload()).to.eventually.be.rejectedWith(Error);
+			await expect(brokenTestDriver.unload()).to.rejects.toThrow(Error);
 			expect((await brokenTestDriver.unloadResult()).err()).to.be.instanceOf(Error);
 		});
 		it('should throw error when deserialize', async () => {
 			brokenTestSerializer.setThrows('deserialize');
 			await brokenTestDriver.setData(Buffer.from(JSON.stringify({test: 'value'})));
-			await expect(brokenTestDriver.hydrate({deserializationThrowsError: true})).to.eventually.be.rejectedWith(Error);
+			await expect(brokenTestDriver.hydrate({deserializationThrowsError: true})).to.rejects.toThrow(Error);
 			expect((await brokenTestDriver.hydrateResult({deserializationThrowsError: true})).err()).to.be.instanceOf(Error);
 		});
 		it('should throw error when run validation', async () => {
 			brokenTestSerializer.setThrows('validator');
 			await brokenTestDriver.setData(Buffer.from(JSON.stringify({test: 'value'})));
-			await expect(brokenTestDriver.hydrate({validationThrowsError: true})).to.eventually.be.rejectedWith(Error);
+			await expect(brokenTestDriver.hydrate({validationThrowsError: true})).to.rejects.toThrow(Error);
 			expect((await brokenTestDriver.hydrateResult({validationThrowsError: true})).err()).to.be.instanceOf(Error);
 		});
 		it('should throw error when run serialize', async () => {
 			brokenTestSerializer.setThrows('serialize');
 			await brokenTestDriver.setData(Buffer.from(JSON.stringify({test: 'value'})));
-			await expect(brokenTestDriver.store({test: 'value'})).to.eventually.be.rejectedWith(Error);
+			await expect(brokenTestDriver.store({test: 'value'})).to.rejects.toThrow(Error);
 			expect((await brokenTestDriver.storeResult({test: 'value'})).err()).to.be.instanceOf(Error);
 			expect(brokenTestDriver.cloneResult(data).err()).to.be.instanceOf(Error);
 		});
