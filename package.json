@@ -18,7 +18,7 @@
 		"build": "tsup src/index.ts --minify --sourcemap --format cjs,esm --dts --clean",
 		"prepublishOnly": "npm run build",
 		"test": "vitest test --run --no-isolate --coverage",
-		"coverage": "vitest test --run --no-isolate --reporter=dot --coverage --coverage.reporter=clover",
+		"coverage": "vitest test --run --no-isolate --reporter=dot --coverage --coverage.reporter=lcov",
 		"lint": "eslint . --ext .ts",
 		"validate": "tsc --noEmit --project tsconfig.test.json",
 		"ui": "vitest --ui"
