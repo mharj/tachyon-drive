@@ -62,7 +62,7 @@ jobs:
         if: success() || failure()
         with:
           name: test-results
-          path: test-results.xml
+          path: ./test-results.xml
           reporter: jest-junit
 
       - name: Run linter checks
