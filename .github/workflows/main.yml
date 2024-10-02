@@ -57,11 +57,13 @@ jobs:
         if: env.HAVE_UNIT_TEST_SCRIPT == 'true'
         run: ${{ env.NPM }} test
 
-      - uses: actions/upload-artifact@v4
+      - name: Test Report
+        uses: dorny/test-reporter@v1
         if: success() || failure()
         with:
           name: test-results
           path: test-results.xml
+          reporter: jest-junit
 
       - name: Run linter checks
         if: env.HAVE_LINT_SCRIPT == 'true'
