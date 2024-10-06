@@ -2,6 +2,7 @@ import type EventEmitter from 'events';
 
 /**
  * The events that the external notify event emitter can emit.
+ * @since v0.9.0
  */
 export type ExternalNotifyEventsMap = {
 	update: [timeStamp: Date];
@@ -9,6 +10,7 @@ export type ExternalNotifyEventsMap = {
 
 /**
  * this interface is for building external update notifiers if driver does not internally support it.
+ * @since v0.9.0
  */
 export interface IExternalNotify extends EventEmitter<ExternalNotifyEventsMap> {
 	/**

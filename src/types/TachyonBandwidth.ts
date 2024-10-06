@@ -1,5 +1,6 @@
 /**
  * Speed of the Tachyon Storage driver.
+ * @since v0.6.0
  */
 export const enum TachyonBandwidth {
 	/** use when driver is synchronous or near synchronous */
@@ -14,6 +15,10 @@ export const enum TachyonBandwidth {
 	VerySmall = 4,
 }
 
+/**
+ * Get the name of the TachyonBandwidth.
+ * @since v0.6.0
+ */
 export function getTachyonBandwidthName(bandwidth: TachyonBandwidth): 'VeryLarge' | 'Large' | 'Normal' | 'Small' | 'VerySmall' {
 	switch (bandwidth) {
 		case TachyonBandwidth.VeryLarge:

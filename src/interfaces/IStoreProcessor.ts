@@ -1,6 +1,7 @@
 /**
  * Interface for a store processor that processes data before it is written to storage and after it is loaded from storage.
  * @template Output - The type of the data that is written to storage.
+ * @since v0.0.1
  */
 export interface IStoreProcessor<Output> {
 	readonly name: string;
@@ -19,6 +20,7 @@ export interface IStoreProcessor<Output> {
  * @template Output - The type of the data that is written to storage.
  * @param {unknown} value - The value to check.
  * @returns {boolean} `true` if the value is an instance of `IStoreProcessor`, `false` otherwise.
+ * @since v0.0.5
  */
 export function isValidStoreProcessor<Output>(value: unknown): value is IStoreProcessor<Output> {
 	return (

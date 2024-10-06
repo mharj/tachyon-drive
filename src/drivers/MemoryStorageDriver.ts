@@ -5,6 +5,7 @@ import {TachyonBandwidth} from '../types/TachyonBandwidth.js';
  * A storage driver that stores data in memory.
  * @template Input - The type of the data to serialize and deserialize.
  * @template Output - The type of the data to store.
+ * @since v0.6.0
  * @example
  * const driver: IStorageDriver<SomeType> = new MemoryStorageDriver<SomeType>('MemoryStorageDriver', serializer, null);
  */

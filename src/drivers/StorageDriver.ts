@@ -11,6 +11,7 @@ import {type StorageDriverJson} from '../types/StorageDriverJson.js';
 
 /**
  * The default log levels for the storage driver.
+ * @since v0.4.0
  */
 export const defaultLogLevels = {
 	clear: LogLevel.None,
@@ -23,12 +24,17 @@ export const defaultLogLevels = {
 	validator: LogLevel.Warn,
 };
 
+/**
+ * The log key mapping for the storage driver.
+ * @since v0.4.0
+ */
 export type LogMappingType = LogMapping<keyof typeof defaultLogLevels>; // build type
 
 /**
  * Abstract class that provides a simple interface for storing and retrieving data using a specified storage mechanism.
  * @template Input - The type of the data to store and retrieve.
  * @template Output - The type of the data to serialize and deserialize.
+ * @since v0.6.0
  */
 export abstract class StorageDriver<Input, Output> extends EventEmitter<StorageDriverEventsMap<Input>> implements IStorageDriver<Input>, ISetOptionalLogger {
 	public abstract readonly bandwidth: TachyonBandwidth;

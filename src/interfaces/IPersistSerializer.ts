@@ -5,6 +5,7 @@ import type {ILoggerLike} from '@avanio/logger-like';
  * @template Input - The type of the data that is serialized and deserialized.
  * @template Output - The type of the data that is written to storage.
  * @template ValidateInput - The type of the data that is validated.
+ * @since v0.7.0
  */
 export interface IPersistSerializer<Input, Output, ValidateInput = Input> {
 	readonly name: string;
@@ -29,6 +30,7 @@ export interface IPersistSerializer<Input, Output, ValidateInput = Input> {
  * @template ValidateInput - The type of the data that is validated.
  * @param {unknown} value - The value to check.
  * @returns {boolean} `true` if the value is an instance of `IPersistSerializer`, `false` otherwise.
+ * @since v0.0.5
  */
 export function isValidPersistSerializer<Input, Output, ValidateInput = Input>(value: unknown): value is IPersistSerializer<Input, Output, ValidateInput> {
 	return (

@@ -9,6 +9,7 @@ import {type IPersistSerializer} from './interfaces/IPersistSerializer.js';
  * @param {IPersistSerializer} current - The current serializer.
  * @param {IPersistSerializer} nextSer - The next serializer.
  * @returns {IPersistSerializer} The chained serializer.
+ * @since v0.7.0
  * @example
  * const baseSerializer: IPersistSerializer<Data, string> = {
  *   name: 'BaseSerializer',

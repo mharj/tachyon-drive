@@ -4,6 +4,10 @@ import type {IResult} from '@luolapeikko/result-option';
 import type {StorageDriverJson} from '../types/StorageDriverJson.js';
 import type {TachyonBandwidth} from '../types/TachyonBandwidth.js';
 
+/**
+ * Events emitted by the storage driver.
+ * @since v0.9.0
+ */
 export type StorageDriverEventsMap<Input> = {
 	hydrate: [isHydrating: boolean];
 	init: [isInitializing: boolean];
@@ -15,6 +19,7 @@ export type StorageDriverEventsMap<Input> = {
 
 /**
  * Interface for options to use when hydrating data.
+ * @since v0.0.8
  */
 export interface IHydrateOptions {
 	validationThrowsError?: boolean;
@@ -24,6 +29,7 @@ export interface IHydrateOptions {
 /**
  * Interface for a storage driver that provides a simple interface for storing and retrieving data using a specified storage mechanism.
  * @template Input - The type of the data to store and retrieve.
+ * @since v0.9.0
  */
 export interface IStorageDriver<Input, JsonOutput extends StorageDriverJson = StorageDriverJson> extends EventEmitter<StorageDriverEventsMap<Input>> {
 	/**
