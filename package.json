@@ -1,6 +1,6 @@
 {
 	"name": "tachyon-drive",
-	"version": "0.10.0",
+	"version": "0.10.1",
 	"description": "Extendable typescript/javascript storage driver implementation",
 	"type": "module",
 	"main": "./dist/index.cjs",
