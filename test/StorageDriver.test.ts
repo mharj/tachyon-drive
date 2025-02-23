@@ -1,49 +1,45 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/require-await */
-/* eslint-disable sort-keys */
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import {EventEmitter} from 'events';
+import {LogLevel} from '@avanio/logger-like';
+import {spy} from 'sinon';
 import {afterEach, beforeAll, beforeEach, describe, expect, it} from 'vitest';
+import {z} from 'zod';
 import {
 	type ExternalNotifyEventsMap,
 	type IExternalNotify,
 	type IPersistSerializer,
 	type IStoreProcessor,
 	isValidPersistSerializer,
-	type LogMappingType,
 	MemoryStorageDriver,
 	nextSerializer,
 	StorageDriver,
+	type StorageDriverLogMapping,
 } from '../src/index.js';
 import {resetLoggerSpies, sinonLoggerSpy} from './lib/loggerSpy.js';
-import {ControlledJsonSerializer} from './lib/testSerializer.js';
-import {EventEmitter} from 'events';
-import {LogLevel} from '@avanio/logger-like';
-import sinon from 'sinon';
 import {TestMemoryStorageDriver} from './lib/testDriver.js';
-import zod from 'zod';
+import {ControlledJsonSerializer} from './lib/testSerializer.js';
 
-const unitTestLogMap: LogMappingType = {
+const unitTestLogMap: StorageDriverLogMapping = {
 	clear: LogLevel.Debug,
 	deserialize: LogLevel.Debug,
 	hydrate: LogLevel.Debug,
 	init: LogLevel.Debug,
+	processor: LogLevel.Debug,
 	store: LogLevel.Debug,
 	unload: LogLevel.Debug,
 	update: LogLevel.Debug,
 	validator: LogLevel.Debug,
 };
 
-const dataSchema = zod.object({
-	test: zod.string(),
+const dataSchema = z.object({
+	test: z.string(),
 });
 
-type Data = zod.infer<typeof dataSchema>;
+type Data = z.infer<typeof dataSchema>;
 
 const nullProcessor: IStoreProcessor<Data> = {
 	name: 'NullProcessor',
-	preStore: async (data: Data) => data,
-	postHydrate: async (data: Data) => data,
+	preStore: (data: Data) => Promise.resolve(data),
+	postHydrate: (data: Data) => Promise.resolve(data),
 };
 
 const objectSerializer: IPersistSerializer<Data, Data> = {
@@ -56,7 +52,7 @@ const objectSerializer: IPersistSerializer<Data, Data> = {
 const jsonSerializer: IPersistSerializer<Data, string> = {
 	name: 'JsonSerializer',
 	serialize: (data: Data) => JSON.stringify(data),
-	deserialize: (buffer: string) => JSON.parse(buffer),
+	deserialize: (buffer: string) => JSON.parse(buffer) as Data,
 	validator: (data: Data) => dataSchema.safeParse(data).success,
 };
 
@@ -72,11 +68,11 @@ const strToBufferSerializer: IPersistSerializer<string, Buffer> = {
 // [Object <=> Object] => [Object <=> JSON] => [JSON <=> Buffer]
 const bufferSerializer: IPersistSerializer<Data, Buffer> = nextSerializer<Data, string, Buffer>(objecToJson, strToBufferSerializer);
 
-const onInitSpy = sinon.spy();
-const onHydrateSpy = sinon.spy();
-const onStoreSpy = sinon.spy();
-const onClearSpy = sinon.spy();
-const onUnloadSpy = sinon.spy();
+const onInitSpy = spy();
+const onHydrateSpy = spy();
+const onStoreSpy = spy();
+const onClearSpy = spy();
+const onUnloadSpy = spy();
 
 export function getCallCounts() {
 	return {
@@ -103,18 +99,19 @@ class SimpleNotify extends EventEmitter<ExternalNotifyEventsMap> implements IExt
 }
 
 const notifier = new SimpleNotify();
-const onUpdateEmitterSpy = sinon.spy(notifier, 'notifyUpdate');
+const onUpdateEmitterSpy = spy(notifier, 'notifyUpdate');
 
 const memoryObjectDriver = new MemoryStorageDriver('MemoryStorageDriver - Object', objectSerializer, notifier, nullProcessor);
 
 const data = dataSchema.parse({test: 'demo'});
 
 const driverSet = new Set([
-	{driver: memoryObjectDriver, initValue: objectSerializer.serialize(data, undefined)},
+	{driver: memoryObjectDriver, initValue: objectSerializer.serialize(data, undefined), processor: true},
 	{driver: new MemoryStorageDriver('MemoryStorageDriver - Buffer', bufferSerializer, notifier), initValue: bufferSerializer.serialize(data, undefined)},
 	{
 		driver: new MemoryStorageDriver('MemoryStorageDriver - Object', objectSerializer, notifier, () => nullProcessor),
 		initValue: objectSerializer.serialize(data, undefined),
+		processor: true,
 	},
 ]);
 
@@ -125,7 +122,7 @@ describe('StorageDriver', () => {
 	beforeAll(async () => {
 		await memoryObjectDriver.setData(undefined);
 	});
-	driverSet.forEach(({driver, initValue}) => {
+	driverSet.forEach(({driver, initValue, processor}) => {
 		describe(driver.name, () => {
 			beforeEach(() => {
 				onInitSpy.resetHistory();
@@ -137,10 +134,10 @@ describe('StorageDriver', () => {
 				resetLoggerSpies();
 				expect(notifier.listenerCount('update'), 'notifier listener count').equals(0);
 			});
-			beforeAll(async () => {
+			beforeAll(() => {
 				if (driver instanceof StorageDriver) {
-					driver.setLogger(sinonLoggerSpy);
-					driver.setLogMapping(unitTestLogMap);
+					driver.logger.setLogger(sinonLoggerSpy);
+					driver.logger.setLogMapping(unitTestLogMap);
 				}
 				driver.on('init', onInitSpy);
 				driver.on('hydrate', onHydrateSpy);
@@ -157,7 +154,7 @@ describe('StorageDriver', () => {
 				expect(driver.isInitialized).equals(true);
 				expect(getCallCounts()).toStrictEqual({init: 2, hydrate: 2, store: 0, clear: 0, unload: 0});
 				expect(onUpdateEmitterSpy.callCount).equals(0);
-				expect(sinonLoggerSpy.debug.callCount).equals(2);
+				expect(sinonLoggerSpy.debug.callCount).equals(processor ? 3 : 2);
 			});
 			it('should store to storage driver', async () => {
 				await driver.store(data);
@@ -202,7 +199,7 @@ describe('StorageDriver', () => {
 				await expect(driver.hydrate({validationThrowsError: true})).to.rejects.toThrow(Error);
 				expect(sinonLoggerSpy.debug.callCount).equals(4);
 			});
-			it('should clone input data', async () => {
+			it('should clone input data', () => {
 				expect(driver.clone(data)).toStrictEqual(data);
 				expect(driver.cloneResult(data).ok()).toStrictEqual(data);
 			});
@@ -210,7 +207,16 @@ describe('StorageDriver', () => {
 				const processor = await driver.getProcessorResult();
 				expect(processor.isOk).equals(true);
 			});
-			it('should toString()', async () => {
+			it('should get processor', async () => {
+				await driver.init();
+				const processor = driver.processor;
+				if (!processor) return;
+				expect(processor.name).to.be.an('string');
+			});
+			it('should get get error getting processor if not initialized yet', () => {
+				expect(() => driver.processor).toThrow(Error);
+			});
+			it('should toString()', () => {
 				expect(driver.toString()).to.be.an('string');
 				expect(driver.toString()).to.satisfies((value: string) => value.startsWith(`${driver.name}(`));
 			});
@@ -232,14 +238,14 @@ describe('StorageDriver', () => {
 			expect(
 				isValidPersistSerializer({
 					serialize: (data: Data) => Buffer.from(JSON.stringify(data)),
-					deserialize: (buffer: Buffer) => JSON.parse(buffer.toString()),
+					deserialize: (buffer: Buffer) => JSON.parse(buffer.toString()) as Data,
 					validator: (data: Data) => dataSchema.safeParse(data).success,
 				}),
 			).equals(true);
 			expect(
 				isValidPersistSerializer({
 					serialize: (data: Data) => Buffer.from(JSON.stringify(data)),
-					deserialize: (buffer: Buffer) => JSON.parse(buffer.toString()),
+					deserialize: (buffer: Buffer) => JSON.parse(buffer.toString()) as Data,
 				}),
 			).equals(true);
 		});

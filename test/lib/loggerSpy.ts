@@ -1,5 +1,5 @@
-import * as sinon from 'sinon';
 import {type ILoggerLike} from '@avanio/logger-like';
+import * as sinon from 'sinon';
 
 const logDebugSpy = sinon.spy();
 const logInfoSpy = sinon.spy();

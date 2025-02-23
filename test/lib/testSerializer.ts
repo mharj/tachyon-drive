@@ -1,5 +1,5 @@
-import {type IPersistSerializer} from '../../src/index.js';
 import {type z} from 'zod';
+import {type IPersistSerializer} from '../../src/index.js';
 
 export class ControlledJsonSerializer<Data> implements IPersistSerializer<Data, Buffer> {
 	public readonly name = 'ControlledSerializer';

@@ -1,8 +1,10 @@
-import type {AsJson} from '@luolapeikko/ts-common';
 import type EventEmitter from 'events';
 import type {IResult} from '@luolapeikko/result-option';
+import type {AsJson} from '@luolapeikko/ts-common';
 import type {StorageDriverJson} from '../types/StorageDriverJson.js';
 import type {TachyonBandwidth} from '../types/TachyonBandwidth.js';
+import {type IPersistSerializer} from './IPersistSerializer.js';
+import {type IStoreProcessor} from './IStoreProcessor.js';
 
 /**
  * Events emitted by the storage driver.
@@ -29,9 +31,12 @@ export interface IHydrateOptions {
 /**
  * Interface for a storage driver that provides a simple interface for storing and retrieving data using a specified storage mechanism.
  * @template Input - The type of the data to store and retrieve.
- * @since v0.9.0
+ * @template Output - The type of the data to serialize and deserialize.
+ * @template JsonOutput - The type of the data from the JSON representation of the storage driver.
+ * @since v0.11.0
  */
-export interface IStorageDriver<Input, JsonOutput extends StorageDriverJson = StorageDriverJson> extends EventEmitter<StorageDriverEventsMap<Input>> {
+export interface IStorageDriver<Input, Output = unknown, JsonOutput extends StorageDriverJson = StorageDriverJson>
+	extends EventEmitter<StorageDriverEventsMap<Input>> {
 	/**
 	 * Indicates the speed of the storage driver.
 	 */
@@ -44,6 +49,16 @@ export interface IStorageDriver<Input, JsonOutput extends StorageDriverJson = St
 	 * The name of the storage driver.
 	 */
 	readonly name: string;
+
+	/**
+	 * Get current processor (after init)
+	 */
+	readonly processor: IStoreProcessor<Output> | undefined;
+
+	/**
+	 * Get Current serializer
+	 */
+	readonly serializer: IPersistSerializer<Input, Output>;
 	/**
 	 * Initializes the storage driver.
 	 * @returns A boolean or promise of boolean that resolves to `true` if the storage driver was successfully initialized, or `false` otherwise.

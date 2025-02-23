@@ -1,5 +1,5 @@
-import {StorageDriver} from './StorageDriver.js';
 import {TachyonBandwidth} from '../types/TachyonBandwidth.js';
+import {StorageDriver} from './StorageDriver.js';
 
 /**
  * A storage driver that stores data in memory.

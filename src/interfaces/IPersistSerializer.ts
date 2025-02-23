@@ -16,7 +16,7 @@ export interface IPersistSerializer<Input, Output, ValidateInput = Input> {
 	/**
 	 * Deserialize data from store.
 	 */
-	deserialize: (value: Output, logger: ILoggerLike | undefined) => Input;
+	deserialize: (value: Output, logger: ILoggerLike | undefined) => ValidateInput;
 	/**
 	 * Optional validator callback to validate the data after hydrate.
 	 */

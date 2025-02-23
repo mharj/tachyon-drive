@@ -1,13 +1,13 @@
-import {Err, type IResult, Ok} from '@luolapeikko/result-option';
-import {getTachyonBandwidthName, type TachyonBandwidth} from '../types/TachyonBandwidth.js';
-import {type IHydrateOptions, type IStorageDriver, type StorageDriverEventsMap} from '../interfaces/IStorageDriver.js';
-import {type ILoggerLike, type ISetOptionalLogger, LogLevel, type LogMapping, MapLogger} from '@avanio/logger-like';
-import {type IPersistSerializer, isValidPersistSerializer} from '../interfaces/IPersistSerializer.js';
-import {type IStoreProcessor, isValidStoreProcessor} from '../interfaces/IStoreProcessor.js';
 import {EventEmitter} from 'events';
-import {type IExternalNotify} from '../interfaces/IExternalUpdateNotify.js';
+import {type ILoggerLike, LogLevel, type LogMapInfer, MapLogger} from '@avanio/logger-like';
+import {Err, type IResult, Ok} from '@luolapeikko/result-option';
 import type {Loadable} from '@luolapeikko/ts-common';
+import {type IExternalNotify} from '../interfaces/IExternalUpdateNotify.js';
+import {type IPersistSerializer, isValidPersistSerializer} from '../interfaces/IPersistSerializer.js';
+import {type IHydrateOptions, type IStorageDriver, type StorageDriverEventsMap} from '../interfaces/IStorageDriver.js';
+import {type IStoreProcessor, isValidStoreProcessor} from '../interfaces/IStoreProcessor.js';
 import {type StorageDriverJson} from '../types/StorageDriverJson.js';
+import {getTachyonBandwidthName, type TachyonBandwidth} from '../types/TachyonBandwidth.js';
 
 /**
  * The default log levels for the storage driver.
@@ -18,6 +18,7 @@ export const defaultLogLevels = {
 	deserialize: LogLevel.Warn,
 	hydrate: LogLevel.Debug,
 	init: LogLevel.None,
+	processor: LogLevel.Debug,
 	store: LogLevel.Debug,
 	unload: LogLevel.None,
 	update: LogLevel.None,
@@ -26,23 +27,30 @@ export const defaultLogLevels = {
 
 /**
  * The log key mapping for the storage driver.
+ * @deprecated use `StorageDriverLogMapping` instead
  * @since v0.4.0
  */
-export type LogMappingType = LogMapping<keyof typeof defaultLogLevels>; // build type
+export type LogMappingType = LogMapInfer<typeof defaultLogLevels>; // build type
+
+/**
+ * The log key mapping for the storage driver.
+ * @since v0.11.0
+ */
+export type StorageDriverLogMapping = LogMapInfer<typeof defaultLogLevels>; // build type
 
 /**
  * Abstract class that provides a simple interface for storing and retrieving data using a specified storage mechanism.
  * @template Input - The type of the data to store and retrieve.
  * @template Output - The type of the data to serialize and deserialize.
- * @since v0.6.0
+ * @since v0.11.0
  */
-export abstract class StorageDriver<Input, Output> extends EventEmitter<StorageDriverEventsMap<Input>> implements IStorageDriver<Input>, ISetOptionalLogger {
+export abstract class StorageDriver<Input, Output> extends EventEmitter<StorageDriverEventsMap<Input>> implements IStorageDriver<Input, Output> {
 	public abstract readonly bandwidth: TachyonBandwidth;
 	public readonly name: string;
 	private loadableProcessor: Loadable<IStoreProcessor<Output>> | undefined;
-	private processor: IStoreProcessor<Output> | undefined;
-	private serializer: IPersistSerializer<Input, Output>;
-	protected logger: MapLogger<LogMappingType>;
+	private _processor: IStoreProcessor<Output> | undefined;
+	public readonly serializer: IPersistSerializer<Input, Output>;
+	public readonly logger: MapLogger<StorageDriverLogMapping>;
 	private extNotify: IExternalNotify | null;
 	private _isInitialized = false;
 
@@ -75,22 +83,6 @@ export abstract class StorageDriver<Input, Output> extends EventEmitter<StorageD
 		this.handleUpdate = this.handleUpdate.bind(this);
 		// hook external notifier to handle update
 		this.extNotify = extNotify;
-	}
-
-	/**
-	 * Set the logger for the storage driver.
-	 * @param logger - The logger to use for logging messages.
-	 */
-	public setLogger(logger: ILoggerLike | undefined): void {
-		this.logger.setLogger(logger);
-	}
-
-	/**
-	 * Change log levels for the storage driver.
-	 * @param map - The log key mapping to use for logging messages.
-	 */
-	public setLogMapping(map: Partial<LogMappingType>): void {
-		this.logger.setLogMapping(map);
 	}
 
 	public get isInitialized(): boolean {
@@ -267,6 +259,16 @@ export abstract class StorageDriver<Input, Output> extends EventEmitter<StorageD
 	}
 
 	/**
+	 * Get current processor
+	 */
+	public get processor(): IStoreProcessor<Output> | undefined {
+		if (!this._isInitialized) {
+			throw new Error('Storage driver is not initialized');
+		}
+		return this._processor;
+	}
+
+	/**
 	 * Clone the given data with the serializer and return Result of the cloned data.
 	 * @param {Input} data - The data to clone.
 	 * @returns {Result<Input>} The cloned data.
@@ -287,8 +289,8 @@ export abstract class StorageDriver<Input, Output> extends EventEmitter<StorageD
 		if (!this.loadableProcessor) {
 			return undefined;
 		}
-		if (this.processor) {
-			return this.processor;
+		if (this._processor) {
+			return this._processor;
 		}
 		// allow loading processor only once
 		if (typeof this.loadableProcessor === 'function') {
@@ -298,7 +300,8 @@ export abstract class StorageDriver<Input, Output> extends EventEmitter<StorageD
 		if (!isValidStoreProcessor(this.loadableProcessor)) {
 			throw new TypeError('Invalid processor');
 		}
-		this.processor = this.loadableProcessor;
+		this._processor = this.loadableProcessor;
+		this.logger.logKey('processor', `${this.name}: processor (${this._processor.name}) loaded`);
 		return this.loadableProcessor;
 	}
 
@@ -320,6 +323,31 @@ export abstract class StorageDriver<Input, Output> extends EventEmitter<StorageD
 	 */
 	public getSerializer(): IPersistSerializer<Input, Output> {
 		return this.serializer;
+	}
+
+	public override toString(): string {
+		return `${this.name}(serializer=${this.serializer.name}, processor=${this._processor?.name || 'undefined'}, bandwidth=${getTachyonBandwidthName(this.bandwidth)})`;
+	}
+
+	/**
+	 * Build the default JSON representation of the storage driver.
+	 * @returns {StorageDriverJson} The JSON representation of the storage driver.
+	 * @example
+	 * // override the toJSON method to include additional (typed) properties
+	 * public override toJSON(): FooStorageDriverJson {
+	 * 	return {
+	 * 		...super.toJSON(),
+	 * 		foo: this.foo,
+	 * 	};
+	 * }
+	 */
+	public toJSON(): StorageDriverJson {
+		return {
+			bandwidth: this.bandwidth,
+			name: this.name,
+			processor: this._processor?.name,
+			serializer: this.serializer.name,
+		};
 	}
 
 	/**
@@ -352,31 +380,6 @@ export abstract class StorageDriver<Input, Output> extends EventEmitter<StorageD
 			}
 		}
 		return undefined;
-	}
-
-	public override toString(): string {
-		return `${this.name}(serializer=${this.serializer.name}, processor=${this.processor?.name || 'undefined'}, bandwidth=${getTachyonBandwidthName(this.bandwidth)})`;
-	}
-
-	/**
-	 * Build the default JSON representation of the storage driver.
-	 * @returns {StorageDriverJson} The JSON representation of the storage driver.
-	 * @example
-	 * // override the toJSON method to include additional (typed) properties
-	 * public override toJSON(): FooStorageDriverJson {
-	 * 	return {
-	 * 		...super.toJSON(),
-	 * 		foo: this.foo,
-	 * 	};
-	 * }
-	 */
-	public toJSON(): StorageDriverJson {
-		return {
-			bandwidth: this.bandwidth,
-			name: this.name,
-			processor: this.processor?.name,
-			serializer: this.serializer.name,
-		};
 	}
 
 	/**

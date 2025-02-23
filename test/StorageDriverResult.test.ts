@@ -1,10 +1,8 @@
-/* eslint-disable no-unused-expressions */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/require-await */
-/* eslint-disable sort-keys */
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import {EventEmitter} from 'events';
+import type {IResult} from '@luolapeikko/result-option';
+import {spy} from 'sinon';
 import {afterEach, beforeAll, beforeEach, describe, expect, it} from 'vitest';
+import {z} from 'zod';
 import {
 	type ExternalNotifyEventsMap,
 	type IExternalNotify,
@@ -14,10 +12,6 @@ import {
 	MemoryStorageDriver,
 	nextSerializer,
 } from '../src/index.js';
-import {EventEmitter} from 'events';
-import type {IResult} from '@luolapeikko/result-option';
-import sinon from 'sinon';
-import {z} from 'zod';
 
 const dataSchema = z.object({
 	test: z.string(),
@@ -27,8 +21,8 @@ type Data = z.infer<typeof dataSchema>;
 
 const nullProcessor: IStoreProcessor<Data> = {
 	name: 'NullProcessor',
-	preStore: async (data: Data) => data,
-	postHydrate: async (data: Data) => data,
+	preStore: (data: Data) => Promise.resolve(data),
+	postHydrate: (data: Data) => Promise.resolve(data),
 };
 
 const objectSerializer: IPersistSerializer<Data, Data> = {
@@ -41,7 +35,7 @@ const objectSerializer: IPersistSerializer<Data, Data> = {
 const jsonSerializer: IPersistSerializer<Data, string> = {
 	name: 'JsonSerializer',
 	serialize: (data: Data) => JSON.stringify(data),
-	deserialize: (buffer: string) => JSON.parse(buffer),
+	deserialize: (buffer: string) => JSON.parse(buffer) as Data,
 	validator: (data: Data) => dataSchema.safeParse(data).success,
 };
 
@@ -57,11 +51,11 @@ const strToBufferSerializer: IPersistSerializer<string, Buffer> = {
 // [Object <=> Object] => [Object <=> JSON] => [JSON <=> Buffer]
 const bufferSerializer: IPersistSerializer<Data, Buffer> = nextSerializer<Data, string, Buffer>(objecToJson, strToBufferSerializer);
 
-const onInitSpy = sinon.spy();
-const onHydrateSpy = sinon.spy();
-const onStoreSpy = sinon.spy();
-const onClearSpy = sinon.spy();
-const onUnloadSpy = sinon.spy();
+const onInitSpy = spy();
+const onHydrateSpy = spy();
+const onStoreSpy = spy();
+const onClearSpy = spy();
+const onUnloadSpy = spy();
 
 export function getCallCounts() {
 	return {
@@ -88,7 +82,7 @@ class SimpleNotify extends EventEmitter<ExternalNotifyEventsMap> implements IExt
 }
 
 const notifier = new SimpleNotify();
-const onUpdateEmitterSpy = sinon.spy(notifier, 'notifyUpdate');
+const onUpdateEmitterSpy = spy(notifier, 'notifyUpdate');
 
 const memoryObjectDriver = new MemoryStorageDriver('MemoryStorageDriver - Object', objectSerializer, notifier, nullProcessor);
 
@@ -190,10 +184,10 @@ describe('StorageDriver Result', () => {
 				const hydrateResult = await driver.hydrateResult({validationThrowsError: true});
 				expect(() => hydrateResult.unwrap()).to.throw(Error);
 			});
-			it('should clone input data', async () => {
+			it('should clone input data', () => {
 				expect(driver.clone(data)).toStrictEqual(data);
 			});
-			it('should clone Result input data', async () => {
+			it('should clone Result input data', () => {
 				const cloneResult: IResult<{test: string}> = driver.cloneResult(data);
 				expect(cloneResult.isOk).equals(true);
 				expect(cloneResult.ok()).toStrictEqual(data);
@@ -208,14 +202,14 @@ describe('StorageDriver Result', () => {
 			expect(
 				isValidPersistSerializer({
 					serialize: (data: Data) => Buffer.from(JSON.stringify(data)),
-					deserialize: (buffer: Buffer) => JSON.parse(buffer.toString()),
+					deserialize: (buffer: Buffer) => JSON.parse(buffer.toString()) as Data,
 					validator: (data: Data) => dataSchema.safeParse(data).success,
 				}),
 			).equals(true);
 			expect(
 				isValidPersistSerializer({
 					serialize: (data: Data) => Buffer.from(JSON.stringify(data)),
-					deserialize: (buffer: Buffer) => JSON.parse(buffer.toString()),
+					deserialize: (buffer: Buffer) => JSON.parse(buffer.toString()) as Data,
 				}),
 			).equals(true);
 		});
