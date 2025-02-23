@@ -44,7 +44,7 @@ export type StorageDriverLogMapping = LogMapInfer<typeof defaultLogLevels>; // b
  * @template Output - The type of the data to serialize and deserialize.
  * @since v0.11.0
  */
-export abstract class StorageDriver<Input, Output> extends EventEmitter<StorageDriverEventsMap<Input>> implements IStorageDriver<Input, Output> {
+export abstract class StorageDriver<Input, Output> extends EventEmitter<StorageDriverEventsMap<Input>> implements IStorageDriver<Input> {
 	public abstract readonly bandwidth: TachyonBandwidth;
 	public readonly name: string;
 	private loadableProcessor: Loadable<IStoreProcessor<Output>> | undefined;
