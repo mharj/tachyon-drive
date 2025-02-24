@@ -16,6 +16,14 @@
 		"plugin:prettier/recommended",
 		"plugin:sonarjs/recommended"
 	],
+	"settings": {
+		"import/resolver": {
+			"typescript": {
+				"extensions": [".ts"],
+				"moduleDirectory": ["node_modules", "src/"]
+			}
+		}
+	},
 	"rules": {
 		"sort-imports": "off",
 		"import/order": [
@@ -96,8 +104,7 @@
 		],
 		"@typescript-eslint/unbound-method": "off",
 		"@typescript-eslint/no-confusing-void-expression": "off",
-		"no-console": "warn",
-		"import/no-unresolved": "off"
+		"no-console": "warn"
 	},
 	"overrides": [
 		{
