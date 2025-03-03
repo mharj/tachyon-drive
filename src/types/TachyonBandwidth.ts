@@ -17,6 +17,8 @@ export const enum TachyonBandwidth {
 
 /**
  * Get the name of the TachyonBandwidth.
+ * @param {TachyonBandwidth} bandwidth - The TachyonBandwidth to get the name of.
+ * @returns {'VeryLarge' | 'Large' | 'Normal' | 'Small' | 'VerySmall'} The name of the TachyonBandwidth.
  * @since v0.6.0
  */
 export function getTachyonBandwidthName(bandwidth: TachyonBandwidth): 'VeryLarge' | 'Large' | 'Normal' | 'Small' | 'VerySmall' {

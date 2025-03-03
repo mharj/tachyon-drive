@@ -16,29 +16,30 @@ export class MemoryStorageDriver<Input, Output> extends StorageDriver<Input, Out
 	/**
 	 * Set the data to store and emit an update.
 	 * @param {Output | undefined} data - The data to store.
+	 * @returns {Promise<void>} A promise that resolves when the data has been successfully stored.
 	 */
-	public setData(data: Output | undefined) {
+	public setData(data: Output | undefined): Promise<void> {
 		this.data = data;
 		return this.handleUpdate();
 	}
 
-	protected handleInit() {
+	protected handleInit(): boolean {
 		return true;
 	}
 
-	protected handleStore(data: Output) {
+	protected handleStore(data: Output): void {
 		this.data = data;
 	}
 
-	protected handleHydrate() {
+	protected handleHydrate(): Output | undefined {
 		return this.data;
 	}
 
-	protected handleClear() {
+	protected handleClear(): void {
 		this.data = undefined;
 	}
 
-	protected handleUnload() {
+	protected handleUnload(): boolean {
 		this.data = undefined;
 		return true;
 	}

@@ -1,12 +1,16 @@
 import {type ILoggerLike} from '@avanio/logger-like';
-import sinon from 'sinon';
+import {spy} from 'sinon';
 
-const logDebugSpy = sinon.spy();
-const logInfoSpy = sinon.spy();
-const logWarnSpy = sinon.spy();
-const logErrorSpy = sinon.spy();
+const logDebugSpy = spy();
+const logInfoSpy = spy();
+const logWarnSpy = spy();
+const logErrorSpy = spy();
 
-export function resetLoggerSpies() {
+/**
+ * Resets the call history for all logger spies (debug, info, warn, error).
+ * This is useful for ensuring clean state in tests that rely on logging behavior.
+ */
+export function resetLoggerSpies(): void {
 	logDebugSpy.resetHistory();
 	logInfoSpy.resetHistory();
 	logWarnSpy.resetHistory();

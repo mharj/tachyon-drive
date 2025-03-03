@@ -210,7 +210,9 @@ describe('StorageDriver', () => {
 			it('should get processor', async () => {
 				await driver.init();
 				const processor = driver.processor;
-				if (!processor) return;
+				if (!processor) {
+					return;
+				}
 				expect(processor.name).to.be.an('string');
 			});
 			it('should get get error getting processor if not initialized yet', () => {

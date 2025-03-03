@@ -240,6 +240,7 @@ export abstract class StorageDriver<Input, Output> extends EventEmitter<StorageD
 
 	/**
 	 * Clear the stored data and return the Promise of Result.
+	 * @returns {Promise<Result<void>>} A promise of Result that resolves when the data has been successfully cleared.
 	 */
 	public async clearResult(): Promise<IResult<void>> {
 		try {
@@ -260,6 +261,7 @@ export abstract class StorageDriver<Input, Output> extends EventEmitter<StorageD
 
 	/**
 	 * Get current processor
+	 * @returns {IStoreProcessor | undefined} current processor
 	 */
 	public get processor(): IStoreProcessor<Output> | undefined {
 		if (!this._isInitialized) {
@@ -361,9 +363,10 @@ export abstract class StorageDriver<Input, Output> extends EventEmitter<StorageD
 
 	/**
 	 * Retrieves the data, processes it, and then returns the processed data.
+	 * @param {IHydrateOptions} If deserializationThrowsError `true`, the deserialization will throw an error if it fails.
 	 * @returns {Promise<Input | undefined>} The retrieved deserialized data, or `undefined` if no data was found.
 	 */
-	private async doHydrate({deserializationThrowsError}: {deserializationThrowsError?: boolean} = {}): Promise<Input | undefined> {
+	private async doHydrate({deserializationThrowsError}: IHydrateOptions = {}): Promise<Input | undefined> {
 		let output = await this.handleHydrate();
 		if (output) {
 			const processor = await this.getProcessor();

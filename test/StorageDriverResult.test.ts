@@ -182,7 +182,7 @@ describe('StorageDriver Result', () => {
 			it('should throw error when strict validation', async () => {
 				await driver.store('ASD' as any);
 				const hydrateResult = await driver.hydrateResult({validationThrowsError: true});
-				expect(() => hydrateResult.unwrap()).to.throw(Error);
+				expect(() => hydrateResult.unwrap()).to.throw(Error, `${driver.name}: hydrate() validator failed`);
 			});
 			it('should clone input data', () => {
 				expect(driver.clone(data)).toStrictEqual(data);

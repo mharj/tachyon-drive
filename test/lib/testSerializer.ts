@@ -9,7 +9,7 @@ export class ControlledJsonSerializer<Data> implements IPersistSerializer<Data, 
 		this.dataSchema = dataSchema;
 	}
 
-	public setThrows(key: 'serialize' | 'deserialize' | 'validator' | undefined) {
+	public setThrows(key: 'serialize' | 'deserialize' | 'validator' | undefined): void {
 		this.throwKey = key;
 	}
 
