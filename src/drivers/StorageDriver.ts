@@ -328,7 +328,7 @@ export abstract class StorageDriver<Input, Output> extends EventEmitter<StorageD
 	}
 
 	public override toString(): string {
-		return `${this.name}(serializer=${this.serializer.name}, processor=${this._processor?.name || 'undefined'}, bandwidth=${getTachyonBandwidthName(this.bandwidth)})`;
+		return `${this.name}(serializer=${this.serializer.name}, processor=${this._processor?.name ?? 'undefined'}, bandwidth=${getTachyonBandwidthName(this.bandwidth)})`;
 	}
 
 	/**

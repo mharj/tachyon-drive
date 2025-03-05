@@ -39,7 +39,7 @@ const jsonSerializer: IPersistSerializer<Data, string> = {
 	validator: (data: Data) => dataSchema.safeParse(data).success,
 };
 
-const objecToJson: IPersistSerializer<Data, string> = nextSerializer<Data, Data, string>(objectSerializer, jsonSerializer);
+const objectToJson: IPersistSerializer<Data, string> = nextSerializer<Data, Data, string>(objectSerializer, jsonSerializer);
 
 const strToBufferSerializer: IPersistSerializer<string, Buffer> = {
 	name: 'StrToBufferSerializer',
@@ -49,7 +49,7 @@ const strToBufferSerializer: IPersistSerializer<string, Buffer> = {
 };
 
 // [Object <=> Object] => [Object <=> JSON] => [JSON <=> Buffer]
-const bufferSerializer: IPersistSerializer<Data, Buffer> = nextSerializer<Data, string, Buffer>(objecToJson, strToBufferSerializer);
+const bufferSerializer: IPersistSerializer<Data, Buffer> = nextSerializer<Data, string, Buffer>(objectToJson, strToBufferSerializer);
 
 const onInitSpy = spy();
 const onHydrateSpy = spy();
