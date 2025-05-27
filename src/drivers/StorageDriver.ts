@@ -199,7 +199,7 @@ export abstract class StorageDriver<Input, Output> extends EventEmitter<StorageD
 		} finally {
 			this.emit('hydrate', false);
 		}
-		if (data && this.serializer.validator && !this.serializer.validator(data, this.logger)) {
+		if (data && this.serializer.validator && !(await this.serializer.validator(data, this.logger))) {
 			if (validationThrowsError) {
 				throw new Error(`${this.name}: hydrate() validator failed`);
 			}

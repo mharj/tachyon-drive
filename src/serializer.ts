@@ -39,12 +39,12 @@ export function nextSerializer<CurrentInput, CurrentOutput, TargetOutput>(
 		deserialize: (data: TargetOutput, logger: ILoggerLike | undefined): CurrentInput => {
 			return current.deserialize(nextSer.deserialize(data, logger), logger);
 		},
-		validator: (data: CurrentInput, logger: ILoggerLike | undefined): boolean => {
-			const firstValidation = current.validator?.(data, logger);
+		validator: async (data: CurrentInput, logger: ILoggerLike | undefined): Promise<boolean> => {
+			const firstValidation = await current.validator?.(data, logger);
 			if (firstValidation === false) {
 				return false;
 			}
-			const secondValidation = nextSer.validator?.(current.serialize(data, logger), logger); // double serialization to ensure the data is in the correct format
+			const secondValidation = await nextSer.validator?.(current.serialize(data, logger), logger); // double serialization to ensure the data is in the correct format
 			return secondValidation !== false; // undefined = no validation = true
 		},
 	};

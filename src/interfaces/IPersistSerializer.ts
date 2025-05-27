@@ -20,7 +20,7 @@ export interface IPersistSerializer<Input, Output, ValidateInput = Input> {
 	/**
 	 * Optional validator callback to validate the data after hydrate.
 	 */
-	validator?: (data: ValidateInput, logger: ILoggerLike | undefined) => boolean;
+	validator?: (data: ValidateInput, logger: ILoggerLike | undefined) => boolean | Promise<boolean>;
 }
 
 /**
