@@ -33,7 +33,7 @@ env:
 
 defaults:
   run:
-    working-directory: tachyon-drive
+    working-directory: tachyon-drive-node-fs
 
 jobs:
   build:
