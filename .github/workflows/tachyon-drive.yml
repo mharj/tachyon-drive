@@ -98,6 +98,7 @@ jobs:
         env:
           CC_TEST_REPORTER_ID: ${{ env.CC_TEST_REPORTER_ID }}
         with:
+          workingDirectory: ${{ env.WORK_DIR }}
           coverageCommand: ${{ env.NPM }} run coverage
 
       # npm publish when PR done
