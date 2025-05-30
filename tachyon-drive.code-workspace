@@ -14,6 +14,9 @@
     },
     {
       "path": "tachyon-drive-blob-storage"
+    },
+    {
+      "path": "tachyon-drive-s3"
     }
   ],
   "settings": {}
