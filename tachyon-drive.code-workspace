@@ -8,6 +8,9 @@
     },
     {
       "path": "tachyon-drive-node-fs"
+    },
+    {
+      "path": "tachyon-drive-browser"
     }
   ],
   "settings": {}
