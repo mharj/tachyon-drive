@@ -1,0 +1,23 @@
+{
+	"extends": "@tsconfig/node20/tsconfig.json",
+	"compilerOptions": {
+		"rootDir": "./src",
+		"outDir": "./dist",
+		"sourceRoot": "./src",
+		"types": ["node"],
+		"sourceMap": true,
+		"declaration": true,
+		"removeComments": false,
+		"inlineSources": true,
+		"inlineSourceMap": false,
+		"forceConsistentCasingInFileNames": true,
+		"noImplicitReturns": true,
+		"noImplicitThis": true,
+		"noImplicitAny": true,
+		"importHelpers": true,
+		"strictNullChecks": true,
+		"noUnusedLocals": true
+	},
+	"include": ["src/"],
+	"exclude": ["node_modules", "**/*.spec.ts", "test"]
+}

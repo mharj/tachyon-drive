@@ -11,6 +11,9 @@
     },
     {
       "path": "tachyon-drive-browser"
+    },
+    {
+      "path": "tachyon-drive-blob-storage"
     }
   ],
   "settings": {}
