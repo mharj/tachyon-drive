@@ -1,9 +1,15 @@
-name: Validate and publish package to npmjs
+name: tachyon-drive to npmjs
 on:
   push:
     branches: [main]
+    paths:
+      - "tachyon-drive/**"
+      - ".github/workflows/tachyon-drive.yml"
   pull_request:
     branches: [main]
+    paths:
+      - "tachyon-drive/**"
+      - ".github/workflows/tachyon-drive.yml"
 
 permissions:
   contents: read
@@ -23,6 +29,10 @@ env:
   HAVE_VALIDATE_SCRIPT: false
   HAVE_LINT_SCRIPT: false
   HAVE_UNIT_TEST_SCRIPT: false
+
+defaults:
+  run:
+    working-directory: tachyon-drive
 
 jobs:
   build:

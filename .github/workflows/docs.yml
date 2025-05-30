@@ -4,8 +4,15 @@ name: TSDoc Actions
 on:
   push:
     branches: [main]
+    paths:
+      - "tachyon-drive/**"
+      - ".github/workflows/docs.yml"
   pull_request:
     branches: [main]
+    paths:
+      - "tachyon-drive/**"
+      - ".github/workflows/docs.yml"
+
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
@@ -16,7 +23,7 @@ permissions:
   id-token: write
 
 env:
-  NPM: 'npm'
+  NPM: "npm"
 
 jobs:
   # Single deploy job since we're just deploying
@@ -33,6 +40,19 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          sparse-checkout: tachyon-drive
+          sparse-checkout-cone-mode: false
+
+      - name: Subdirectory hack for TSDoc
+        run: |
+          mv -v tachyon-drive/* . && \
+          rm -vrf tachyon-drive
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+          registry-url: "https://registry.npmjs.org"
 
       - name: Identify project environment variables
         run: |
@@ -40,10 +60,11 @@ jobs:
 
       - uses: pnpm/action-setup@v4
         if: env.NPM == 'pnpm'
+
       - uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
-          registry-url: 'https://registry.npmjs.org'
+          node-version: "lts/*"
+          registry-url: "https://registry.npmjs.org"
 
       - name: Install dependencies
         run: ${{ env.NPM }} install
@@ -51,9 +72,11 @@ jobs:
       - name: TSDoc Action
         uses: erikyo/tsdoc-action@v1
         with:
-          source_dir: ./src/
+          source_dir: ./src
           output_dir: ./docs
+          options: ./typedoc.json
           front_page: README.md
+
       - name: Setup Pages
         uses: actions/configure-pages@v3
 
@@ -61,7 +84,7 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           # Upload entire repository
-          path: './docs'
+          path: "./docs"
 
       - name: Deploy to GitHub Pages
         id: deployment
