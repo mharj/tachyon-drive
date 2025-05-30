@@ -53,6 +53,8 @@ jobs:
 
       - uses: pnpm/action-setup@v4
         if: env.NPM == 'pnpm'
+        with:
+          package_json_file: tachyon-drive/package.json
 
       - uses: actions/setup-node@v4
         with:
