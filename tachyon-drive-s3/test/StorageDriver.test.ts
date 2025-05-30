@@ -1,10 +1,9 @@
-/* eslint-disable sonarjs/no-duplicate-string */
-import {beforeAll, describe, expect, it} from 'vitest';
 import * as dotenv from 'dotenv';
-import * as zod from 'zod';
-import {AwsS3StorageDriver, urlToClientConfig} from '../src/';
-import {IPersistSerializer, IStorageDriver, nextSerializer} from 'tachyon-drive';
+import {type IPersistSerializer, type IStorageDriver, nextSerializer} from 'tachyon-drive';
 import {strToBufferSerializer} from 'tachyon-drive-node-fs';
+import {beforeAll, describe, expect, it} from 'vitest';
+import * as zod from 'zod';
+import {AwsS3StorageDriver, urlToClientConfig} from '../src';
 
 dotenv.config();
 
@@ -16,7 +15,7 @@ type Data = zod.infer<typeof dataSchema>;
 
 const jsonSerialization: IPersistSerializer<Data, string> = {
 	name: 'jsonSerialization',
-	deserialize: (buffer: string) => JSON.parse(buffer.toString()),
+	deserialize: (buffer: string) => JSON.parse(buffer.toString()) as Data,
 	serialize: (data: Data) => JSON.stringify(data),
 	validator: (data: Data) => dataSchema.safeParse(data).success,
 };

@@ -1,8 +1,8 @@
-import {deleteObject, getObject, putObject} from './objectUtils';
-import {IExternalNotify, IPersistSerializer, IStoreProcessor, StorageDriver, TachyonBandwidth} from 'tachyon-drive';
-import {S3Client, S3ClientConfig} from '@aws-sdk/client-s3';
-import {AwsCredentialIdentity} from '@aws-sdk/types';
 import type {ILoggerLike} from '@avanio/logger-like';
+import {S3Client, type S3ClientConfig} from '@aws-sdk/client-s3';
+import {type AwsCredentialIdentity} from '@aws-sdk/types';
+import {type IExternalNotify, type IPersistSerializer, type IStoreProcessor, StorageDriver, TachyonBandwidth} from 'tachyon-drive';
+import {deleteObject, getObject, putObject} from './objectUtils';
 
 /**
  * The Tachyon driver configuration object for the AWS S3 storage driver with bucket and key.
@@ -27,10 +27,10 @@ export function urlToClientConfig(url: URL): ClientConfigObject {
 	const [awsBucket, awsKey] = url.pathname.slice(1).split('/');
 	return buildClientConfig(
 		{
-			credentials: urlToCreedentials(url),
+			credentials: urlToCredentials(url),
 			endpoint: `${url.protocol}//${url.hostname}${port}`,
 			forcePathStyle: url.searchParams.get('forcePathStyle') === 'true',
-			region: url.searchParams.get('region') || undefined,
+			region: url.searchParams.get('region') ?? undefined,
 			tls: url.protocol === 'https:',
 		},
 		awsBucket,
@@ -38,7 +38,7 @@ export function urlToClientConfig(url: URL): ClientConfigObject {
 	);
 }
 
-export function urlToCreedentials(url: URL): AwsCredentialIdentity {
+export function urlToCredentials(url: URL): AwsCredentialIdentity {
 	return {
 		accessKeyId: url.username,
 		secretAccessKey: url.password,
@@ -63,9 +63,9 @@ export class AwsS3StorageDriver<Input> extends StorageDriver<Input, Buffer> {
 		processor?: IStoreProcessor<Buffer>,
 		opts?: ClientOptions,
 	) {
-		super(name, serializer, extNotify || null, processor, opts?.logger);
+		super(name, serializer, extNotify ?? null, processor, opts?.logger);
 		this._config = config;
-		this.bandwidth = opts?.TachyonBandwidth || TachyonBandwidth.VerySmall;
+		this.bandwidth = opts?.TachyonBandwidth ?? TachyonBandwidth.VerySmall;
 	}
 
 	protected async handleInit(): Promise<boolean> {
@@ -75,7 +75,7 @@ export class AwsS3StorageDriver<Input> extends StorageDriver<Input, Buffer> {
 
 	protected async handleUnload(): Promise<boolean> {
 		this._awsClient = undefined;
-		return true;
+		return Promise.resolve(true);
 	}
 
 	protected async handleStore(buffer: Buffer): Promise<void> {
@@ -103,9 +103,7 @@ export class AwsS3StorageDriver<Input> extends StorageDriver<Input, Buffer> {
 
 	private async getAwsClient(): Promise<{client: S3Client; awsBucket: string; awsKey: string}> {
 		const config = await this.getAwsConfig();
-		if (!this._awsClient) {
-			this._awsClient = new S3Client(config.client);
-		}
+		this._awsClient ??= new S3Client(config.client);
 		return {client: this._awsClient, awsBucket: config.awsBucket, awsKey: config.awsKey};
 	}
 

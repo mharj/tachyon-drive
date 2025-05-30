@@ -1,13 +1,13 @@
 {
 	"compilerOptions": {
-		"module": "commonjs",
+		"module": "NodeNext",
 		"target": "es2020",
 		"lib": [
 			"es2020"
 		],
 		"rootDir": "./src",
 		"outDir": "./dist",
-		"moduleResolution": "node",
+		"moduleResolution": "NodeNext",
 		"sourceRoot": "./src",
 		"types": [
 			"node"
@@ -27,8 +27,7 @@
 		"noUnusedLocals": true
 	},
 	"include": [
-		"src/**/*",
-		"src/**/**/*"
+		"src",
 	],
 	"exclude": [
 		"node_modules",

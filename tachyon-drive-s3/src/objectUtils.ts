@@ -1,5 +1,6 @@
 import * as stream from 'stream';
-import {DeleteObjectCommand, GetObjectCommand, PutObjectCommand, S3Client} from '@aws-sdk/client-s3';
+import {DeleteObjectCommand, GetObjectCommand, PutObjectCommand, type S3Client} from '@aws-sdk/client-s3';
+import {toError} from '@luolapeikko/ts-common';
 
 export function getObject(client: S3Client, Bucket: string, Key: string): Promise<Buffer> {
 	// eslint-disable-next-line no-async-promise-executor
@@ -31,7 +32,7 @@ export function getObject(client: S3Client, Bucket: string, Key: string): Promis
 			response.Body.once('end', () => resolve(Buffer.concat(responseDataChunks)));
 		} catch (err) {
 			// Handle the error or throw
-			return reject(err);
+			return reject(toError(err));
 		}
 	});
 }
