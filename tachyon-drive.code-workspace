@@ -5,6 +5,9 @@
     },
     {
       "path": "tachyon-drive"
+    },
+    {
+      "path": "tachyon-drive-node-fs"
     }
   ],
   "settings": {}
