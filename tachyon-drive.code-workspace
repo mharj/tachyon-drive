@@ -16,6 +16,9 @@
       "path": "tachyon-drive-blob-storage"
     },
     {
+      "path": "tachyon-drive-redis"
+    },
+    {
       "path": "tachyon-drive-s3"
     }
   ],
