@@ -7,6 +7,9 @@
       "path": "tachyon-drive"
     },
     {
+      "path": "tachyon-drive-memcached"
+    },
+    {
       "path": "tachyon-drive-node-fs"
     },
     {

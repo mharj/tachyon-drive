@@ -5,6 +5,7 @@
 ## Directory structure
 
 - [tachyon-drive](tachyon-drive/README.md): contains the main library code.
+- [tachyon-drive-memcached](tachyon-drive-memcached/README.md): contains the Memcached driver implementation.
 - [tachyon-drive-node-fs](tachyon-drive-node-fs/README.md): contains the Node.js file system driver implementation.
 - [tachyon-drive-blob-storage](tachyon-drive-blob-storage/README.md): contains the Azure Blob Storage driver implementation.
 - [tachyon-drive-browser](tachyon-drive-browser/README.md): contains the browser storage driver implementation.
