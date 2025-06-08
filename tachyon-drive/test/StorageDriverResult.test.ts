@@ -57,7 +57,7 @@ const onStoreSpy = spy();
 const onClearSpy = spy();
 const onUnloadSpy = spy();
 
-export function getCallCounts() {
+export function getCallCounts(): {init: number; hydrate: number; store: number; clear: number; unload: number} {
 	return {
 		init: onInitSpy.callCount,
 		hydrate: onHydrateSpy.callCount,

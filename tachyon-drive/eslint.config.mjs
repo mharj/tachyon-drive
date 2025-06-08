@@ -1,11 +1,11 @@
 import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
-import stylisticTs from '@stylistic/eslint-plugin-ts';
+import stylistic from '@stylistic/eslint-plugin';
 import importPlugin from 'eslint-plugin-import';
 import prettierRecommended from 'eslint-plugin-prettier/recommended';
 import sonarjs from 'eslint-plugin-sonarjs';
 import tsParser from '@typescript-eslint/parser';
-import cspellESLintPluginRecommended from '@cspell/eslint-plugin/recommended';
+import oxlint from 'eslint-plugin-oxlint';
 
 export default tseslint.config(
 	eslint.configs.recommended,
@@ -14,14 +14,14 @@ export default tseslint.config(
 	importPlugin.flatConfigs.recommended,
 	importPlugin.flatConfigs.typescript,
 	sonarjs.configs.recommended,
-	cspellESLintPluginRecommended,
 	prettierRecommended,
+	...oxlint.buildFromOxlintConfigFile('./.oxlintrc.json'),
 	{
 		ignores: ['**/dist', '**/node_modules', '**/.github', '**/.nyc_output', '**/vite.config.mts', 'eslint.config.mjs'],
 	},
 	{
 		plugins: {
-			'@stylistic/ts': stylisticTs,
+			'@stylistic/ts': stylistic,
 		},
 		languageOptions: {
 			parser: tsParser,
@@ -123,15 +123,16 @@ export default tseslint.config(
 			'jsdoc/no-undefined-types': 'off',
 			'@typescript-eslint/explicit-function-return-type': 'warn',
 			'@typescript-eslint/consistent-type-definitions': 'off',
+			'sonarjs/deprecation': 'off',
 		},
 	},
 	{
-		files: ['**/*.test.ts', '**/*.test-d.ts'],
+		files: ['**/*.test.ts', '**/*.test-d.ts', 'test/**/*.ts'],
 		rules: {
-			'@typescript-eslint/no-unsafe-argument': 'off',
-			'@typescript-eslint/no-explicit-any': 'off',
-			'jsdoc/require-jsdoc': 'off',
 			'@typescript-eslint/explicit-function-return-type': 'off',
+			'@typescript-eslint/no-explicit-any': 'off',
+			'@typescript-eslint/no-unsafe-argument': 'off',
+			'jsdoc/require-jsdoc': 'off',
 			'sonarjs/no-nested-functions': 'off',
 		},
 	},

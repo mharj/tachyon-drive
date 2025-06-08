@@ -1,4 +1,5 @@
 import {type ILoggerLike} from '@avanio/logger-like';
+import type Sinon from 'sinon';
 import {spy} from 'sinon';
 
 const logDebugSpy = spy();
@@ -17,7 +18,12 @@ export function resetLoggerSpies(): void {
 	logErrorSpy.resetHistory();
 }
 
-export const sinonLoggerSpy = {
+export const sinonLoggerSpy: {
+	debug: Sinon.SinonSpy<any[], any>;
+	error: Sinon.SinonSpy<any[], any>;
+	info: Sinon.SinonSpy<any[], any>;
+	warn: Sinon.SinonSpy<any[], any>;
+} = {
 	debug: logDebugSpy,
 	error: logErrorSpy,
 	info: logInfoSpy,

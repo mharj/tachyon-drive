@@ -10,7 +10,7 @@ import {StorageDriver} from './StorageDriver.js';
  * const driver: IStorageDriver<SomeType> = new MemoryStorageDriver<SomeType>('MemoryStorageDriver', serializer, null);
  */
 export class MemoryStorageDriver<Input, Output> extends StorageDriver<Input, Output> {
-	public readonly bandwidth = TachyonBandwidth.VeryLarge;
+	public readonly bandwidth: TachyonBandwidth = TachyonBandwidth.VeryLarge;
 	private data: Output | undefined;
 
 	/**

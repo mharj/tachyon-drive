@@ -19,7 +19,9 @@
 		"strictNullChecks": true,
 		"noUnusedLocals": true,
 		"noUncheckedIndexedAccess": true,
-		"esModuleInterop": true
+		"esModuleInterop": true,
+		"erasableSyntaxOnly": true,
+		"isolatedDeclarations": true
 	},
 	"typedocOptions": {
 		"entryPoints": ["src/index.ts"],
@@ -28,7 +30,4 @@
 	},
 	"include": ["src/"],
 	"exclude": ["node_modules", "**/*.spec.ts", "test"],
-	"ts-node": {
-		"esm": true
-	}
 }

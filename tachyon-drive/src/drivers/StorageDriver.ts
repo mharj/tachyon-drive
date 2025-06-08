@@ -1,5 +1,5 @@
 import {EventEmitter} from 'events';
-import {type ILoggerLike, LogLevel, type LogMapInfer, MapLogger} from '@avanio/logger-like';
+import {type ILoggerLike, LogLevel, type LogLevelValue, MapLogger} from '@avanio/logger-like';
 import {Err, type IResult, Ok} from '@luolapeikko/result-option';
 import type {Loadable} from '@luolapeikko/ts-common';
 import {type IExternalNotify} from '../interfaces/IExternalUpdateNotify.js';
@@ -10,10 +10,26 @@ import {type StorageDriverJson} from '../types/StorageDriverJson.js';
 import {getTachyonBandwidthName, type TachyonBandwidth} from '../types/TachyonBandwidth.js';
 
 /**
+ * The log key mapping for the storage driver.
+ * @since v0.11.0
+ */
+export type StorageDriverLogMapping = {
+	clear: LogLevelValue;
+	deserialize: LogLevelValue;
+	hydrate: LogLevelValue;
+	init: LogLevelValue;
+	processor: LogLevelValue;
+	store: LogLevelValue;
+	unload: LogLevelValue;
+	update: LogLevelValue;
+	validator: LogLevelValue;
+};
+
+/**
  * The default log levels for the storage driver.
  * @since v0.4.0
  */
-export const defaultLogLevels = {
+export const defaultLogLevels: StorageDriverLogMapping = {
 	clear: LogLevel.None,
 	deserialize: LogLevel.Warn,
 	hydrate: LogLevel.Debug,
@@ -24,19 +40,6 @@ export const defaultLogLevels = {
 	update: LogLevel.None,
 	validator: LogLevel.Warn,
 };
-
-/**
- * The log key mapping for the storage driver.
- * @deprecated use `StorageDriverLogMapping` instead
- * @since v0.4.0
- */
-export type LogMappingType = LogMapInfer<typeof defaultLogLevels>; // build type
-
-/**
- * The log key mapping for the storage driver.
- * @since v0.11.0
- */
-export type StorageDriverLogMapping = LogMapInfer<typeof defaultLogLevels>; // build type
 
 /**
  * Abstract class that provides a simple interface for storing and retrieving data using a specified storage mechanism.

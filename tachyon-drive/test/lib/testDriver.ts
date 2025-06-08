@@ -1,7 +1,7 @@
 import {StorageDriver, TachyonBandwidth} from '../../src/index.js';
 
 export class TestMemoryStorageDriver<Input, Output> extends StorageDriver<Input, Output> {
-	public readonly bandwidth = TachyonBandwidth.VeryLarge;
+	public readonly bandwidth: TachyonBandwidth = TachyonBandwidth.VeryLarge;
 	private data: Output | undefined;
 	private throwKey: 'init' | 'store' | 'hydrate' | 'clear' | 'unload' | undefined;
 
