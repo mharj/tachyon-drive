@@ -15,7 +15,7 @@ import {type IPersistSerializer, type IStoreProcessor, StorageDriver, TachyonBan
  * @since v0.10.3
  */
 export class WebFsStorageDriver<Input> extends StorageDriver<Input, ArrayBuffer> {
-	public readonly bandwidth = TachyonBandwidth.VeryLarge;
+	public readonly bandwidth: TachyonBandwidth = TachyonBandwidth.VeryLarge;
 	private dirHandleLoadable: Loadable<FileSystemDirectoryHandle>;
 	private fileName: Loadable<string>;
 

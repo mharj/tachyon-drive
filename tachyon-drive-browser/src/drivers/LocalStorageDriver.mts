@@ -10,7 +10,7 @@ import {type IPersistSerializer, type IStoreProcessor, StorageDriver, TachyonBan
  * @since v0.3.0
  */
 export class LocalStorageDriver<Input, Output extends string = string> extends StorageDriver<Input, Output> {
-	public readonly bandwidth = TachyonBandwidth.Large;
+	public readonly bandwidth: TachyonBandwidth = TachyonBandwidth.Large;
 	private keyName: Loadable<string>;
 	private localStorage: Storage;
 	private currentKey: string | undefined;

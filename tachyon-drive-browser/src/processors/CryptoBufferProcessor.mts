@@ -39,14 +39,14 @@ export class CryptoBufferProcessor implements IStoreProcessor<ArrayBuffer> {
 		return `${this.name} algorithm: ${this.algorithm}`;
 	}
 
-	public toJSON() {
+	public toJSON(): {name: string; algorithm: 'AES-GCM'} {
 		return {
 			name: this.name,
 			algorithm: this.algorithm,
 		};
 	}
 
-	public setLogger(logger: ILoggerLike | undefined) {
+	public setLogger(logger: ILoggerLike | undefined): void {
 		this.logger = logger;
 	}
 

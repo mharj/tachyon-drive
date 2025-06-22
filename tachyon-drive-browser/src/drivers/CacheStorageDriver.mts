@@ -16,7 +16,7 @@ export type CacheStorageDriverOptions = {
  * @since v0.3.0
  */
 export class CacheStorageDriver<Input, Output extends ArrayBuffer | string> extends StorageDriver<Input, Output> {
-	public readonly bandwidth = TachyonBandwidth.Large;
+	public readonly bandwidth: TachyonBandwidth = TachyonBandwidth.Large;
 	private options: Loadable<CacheStorageDriverOptions>;
 	private caches: CacheStorage;
 	private currentCache: Cache | undefined;

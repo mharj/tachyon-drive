@@ -13,6 +13,46 @@ export default defineConfig({
 			include: ['src/**/*.mts'],
 			reporter: ['text'],
 		},
+		projects: [
+			{
+				test: {
+					name: 'chrome',
+					browser: {
+						provider: 'playwright',
+						enabled: true,
+						headless: true,
+						instances: [
+							{
+								browser: 'chromium',
+							},
+						],
+					},
+					include: ['test/**/*.test.mts'],
+				},
+				optimizeDeps: {
+					include: ['tachyon-drive', 'sinon', 'zod'],
+				},
+			},
+			{
+				test: {
+					name: 'firefox',
+					browser: {
+						provider: 'playwright',
+						enabled: true,
+						headless: false,
+						instances: [
+							{
+								browser: 'firefox',
+							},
+						],
+					},
+					include: ['test/**/*.test.mts'],
+				},
+				optimizeDeps: {
+					include: ['tachyon-drive', 'sinon', 'zod'],
+				},
+			},
+		],
 	},
 	optimizeDeps: {
 		include: ['tachyon-drive', 'sinon', 'zod'],
