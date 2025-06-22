@@ -30,7 +30,7 @@ export class CryptoBufferProcessor implements IStoreProcessor<Buffer> {
 		return `${this.name} algorithm: ${this.algorithm}`;
 	}
 
-	public toJSON() {
+	public toJSON(): {name: string; algorithm: crypto.CipherGCMTypes} {
 		return {
 			name: this.name,
 			algorithm: this.algorithm,

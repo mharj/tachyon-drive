@@ -19,7 +19,9 @@
 		"strictNullChecks": true,
 		"noUnusedLocals": true,
 		"noUncheckedIndexedAccess": true,
-		"esModuleInterop": true
+		"esModuleInterop": true,
+		"erasableSyntaxOnly": true,
+		"isolatedDeclarations": true
 	},
 	"include": ["src/"],
 	"exclude": ["node_modules", "**/*.spec.ts", "test/"],

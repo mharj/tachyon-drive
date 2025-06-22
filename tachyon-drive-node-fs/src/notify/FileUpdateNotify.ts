@@ -59,7 +59,7 @@ export class FileUpdateNotify extends EventEmitter<ExternalNotifyEventsMap> impl
 		return `${this.constructor.name}: fileName: ${this.fileName}`;
 	}
 
-	public toJSON() {
+	public toJSON(): {fileName: string; updated: number | undefined} {
 		this.assertIsInitialized(this.fileName);
 		return {
 			fileName: this.fileName,
@@ -91,6 +91,7 @@ export class FileUpdateNotify extends EventEmitter<ExternalNotifyEventsMap> impl
 
 	/**
 	 * method for file watcher instance
+	 * @param {('rename' | 'change')} event - The type of file system event ('rename' or 'change').
 	 */
 	private fileWatcher(event: 'rename' | 'change') {
 		// ignore watcher events if writing
@@ -122,6 +123,7 @@ export class FileUpdateNotify extends EventEmitter<ExternalNotifyEventsMap> impl
 
 	/**
 	 * Build file name from fileNameOrPromise
+	 * @returns {Promise<string>} The resolved file name as a string.
 	 */
 	private async getFileName(): Promise<string> {
 		if (typeof this.fileNameLoadable === 'function') {

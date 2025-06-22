@@ -28,13 +28,13 @@ export class FileStorageDriver<Input> extends StorageDriver<Input, Buffer> {
 
 	/**
 	 * Creates a new instance of the `FileStorageDriver` class.
-	 * @param name - name of the driver
-	 * @param options - options for the driver
-	 * @param options.fileName - file name or async function that returns a file name
-	 * @param options.bandwidth - speed of the file storage driver, default is "TachyonBandwidth.Large"
-	 * @param serializer - serializer to serialize and deserialize data (to and from Buffer)
-	 * @param processor - optional processor to process data before storing and after hydrating
-	 * @param logger - optional logger to log messages
+	 * @param {string} name - name of the driver
+	 * @param {FileStorageDriverOptions} options - options for the driver
+	 * @param {Loadable<string>} options.fileName - file name or async function that returns a file name
+	 * @param {TachyonBandwidth} options.bandwidth - speed of the file storage driver, default is "TachyonBandwidth.Large"
+	 * @param {IPersistSerializer<Input, Buffer>} serializer - serializer to serialize and deserialize data (to and from Buffer)
+	 * @param {Loadable<IStoreProcessor<Buffer>>} processor - optional processor to process data before storing and after hydrating
+	 * @param {ILoggerLike} logger - optional logger to log messages
 	 */
 	constructor(
 		name: string,
@@ -51,6 +51,7 @@ export class FileStorageDriver<Input> extends StorageDriver<Input, Buffer> {
 
 	/**
 	 * initialize watcher if have a file
+	 * @returns {Promise<boolean>} - true if watcher was set, false if no file exists
 	 */
 	protected async handleInit(): Promise<boolean> {
 		await this.setFileWatcher();
@@ -59,6 +60,7 @@ export class FileStorageDriver<Input> extends StorageDriver<Input, Buffer> {
 
 	/**
 	 * unload watcher if have a file
+	 * @returns {Promise<boolean>} - true if watcher was unset, false if no watcher was set
 	 */
 	protected async handleUnload(): Promise<boolean> {
 		return this.unsetFileWatcher();
@@ -66,6 +68,8 @@ export class FileStorageDriver<Input> extends StorageDriver<Input, Buffer> {
 
 	/**
 	 * Actual implementation of store data to the file
+	 * @param {Buffer} buffer - Buffer to store in the file
+	 * @throws {TypeError} - if the buffer is not a Buffer
 	 */
 	protected async handleStore(buffer: Buffer): Promise<void> {
 		// buffer sanity check
@@ -80,6 +84,7 @@ export class FileStorageDriver<Input> extends StorageDriver<Input, Buffer> {
 
 	/**
 	 * Actual implementation of hydrate data from the file
+	 * @returns {Promise<Buffer | undefined>} - Buffer from the file or undefined if file does not exist
 	 */
 	protected async handleHydrate(): Promise<Buffer | undefined> {
 		const fileName = await this.getFileName();
@@ -124,6 +129,7 @@ export class FileStorageDriver<Input> extends StorageDriver<Input, Buffer> {
 
 	/**
 	 * method for file watcher instance
+	 * @param {('rename' | 'change')} event - event type, either 'rename' or 'change'
 	 */
 	private fileWatcher(event: 'rename' | 'change') {
 		// ignore watcher events if writing
@@ -146,6 +152,7 @@ export class FileStorageDriver<Input> extends StorageDriver<Input, Buffer> {
 
 	/**
 	 * Build file name from fileNameOrPromise
+	 * @returns {Promise<string>} - file name
 	 */
 	private async getFileName(): Promise<string> {
 		// lock down file name as this can't be changed after change events
