@@ -16,7 +16,9 @@
 		"noImplicitAny": true,
 		"importHelpers": true,
 		"strictNullChecks": true,
-		"noUnusedLocals": true
+		"noUnusedLocals": true,
+		"erasableSyntaxOnly": true,
+		"isolatedDeclarations": true
 	},
 	"include": ["src/"],
 	"exclude": ["node_modules", "**/*.spec.ts", "test"]

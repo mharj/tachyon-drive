@@ -22,12 +22,12 @@ export class AzureBlobStorageDriver<Input> extends StorageDriver<Input, Buffer> 
 
 	/**
 	 * AzureBlobStorageDriver
-	 * @param name - name of the driver
-	 * @param blobOptions - options for the Azure Blob Storage (connectionString, containerName, fileName)
-	 * @param serializer - serializer to serialize and deserialize data (to and from Buffer)
-	 * @param extNotify - optional external notify service to notify store update events
-	 * @param processor - optional processor to process data (encrypt, decrypt, compress, decompress, etc.)
-	 * @param logger - optional logger
+	 * @param {string} name - name of the driver
+	 * @param {AzureBlobStorageDriverOptions} blobOptions - options for the Azure Blob Storage (connectionString, containerName, fileName)
+	 * @param {IPersistSerializer<Input, Buffer>} serializer - serializer to serialize and deserialize data (to and from Buffer)
+	 * @param {IExternalNotify} [extNotify] - optional external notify service to notify store update events
+	 * @param {Loadable<IStoreProcessor<Buffer>>} [processor] - optional processor to process data (encrypt, decrypt, compress, decompress, etc.)
+	 * @param {ILoggerLike} [logger] - optional logger
 	 */
 	constructor(
 		name: string,
@@ -35,7 +35,7 @@ export class AzureBlobStorageDriver<Input> extends StorageDriver<Input, Buffer> 
 		serializer: IPersistSerializer<Input, Buffer>,
 		extNotify?: IExternalNotify,
 		processor?: Loadable<IStoreProcessor<Buffer>>,
-		logger?: ILoggerLike | Console,
+		logger?: ILoggerLike,
 	) {
 		super(name, serializer, extNotify ?? null, processor, logger);
 		this.bandwidth = blobOptions.bandwidth ?? TachyonBandwidth.VerySmall;
