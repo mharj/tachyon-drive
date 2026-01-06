@@ -41,7 +41,8 @@
   "repository": "github:mharj/tachyon-drive",
   "keywords": [
     "storage",
-    "driver"
+    "driver",
+    "typescript"
   ],
   "author": "mharj",
   "license": "MIT",
