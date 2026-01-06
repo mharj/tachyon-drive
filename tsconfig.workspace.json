@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "paths": {
+      "tachyon-drive": ["packages/tachyon-drive/src/index.ts"],
+      "tachyon-drive-blob-storage": ["packages/tachyon-drive-blob-storage/src/index.ts"],
+      "tachyon-drive-browser": ["packages/tachyon-drive-browser/src/index.mts"],
+      "tachyon-drive-memcached": ["packages/tachyon-drive-memcached/src/index.ts"],
+      "tachyon-drive-node-fs": ["packages/tachyon-drive-node-fs/src/index.ts"],
+      "tachyon-drive-redis": ["packages/tachyon-drive-redis/src/index.ts"],
+      "tachyon-drive-s3": ["packages/tachyon-drive-s3/src/index.ts"]
+    }
+  },
+  "extends": "./tsconfig.base.json"
+}

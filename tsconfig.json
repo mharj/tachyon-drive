@@ -1,0 +1,9 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./packages/tachyon-drive" },
+    { "path": "./packages/tachyon-drive-browser" },
+    { "path": "./packages/tachyon-drive-node-fs" },
+    { "path": "./packages/tachyon-drive-s3" }
+  ]
+}

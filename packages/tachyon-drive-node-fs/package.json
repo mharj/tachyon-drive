@@ -1,0 +1,35 @@
+{
+  "name": "tachyon-drive-node-fs",
+  "version": "0.11.2",
+  "description": "Nodejs fs module storage driver implementation",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.mjs"
+    }
+  },
+  "scripts": {
+    "build": "tsdown src/index.ts --sourcemap --format cjs,esm --dts --clean -c tsconfig.build.json",
+    "validate": "tsc --noEmit"
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": "github:mharj/tachyon-drive",
+  "keywords": [
+    "storage",
+    "driver",
+    "nodejs"
+  ],
+  "author": "mharj",
+  "license": "MIT",
+  "peerDependencies": {
+    "@avanio/logger-like": "^0.1 || ^0.2",
+    "@luolapeikko/ts-common": ">= 1.0.0",
+    "tachyon-drive": "^0.11.1"
+  }
+}

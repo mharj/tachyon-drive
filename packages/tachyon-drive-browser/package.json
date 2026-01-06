@@ -1,0 +1,37 @@
+{
+  "name": "tachyon-drive-browser",
+  "version": "0.11.2",
+  "description": "Browser module for tachyon storage driver implementation",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.mjs"
+    }
+  },
+  "scripts": {
+    "build": "tsdown src/index.mts --minify --sourcemap --format cjs,esm --dts --clean -c tsconfig.build.json",
+    "validate": "tsc --noEmit"
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": "github:mharj/tachyon-drive",
+  "keywords": [
+    "storage",
+    "driver",
+    "nodejs"
+  ],
+  "author": "mharj",
+  "license": "MIT",
+  "peerDependencies": {
+    "@avanio/logger-like": "^0.2.10",
+    "@luolapeikko/ts-common": ">= 0.0.1",
+    "@types/wicg-file-system-access": "^2023",
+    "events": "^3.3",
+    "tachyon-drive": "^0.11"
+  }
+}

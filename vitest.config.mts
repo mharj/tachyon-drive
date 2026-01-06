@@ -1,0 +1,40 @@
+import {playwright} from '@vitest/browser-playwright';
+import tsconfigPaths from 'vite-tsconfig-paths';
+import {defineConfig} from 'vitest/config';
+
+export default defineConfig({
+	plugins: [tsconfigPaths()],
+	test: {
+		coverage: {
+			exclude: ['**/dist/**', '**/*.test-d.ts', '**/index.ts'],
+			include: ['packages/**/*.ts'],
+			provider: 'v8',
+			reporter: ['text', 'lcov'],
+		},
+		globals: true,
+		projects: [
+			// Default Node tests (exclude the browser package)
+			{
+				test: {
+					environment: 'node',
+					include: ['packages/**/*.test.ts'],
+					name: 'node',
+				},
+			},
+			// Browser tests only for tachyon-drive-browser
+			{
+				test: {
+					browser: {
+						enabled: true,
+						headless: true,
+						instances: [{browser: 'chromium'}],
+						provider: playwright({}),
+					},
+					include: ['packages/tachyon-drive-browser/**/*.test.mts'],
+					name: 'chrome',
+				},
+			},
+		],
+		typecheck: {include: ['**/*.test-d.ts']},
+	},
+});

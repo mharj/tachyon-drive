@@ -69,3 +69,16 @@ reports
 
 # docs
 docs
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
+
+# azurite
+azurite-data
+
+# docs
+doc

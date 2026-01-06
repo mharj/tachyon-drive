@@ -1,0 +1,57 @@
+{
+  "name": "tachyon-drive-memcached",
+  "version": "0.11.0",
+  "description": "Tachyon drive implementation for Memcached",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.mjs"
+    }
+  },
+  "scripts": {
+    "build": "tsdown src/index.ts --minify --sourcemap --format cjs,esm --dts --clean -c tsconfig.build.json",
+    "validate": "tsc --noEmit"
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": "github:mharj/tachyon-drive-memcached",
+  "keywords": [
+    "storage",
+    "driver",
+    "nodejs"
+  ],
+  "mocha": {
+    "exit": true,
+    "extension": [
+      "ts",
+      "js"
+    ],
+    "recursive": true,
+    "require": [
+      "ts-node/register",
+      "source-map-support/register"
+    ],
+    "reporters": [
+      "spec",
+      "mocha-junit-reporter"
+    ]
+  },
+  "author": "mharj",
+  "license": "MIT",
+  "devDependencies": {
+    "tachyon-drive": "workspace:*",
+    "tachyon-drive-node-fs": "workspace:*"
+  },
+  "peerDependencies": {
+    "@avanio/logger-like": ">= 0.1.1",
+    "@luolapeikko/ts-common": ">= 0.2.0",
+    "@types/memcached": ">= 2.2.10",
+    "memcached": "^2.2.2",
+    "tachyon-drive": ">= 0.11.0"
+  }
+}
