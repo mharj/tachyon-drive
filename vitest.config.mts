@@ -3,7 +3,15 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 import {defineConfig} from 'vitest/config';
 
 export default defineConfig({
+	optimizeDeps: {
+		include: ['@avanio/logger-like', '@luolapeikko/result-option', '@luolapeikko/ts-common', 'events', 'zod'],
+	},
 	plugins: [tsconfigPaths()],
+	resolve: {
+		alias: {
+			events: 'events',
+		},
+	},
 	test: {
 		coverage: {
 			exclude: ['**/dist/**', '**/*.test-d.ts', '**/index.ts'],

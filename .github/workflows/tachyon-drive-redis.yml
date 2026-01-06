@@ -5,12 +5,16 @@ on:
     paths:
       - "packages/tachyon-drive-redis/**"
       - ".github/workflows/tachyon-drive-redis.yml"
+      - "package.json"
+      - "pnpm-lock.yaml"
       - ".github/workflows/module.yml"
   pull_request:
     branches: [main]
     paths:
       - "packages/tachyon-drive-redis/**"
       - ".github/workflows/tachyon-drive-redis.yml"
+      - "package.json"
+      - "pnpm-lock.yaml"
       - ".github/workflows/module.yml"
 
 jobs:

@@ -1,12 +1,11 @@
-import {createS3Client} from 'mock-aws-s3-v3';
-import path from 'path';
 import {type IPersistSerializer, type IStorageDriver, nextSerializer} from 'tachyon-drive';
 import {strToBufferSerializer} from 'tachyon-drive-node-fs';
 import {beforeAll, describe, expect, it} from 'vitest';
 import * as zod from 'zod';
 import {AwsS3StorageDriver} from '../src';
+import {MockS3Client} from './lib/MockS3Client';
 
-const awsClient = createS3Client({bucket: 'bucket', localDirectory: path.resolve(__dirname, './')});
+const awsClient = new MockS3Client();
 
 const dataSchema = zod.object({
 	test: zod.string(),
