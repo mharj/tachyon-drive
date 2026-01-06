@@ -12,11 +12,7 @@ env:
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
   PACKAGE_NAME: "unknown"
   PACKAGE_VERSION: "unknown"
-  NPM: "pnpm"
   NPM_VERSION: "unknown"
-  HAVE_VALIDATE_SCRIPT: false
-  HAVE_LINT_SCRIPT: false
-  HAVE_UNIT_TEST_SCRIPT: false
 
 jobs:
   build:
@@ -30,9 +26,6 @@ jobs:
         run: |
           echo "PACKAGE_NAME=$(cat package.json | jq -r .name)" | tee -a $GITHUB_ENV
           echo "PACKAGE_VERSION=$(cat package.json | jq -r .version)" | tee -a $GITHUB_ENV
-          echo "HAVE_VALIDATE_SCRIPT=$(jq 'if .scripts.validate == null then false else true end' package.json)" | tee -a $GITHUB_ENV
-          echo "HAVE_LINT_SCRIPT=$(jq 'if .scripts.lint == null then false else true end' package.json)" | tee -a $GITHUB_ENV
-          echo "HAVE_UNIT_TEST_SCRIPT=$(jq 'if .scripts.test == null then false else true end' package.json)" | tee -a $GITHUB_ENV
 
       - uses: pnpm/action-setup@v4
 
@@ -46,22 +39,22 @@ jobs:
           echo "NPM_VERSION=$(curl -s https://registry.npmjs.org/${{ env.PACKAGE_NAME }} | jq -r '."dist-tags".latest')" | tee -a $GITHUB_ENV
 
       - name: Install workspace deps
-        run: ${{ env.NPM }} install
+        run: pnpm install
+
+      - name: Playwrite install
+        run: pnpm exec playwright install
 
       - name: Build
-        run: ${{ env.NPM }} run build
+        run: pnpm run build
 
       - name: Validate
-        if: env.HAVE_VALIDATE_SCRIPT == 'true'
-        run: ${{ env.NPM }} run validate
+        run: pnpm run validate
 
       - name: Test
-        if: env.HAVE_UNIT_TEST_SCRIPT == 'true'
-        run: ${{ env.NPM }} test
+        run: pnpm run test
 
       - name: Lint
-        if: env.HAVE_LINT_SCRIPT == 'true'
-        run: ${{ env.NPM }} run lint
+        run: pnpm run lint
 
       - name: Publish ${{env.PACKAGE_NAME}} ${{env.PACKAGE_VERSION}}
         working-directory: ${{ inputs.package-path }}
@@ -69,6 +62,6 @@ jobs:
           github.ref == env.PUBLISH_BRANCH &&
           env.NPM_TOKEN != '' &&
           env.PACKAGE_VERSION != env.NPM_VERSION
-        run: ${{ env.NPM }} publish --no-git-checks --access public
+        run: pnpm publish --no-git-checks --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
