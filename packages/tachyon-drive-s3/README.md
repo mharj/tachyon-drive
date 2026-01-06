@@ -1,5 +1,11 @@
 # tachyon-drive-s3
 
+[![TypeScript](https://badges.frapsoft.com/typescript/code/typescript.svg?v=101)](https://github.com/ellerbrock/typescript-badges/)
+[![npm version](https://badge.fury.io/js/tachyon-drive-s3.svg)](https://badge.fury.io/js/tachyon-drive-s3)
+[![Maintainability](https://qlty.sh/gh/mharj/projects/tachyon-drive/maintainability.svg)](https://qlty.sh/gh/mharj/projects/tachyon-drive)
+[![Code Coverage](https://qlty.sh/gh/mharj/projects/tachyon-drive/coverage.svg)](https://qlty.sh/gh/mharj/projects/tachyon-drive)
+![github action](https://github.com/mharj/tachyon-drive/actions/workflows/tachyon-drive-s3.yml/badge.svg?branch=main)
+
 ## Overview
 
 This package provides an implementation of the Tachyon Drive `StorageDriver` interface from the `tachyon-drive` package that uses AWS S3 as the underlying storage provider.

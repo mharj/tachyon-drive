@@ -1,5 +1,11 @@
 # tachyon-drive-browser
 
+[![TypeScript](https://badges.frapsoft.com/typescript/code/typescript.svg?v=101)](https://github.com/ellerbrock/typescript-badges/)
+[![npm version](https://badge.fury.io/js/tachyon-drive-browser.svg)](https://badge.fury.io/js/tachyon-drive-browser)
+[![Maintainability](https://qlty.sh/gh/mharj/projects/tachyon-drive/maintainability.svg)](https://qlty.sh/gh/mharj/projects/tachyon-drive)
+[![Code Coverage](https://qlty.sh/gh/mharj/projects/tachyon-drive/coverage.svg)](https://qlty.sh/gh/mharj/projects/tachyon-drive)
+![github action](https://github.com/mharj/tachyon-drive/actions/workflows/tachyon-drive-browser.yml/badge.svg?branch=main)
+
 ## Browser CacheStorage and LocalStorage driver for [tachyon-drive](https://www.npmjs.com/package/tachyon-drive)
 
 ### Compatibility
