@@ -1,13 +1,10 @@
-import {BlobServiceClient} from '@azure/storage-blob';
-import {type ChildProcess, spawn} from 'child_process';
-import {EventEmitter} from 'events';
+import {EventEmitter} from 'node:events';
 import type {ExternalNotifyEventsMap, IExternalNotify, IPersistSerializer, IStorageDriver} from 'tachyon-drive';
 import {CryptoBufferProcessor} from 'tachyon-drive-node-fs';
-import {afterAll, beforeAll, describe, expect, it} from 'vitest';
+import {describe, expect, it} from 'vitest';
 import {z} from 'zod';
 import {AzureBlobStorageDriver} from '../src/index.js';
-
-let azuriteProcess: ChildProcess | undefined;
+import {MockBlockBlobClient} from './lib/MockBlockBlobClient.js';
 
 const dataSchema = z.object({
 	test: z.string(),
@@ -48,22 +45,16 @@ const driverSet = new Set<IStorageDriver<Data>>([
 	new AzureBlobStorageDriver(
 		'AzureBlobStorageDriver',
 		{
-			blockBlobClient: BlobServiceClient.fromConnectionString(
-				`DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;`,
-			)
-				.getContainerClient('test')
-				.getBlockBlobClient('test.json'),
+			// @ts-expect-error - mock client
+			blockBlobClient: new MockBlockBlobClient(),
 		},
 		bufferSerializer,
 	),
 	new AzureBlobStorageDriver(
 		'CryptAzureBlobStorageDriver',
 		{
-			blockBlobClient: BlobServiceClient.fromConnectionString(
-				`DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;`,
-			)
-				.getContainerClient('test')
-				.getBlockBlobClient('test.aes'),
+			// @ts-expect-error - mock client
+			blockBlobClient: new MockBlockBlobClient(),
 		},
 		bufferSerializer,
 		new SimpleNotify(),
@@ -74,24 +65,6 @@ const driverSet = new Set<IStorageDriver<Data>>([
 const data = dataSchema.parse({test: 'demo'});
 
 describe('StorageDriver', () => {
-	beforeAll(async () => {
-		azuriteProcess = spawn('azurite', ['--silent', '--location', 'azurite-data', '--blobHost', '127.0.0.1'], {shell: true, stdio: 'inherit'});
-		// wait a bit for Azurite to be ready
-		await new Promise((r) => setTimeout(r, 5000));
-	});
-
-	afterAll(async () => {
-		if (azuriteProcess?.pid) {
-			if (process.platform === 'win32') {
-				spawn('taskkill', ['/pid', azuriteProcess.pid.toString(), '/f', '/t']);
-			} else {
-				azuriteProcess.kill();
-			}
-		}
-		// wait a bit for Azurite to be closed
-		await new Promise((r) => setTimeout(r, 2000));
-	});
-
 	describe.each([...driverSet])('StorageDriver $name', (currentDriver) => {
 		it('should be empty store', async () => {
 			expect(await currentDriver.hydrate()).to.eq(undefined);

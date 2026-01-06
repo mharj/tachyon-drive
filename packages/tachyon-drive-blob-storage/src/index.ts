@@ -1,6 +1,6 @@
 import type {ILoggerLike} from '@avanio/logger-like';
 import type {BlockBlobClient} from '@azure/storage-blob';
-import {type Loadable, LoadableCore} from '@luolapeikko/ts-common';
+import type {Loadable} from '@luolapeikko/ts-common';
 import {type IExternalNotify, type IPersistSerializer, type IStoreProcessor, StorageDriver, TachyonBandwidth} from 'tachyon-drive';
 
 export type AzureBlobStorageDriverOptions = {
@@ -64,7 +64,7 @@ export class AzureBlobStorageDriver<Input> extends StorageDriver<Input, Buffer> 
 
 	async #getBlockBlobClient(): Promise<BlockBlobClient> {
 		if (typeof this.#blockBlobClient === 'function') {
-			this.#blockBlobClient = LoadableCore.resolve(this.#blockBlobClient);
+			this.#blockBlobClient = this.#blockBlobClient();
 		}
 		return await this.#blockBlobClient;
 	}

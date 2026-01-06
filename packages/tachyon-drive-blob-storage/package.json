@@ -30,13 +30,12 @@
   "author": "mharj",
   "license": "MIT",
   "devDependencies": {
-    "azurite": "^3.35.0",
     "tachyon-drive-node-fs": "workspace:*"
   },
   "peerDependencies": {
     "@avanio/logger-like": ">= 0.0.1",
     "@azure/storage-blob": "^12",
-    "@luolapeikko/ts-common": ">= 0.2.0",
-    "tachyon-drive": "^0.11.1"
+    "@luolapeikko/ts-common": ">= 0.0.1",
+    "tachyon-drive": ">= 0.11.1"
   }
 }
