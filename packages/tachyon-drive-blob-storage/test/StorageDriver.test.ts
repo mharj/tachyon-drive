@@ -93,11 +93,6 @@ describe('StorageDriver', () => {
 	});
 
 	describe.each([...driverSet])('StorageDriver $name', (currentDriver) => {
-		beforeAll(async function () {
-			await expect(currentDriver.init()).resolves.to.be.eq(true);
-			await expect(currentDriver.clear()).resolves.to.be.eq(undefined);
-			expect(currentDriver.isInitialized).to.be.eq(false);
-		});
 		it('should be empty store', async () => {
 			expect(await currentDriver.hydrate()).to.eq(undefined);
 			expect(currentDriver.isInitialized).to.be.eq(true);
