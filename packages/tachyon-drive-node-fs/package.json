@@ -27,6 +27,9 @@
   ],
   "author": "mharj",
   "license": "MIT",
+  "devDependencies": {
+    "tachyon-drive": "workspace:*"
+  },
   "peerDependencies": {
     "@avanio/logger-like": "^0.1 || ^0.2",
     "@luolapeikko/ts-common": ">= 1.0.0",

@@ -102,10 +102,10 @@ importers:
       '@luolapeikko/ts-common':
         specifier: '>= 0.0.1'
         version: 1.1.4
-      tachyon-drive:
-        specifier: '>= 0.11.1'
-        version: 0.11.5(@avanio/logger-like@0.2.12)(@luolapeikko/result-option@2.1.1)(@luolapeikko/ts-common@1.1.4)
     devDependencies:
+      tachyon-drive:
+        specifier: workspace:*
+        version: link:../tachyon-drive
       tachyon-drive-node-fs:
         specifier: workspace:*
         version: link:../tachyon-drive-node-fs
@@ -124,9 +124,10 @@ importers:
       events:
         specifier: ^3.3
         version: 3.3.0
+    devDependencies:
       tachyon-drive:
-        specifier: ^0.11
-        version: 0.11.5(@avanio/logger-like@0.2.12)(@luolapeikko/result-option@2.1.1)(@luolapeikko/ts-common@1.1.4)
+        specifier: workspace:*
+        version: link:../tachyon-drive
 
   packages/tachyon-drive-memcached:
     dependencies:
@@ -158,9 +159,10 @@ importers:
       '@luolapeikko/ts-common':
         specifier: '>= 1.0.0'
         version: 1.1.4
+    devDependencies:
       tachyon-drive:
-        specifier: ^0.11.1
-        version: 0.11.5(@avanio/logger-like@0.2.12)(@luolapeikko/result-option@2.1.1)(@luolapeikko/ts-common@1.1.4)
+        specifier: workspace:*
+        version: link:../tachyon-drive
 
   packages/tachyon-drive-redis:
     dependencies:
@@ -192,10 +194,10 @@ importers:
       '@luolapeikko/ts-common':
         specifier: '>= 0.1.0'
         version: 1.1.4
-      tachyon-drive:
-        specifier: '>= 0.11.0'
-        version: 0.11.5(@avanio/logger-like@0.2.12)(@luolapeikko/result-option@2.1.1)(@luolapeikko/ts-common@1.1.4)
     devDependencies:
+      tachyon-drive:
+        specifier: workspace:*
+        version: link:../tachyon-drive
       tachyon-drive-node-fs:
         specifier: workspace:*
         version: link:../tachyon-drive-node-fs
@@ -2251,13 +2253,6 @@ packages:
   synckit@0.11.11:
     resolution: {integrity: sha512-MeQTA1r0litLUf0Rp/iisCaL8761lKAZHaimlbGK4j0HysC4PLfqygQj9srcs0m2RdtDYnF8UuYyKpbjHYp7Jw==}
     engines: {node: ^14.18.0 || >=16.0.0}
-
-  tachyon-drive@0.11.5:
-    resolution: {integrity: sha512-E8xb/ZBPpIccF41YXN0ulDPTY0Ls6T05T90yBkBu7J1I54AbCDCOtvw4HWRswimyLmGcwBqEIZa+/LulyAeTfA==}
-    peerDependencies:
-      '@avanio/logger-like': '>= 0.2.10'
-      '@luolapeikko/result-option': '>= 1.0.0'
-      '@luolapeikko/ts-common': '>= 0.1.0'
 
   term-size@2.2.1:
     resolution: {integrity: sha512-wK0Ri4fOGjv/XPy8SBHZChl8CM7uMc5VML7SqiQ0zG7+J5Vr+RMQDoHa2CNT6KHUnTGIXH34UDMkPzAUyapBZg==}
@@ -5109,12 +5104,6 @@ snapshots:
     dependencies:
       '@pkgr/core': 0.2.9
     optional: true
-
-  tachyon-drive@0.11.5(@avanio/logger-like@0.2.12)(@luolapeikko/result-option@2.1.1)(@luolapeikko/ts-common@1.1.4):
-    dependencies:
-      '@avanio/logger-like': 0.2.12
-      '@luolapeikko/result-option': 2.1.1
-      '@luolapeikko/ts-common': 1.1.4
 
   term-size@2.2.1: {}
 

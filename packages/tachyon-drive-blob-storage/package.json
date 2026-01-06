@@ -30,6 +30,7 @@
   "author": "mharj",
   "license": "MIT",
   "devDependencies": {
+    "tachyon-drive": "workspace:*",
     "tachyon-drive-node-fs": "workspace:*"
   },
   "peerDependencies": {
