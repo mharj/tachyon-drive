@@ -40,9 +40,8 @@ const awsClient = createS3Client({
   },
 });
 const driver = new AwsS3StorageDriver(
-  "AwsS3StorageDriver",
-  { awsClient, awsBucket: "bucket", awsKey: "key" },
-  bufferSerializer
+  { name: "AwsS3StorageDriver", awsClient, awsBucket: "bucket", awsKey: "key" },
+  bufferSerializer,
 );
 ```
 

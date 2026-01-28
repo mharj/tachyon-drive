@@ -14,7 +14,7 @@
 const driver = new FileStorageDriver(
   "FileStorageDriver",
   "./store.json",
-  bufferSerializer
+  bufferSerializer,
 );
 ```
 
@@ -23,10 +23,13 @@ const driver = new FileStorageDriver(
 ```typescript
 const processor = new CryptoBufferProcessor(Buffer.from("some-secret-key"));
 const driver = new FileStorageDriver(
-  "FileStorageDriver",
-  "./store.json.aes",
+  {
+    name: "FileStorageDriver",
+    fileName: "./store.json.aes",
+    logger: console,
+  },
   bufferSerializer,
-  processor
+  processor,
 );
 ```
 
@@ -35,9 +38,9 @@ const driver = new FileStorageDriver(
 ```typescript
 const fileUpdateNotify = new FileUpdateNotify("./store.notify");
 const driver = new SomeDriver(
-  "SomeDriverWithoutUpdateNotification",
+  { name: "SomeDriverWithoutUpdateNotification" },
   bufferSerializer,
-  fileUpdateNotify
+  fileUpdateNotify,
 );
 ```
 

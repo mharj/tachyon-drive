@@ -1,38 +1,33 @@
-import type {ILoggerLike} from '@avanio/logger-like';
 import type {BlockBlobClient} from '@azure/storage-blob';
 import type {Loadable} from '@luolapeikko/ts-common';
-import {type IExternalNotify, type IPersistSerializer, type IStoreProcessor, StorageDriver, TachyonBandwidth} from 'tachyon-drive';
+import {type IExternalNotify, type IPersistSerializer, type IStoreProcessor, StorageDriver, type StorageDriverOptions, TachyonBandwidth} from 'tachyon-drive';
 
-export type AzureBlobStorageDriverOptions = {
-	blockBlobClient: Loadable<BlockBlobClient>;
+export type AzureBlockBlobClient = Pick<BlockBlobClient, 'upload' | 'downloadToBuffer' | 'deleteIfExists' | 'exists' | 'name' | 'containerName' | 'url'>;
+
+export type AzureBlobStorageDriverOptions = StorageDriverOptions & {
+	blockBlobClient: Loadable<AzureBlockBlobClient>;
 	/** Optional bandwidth settings, defaults to "TachyonBandwidth.VerySmall" because of operation cost */
 	bandwidth?: TachyonBandwidth;
 };
 
 export class AzureBlobStorageDriver<Input> extends StorageDriver<Input, Buffer> {
-	public readonly bandwidth: TachyonBandwidth;
-	#blockBlobClient: Loadable<BlockBlobClient>;
+	#blockBlobClient: Loadable<AzureBlockBlobClient>;
 
 	/**
 	 * AzureBlobStorageDriver
-	 * @param {string} name - name of the driver
-	 * @param {AzureBlobStorageDriverOptions} blobOptions - options for the Azure Blob Storage (connectionString, containerName, fileName)
+	 * @param {AzureBlobStorageDriverOptions} options - options for the Azure Blob Storage (name, blockBlobClient, bandwidth, logger)
 	 * @param {IPersistSerializer<Input, Buffer>} serializer - serializer to serialize and deserialize data (to and from Buffer)
 	 * @param {IExternalNotify} [extNotify] - optional external notify service to notify store update events
 	 * @param {Loadable<IStoreProcessor<Buffer>>} [processor] - optional processor to process data (encrypt, decrypt, compress, decompress, etc.)
-	 * @param {ILoggerLike} [logger] - optional logger
 	 */
 	public constructor(
-		name: string,
-		blobOptions: AzureBlobStorageDriverOptions,
+		options: AzureBlobStorageDriverOptions,
 		serializer: IPersistSerializer<Input, Buffer>,
 		extNotify?: IExternalNotify,
 		processor?: Loadable<IStoreProcessor<Buffer>>,
-		logger?: ILoggerLike,
 	) {
-		super(name, serializer, extNotify ?? null, processor, logger);
-		this.bandwidth = blobOptions.bandwidth ?? TachyonBandwidth.VerySmall;
-		this.#blockBlobClient = blobOptions.blockBlobClient;
+		super(options, serializer, extNotify ?? null, processor);
+		this.#blockBlobClient = options.blockBlobClient;
 	}
 
 	protected async handleInit(): Promise<boolean> {
@@ -62,7 +57,11 @@ export class AzureBlobStorageDriver<Input> extends StorageDriver<Input, Buffer> 
 		await blockBlobClient.deleteIfExists();
 	}
 
-	async #getBlockBlobClient(): Promise<BlockBlobClient> {
+	protected getDefaultBandwidth(): TachyonBandwidth {
+		return TachyonBandwidth.VerySmall;
+	}
+
+	async #getBlockBlobClient(): Promise<AzureBlockBlobClient> {
 		if (typeof this.#blockBlobClient === 'function') {
 			this.#blockBlobClient = this.#blockBlobClient();
 		}

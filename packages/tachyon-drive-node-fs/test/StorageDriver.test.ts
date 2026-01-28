@@ -40,19 +40,18 @@ const loadCryptoProcessor = vi.fn(function () {
 const driverSet = new Set<{driver: IStorageDriver<Data>; fileName?: string; crypto: boolean}>([
 	{
 		crypto: false,
-		driver: new MemoryStorageDriver('MemoryStorageDriver', objectSerializer, new FileUpdateNotify(path.resolve(__dirname, './update.notify'))),
+		driver: new MemoryStorageDriver({name: 'MemoryStorageDriver'}, objectSerializer, new FileUpdateNotify(path.resolve(__dirname, './update.notify'))),
 		fileName: path.resolve(__dirname, './update.notify'),
 	},
 	{
 		crypto: false,
-		driver: new FileStorageDriver('FileStorageDriver - file: string', {fileName: path.resolve(__dirname, './test1.json')}, bufferSerializer),
+		driver: new FileStorageDriver({fileName: path.resolve(__dirname, './test1.json'), name: 'FileStorageDriver - file: string'}, bufferSerializer),
 		fileName: path.resolve(__dirname, './test1.json'),
 	},
 	{
 		crypto: false,
 		driver: new FileStorageDriver(
-			'FileStorageDriver - file: Promise<string>',
-			{fileName: Promise.resolve(path.resolve(__dirname, './test2.json'))},
+			{fileName: Promise.resolve(path.resolve(__dirname, './test2.json')), name: 'FileStorageDriver - file: Promise<string>'},
 			bufferSerializer,
 		),
 		fileName: path.resolve(__dirname, './test2.json'),
@@ -60,8 +59,7 @@ const driverSet = new Set<{driver: IStorageDriver<Data>; fileName?: string; cryp
 	{
 		crypto: true,
 		driver: new FileStorageDriver(
-			'CryptFileStorageDriver - file: () => string',
-			{fileName: () => path.resolve(__dirname, './test1.aes')},
+			{fileName: () => path.resolve(__dirname, './test1.aes'), name: 'CryptFileStorageDriver - file: () => string'},
 			bufferSerializer,
 			loadCryptoProcessor,
 		),
@@ -70,8 +68,7 @@ const driverSet = new Set<{driver: IStorageDriver<Data>; fileName?: string; cryp
 	{
 		crypto: true,
 		driver: new FileStorageDriver(
-			'CryptFileStorageDriver - file: () => Promise<string>',
-			{fileName: () => Promise.resolve(path.resolve(__dirname, './test2.aes'))},
+			{fileName: () => Promise.resolve(path.resolve(__dirname, './test2.aes')), name: 'CryptFileStorageDriver - file: () => Promise<string>'},
 			bufferSerializer,
 			loadCryptoProcessor,
 		),
@@ -144,7 +141,7 @@ describe('StorageDriver', function () {
 	});
 	describe('Broken StorageDriver', function () {
 		it('should fail to start if fileName is not valid', async function () {
-			const brokenDriver = new FileStorageDriver('BrokenDriver', {} as FileStorageDriverOptions, bufferSerializer);
+			const brokenDriver = new FileStorageDriver({name: 'BrokenDriver'} as FileStorageDriverOptions, bufferSerializer);
 			await expect(brokenDriver.init()).to.rejects.toThrowError(`FileStorageDriver 'BrokenDriver' fileName argument must return a string, value: undefined`);
 		});
 	});
@@ -156,7 +153,7 @@ describe('StorageDriver', function () {
 				validator: (data: Data) => dataSchema.safeParse(data).success,
 			} as unknown as IPersistSerializer<Data, Buffer>;
 
-			const brokenDriver = new FileStorageDriver('BrokenSerializer', {fileName: path.resolve(__dirname, './test.json')}, brokenSerializer);
+			const brokenDriver = new FileStorageDriver({fileName: path.resolve(__dirname, './test.json'), name: 'BrokenSerializer'}, brokenSerializer);
 			await expect(brokenDriver.store(data)).to.rejects.toThrowError(`FileStorageDriver 'BrokenSerializer' can only store Buffers`);
 		});
 	});

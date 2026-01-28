@@ -1,6 +1,6 @@
 {
   "name": "tachyon-drive-redis",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Tachyon drive implementation for Redis",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
@@ -35,6 +35,6 @@
   "peerDependencies": {
     "@avanio/logger-like": ">= 0.1.1",
     "@redis/client": "^5.1",
-    "tachyon-drive": "^0.12.0"
+    "tachyon-drive": ">= 2.0.0"
   }
 }

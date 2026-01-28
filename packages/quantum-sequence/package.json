@@ -1,0 +1,43 @@
+{
+  "name": "quantum-sequence",
+  "version": "2.0.0",
+  "description": "Map and Set implementations which uses tachyon-drive as storage backend",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.cts",
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      },
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      }
+    }
+  },
+  "scripts": {
+    "build": "tsdown src/index.mts --sourcemap --format cjs,esm --dts --clean -c tsconfig.build.json",
+    "validate": "tsc --noEmit"
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": "github:mharj/tachyon-drive",
+  "keywords": [
+    "storage",
+    "driver",
+    "tachyon-drive",
+    "iterator"
+  ],
+  "author": "mharj",
+  "license": "MIT",
+  "devDependencies": {
+    "tachyon-drive": "workspace:*"
+  },
+  "peerDependencies": {
+    "@avanio/logger-like": ">= 0.2.10",
+    "tachyon-drive": ">= 2.0.0"
+  }
+}

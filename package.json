@@ -11,6 +11,7 @@
     "@aws-sdk/types": "^3.957.0",
     "@biomejs/biome": "^2.3.11",
     "@luolapeikko/memcached": "^0.0.1",
+    "@luolapeikko/result-option": "^2.2.0",
     "@luolapeikko/ts-common": "^1.1.4",
     "@playwright/test": "^1.57.0",
     "@redis/client": "^5.10.0",

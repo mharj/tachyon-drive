@@ -38,10 +38,8 @@ const redis = createClient({ ...options }).withTypeMapping({
 });
 
 const driver = new RedisStorageDriver(
-  "RedisStorageDriver",
-  "store-key",
+  { name: "RedisStorageDriver", redis, key: "store-key" },
   bufferSerializer,
-  { redis }
 );
 ```
 

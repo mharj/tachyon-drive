@@ -1,10 +1,9 @@
 import {existsSync, type FSWatcher, watch} from 'node:fs';
-import type {ILoggerLike} from '@avanio/logger-like';
 import {type Loadable, LoadableCore, StringCore, toError} from '@luolapeikko/ts-common';
 import {readFile, unlink, writeFile} from 'fs/promises';
-import {type IPersistSerializer, type IStoreProcessor, StorageDriver, TachyonBandwidth} from 'tachyon-drive';
+import {type IPersistSerializer, type IStoreProcessor, StorageDriver, type StorageDriverOptions, TachyonBandwidth} from 'tachyon-drive';
 
-export type FileStorageDriverOptions = {
+export type FileStorageDriverOptions = StorageDriverOptions & {
 	/**
 	 * File name or async function that returns a file name
 	 */
@@ -19,7 +18,6 @@ export type FileStorageDriverOptions = {
  * A storage driver that uses the local file system to store files.
  */
 export class FileStorageDriver<Input> extends StorageDriver<Input, Buffer> {
-	public readonly bandwidth: TachyonBandwidth;
 	#isWriting = false;
 	#fileName: Loadable<string>;
 	#fileWatch: FSWatcher | undefined;
@@ -27,23 +25,12 @@ export class FileStorageDriver<Input> extends StorageDriver<Input, Buffer> {
 
 	/**
 	 * Creates a new instance of the `FileStorageDriver` class.
-	 * @param {string} name - name of the driver
-	 * @param {FileStorageDriverOptions} options - options for the driver
-	 * @param {Loadable<string>} options.fileName - file name or async function that returns a file name
-	 * @param {TachyonBandwidth} options.bandwidth - speed of the file storage driver, default is "TachyonBandwidth.Large"
+	 * @param {FileStorageDriverOptions} options - options for the driver (name, fileName, bandwidth, logger)
 	 * @param {IPersistSerializer<Input, Buffer>} serializer - serializer to serialize and deserialize data (to and from Buffer)
 	 * @param {Loadable<IStoreProcessor<Buffer>>} processor - optional processor to process data before storing and after hydrating
-	 * @param {ILoggerLike} logger - optional logger to log messages
 	 */
-	public constructor(
-		name: string,
-		options: FileStorageDriverOptions,
-		serializer: IPersistSerializer<Input, Buffer>,
-		processor?: Loadable<IStoreProcessor<Buffer>>,
-		logger?: ILoggerLike,
-	) {
-		super(name, serializer, null, processor, logger);
-		this.bandwidth = options.bandwidth ?? TachyonBandwidth.Large;
+	public constructor(options: FileStorageDriverOptions, serializer: IPersistSerializer<Input, Buffer>, processor?: Loadable<IStoreProcessor<Buffer>>) {
+		super(options, serializer, null, processor);
 		this.#fileName = options.fileName;
 		this.fileWatcher = this.fileWatcher.bind(this);
 	}
@@ -106,6 +93,10 @@ export class FileStorageDriver<Input> extends StorageDriver<Input, Buffer> {
 			await unlink(fileName);
 			this.#isWriting = false;
 		}
+	}
+
+	protected getDefaultBandwidth(): TachyonBandwidth {
+		return TachyonBandwidth.Large;
 	}
 
 	/**

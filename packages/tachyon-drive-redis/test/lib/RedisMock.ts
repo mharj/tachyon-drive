@@ -1,4 +1,4 @@
-import type {RedisClient} from '../../src';
+import type {RedisClientInstance} from '../../src';
 
 export class RedisMock {
 	private storage = new Map<string, Map<string, Buffer>>();
@@ -26,6 +26,6 @@ export class RedisMock {
 	}
 }
 
-export function createClient(): RedisClient {
-	return new RedisMock() as unknown as RedisClient;
+export function createClient(): RedisClientInstance {
+	return new RedisMock() as RedisClientInstance;
 }

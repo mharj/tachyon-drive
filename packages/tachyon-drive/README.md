@@ -36,8 +36,8 @@ const bufferSerializer: IPersistSerializer<Data, Buffer> = {
 
 ```typescript
 const driver = new MemoryStorageDriver(
-  "MemoryStorageDriver",
-  bufferSerializer /* externalNotify = null, processor */
+  { name: "MemoryStorageDriver" },
+  bufferSerializer /* externalNotify = null, processor */,
 );
 ```
 

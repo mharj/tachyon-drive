@@ -82,3 +82,6 @@ azurite-data
 
 # docs
 doc
+
+# tsbuildinfo
+tsconfig.tsbuildinfo

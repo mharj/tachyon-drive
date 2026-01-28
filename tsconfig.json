@@ -4,6 +4,10 @@
     { "path": "./packages/tachyon-drive" },
     { "path": "./packages/tachyon-drive-browser" },
     { "path": "./packages/tachyon-drive-node-fs" },
-    { "path": "./packages/tachyon-drive-s3" }
+    { "path": "./packages/tachyon-drive-blob-storage" },
+    { "path": "./packages/tachyon-drive-memcached" },
+    { "path": "./packages/tachyon-drive-redis" },
+    { "path": "./packages/tachyon-drive-s3" },
+    { "path": "./packages/quantum-sequence" }
   ]
 }

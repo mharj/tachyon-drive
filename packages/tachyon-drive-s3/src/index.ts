@@ -1,11 +1,14 @@
-import type {ILoggerLike} from '@avanio/logger-like';
 import {DeleteObjectCommand, GetObjectCommand, PutObjectCommand, type S3Client} from '@aws-sdk/client-s3';
-import {type IExternalNotify, type IPersistSerializer, type IStoreProcessor, StorageDriver, TachyonBandwidth} from 'tachyon-drive';
+import {type IExternalNotify, type IPersistSerializer, type IStoreProcessor, StorageDriver, type StorageDriverOptions, TachyonBandwidth} from 'tachyon-drive';
 
 /**
  * The Tachyon driver configuration object for the AWS S3 storage driver with bucket and key.
  */
-export type AwsS3StorageDriverOption = {awsClient: S3Client; awsBucket: string; awsKey: string; logger?: ILoggerLike; TachyonBandwidth?: TachyonBandwidth};
+export type AwsS3StorageDriverOption = StorageDriverOptions & {
+	awsClient: S3Client;
+	awsBucket: string;
+	awsKey: string;
+};
 
 /**
  * A storage driver that uses AWS S3 as a backend.
@@ -14,18 +17,15 @@ export type AwsS3StorageDriverOption = {awsClient: S3Client; awsBucket: string; 
  * const driver = new AwsS3StorageDriver('AwsS3StorageDriver', new URL(`http://accessKeyId:secretAccessKey@localhost:9000/bucket/key?forcePathStyle=true&region=us-east-1`), bufferSerializer);
  */
 export class AwsS3StorageDriver<Input> extends StorageDriver<Input, Buffer> {
-	public readonly bandwidth: TachyonBandwidth;
-	private _options: AwsS3StorageDriverOption;
+	readonly #options: AwsS3StorageDriverOption;
 	public constructor(
-		name: string,
 		opts: AwsS3StorageDriverOption,
 		serializer: IPersistSerializer<Input, Buffer>,
 		extNotify?: IExternalNotify,
 		processor?: IStoreProcessor<Buffer>,
 	) {
-		super(name, serializer, extNotify ?? null, processor, opts?.logger);
-		this._options = opts;
-		this.bandwidth = opts?.TachyonBandwidth ?? TachyonBandwidth.VerySmall;
+		super(opts, serializer, extNotify ?? null, processor);
+		this.#options = opts;
 	}
 
 	protected handleInit(): boolean {
@@ -37,18 +37,18 @@ export class AwsS3StorageDriver<Input> extends StorageDriver<Input, Buffer> {
 	}
 
 	protected async handleStore(buffer: Buffer): Promise<void> {
-		await this._options.awsClient.send(
+		await this.#options.awsClient.send(
 			new PutObjectCommand({
 				Body: buffer,
-				Bucket: this._options.awsBucket,
-				Key: this._options.awsKey,
+				Bucket: this.#options.awsBucket,
+				Key: this.#options.awsKey,
 			}),
 		);
 	}
 
 	protected async handleHydrate(): Promise<Buffer | undefined> {
 		try {
-			const response = await this._options.awsClient.send(new GetObjectCommand({Bucket: this._options.awsBucket, Key: this._options.awsKey}));
+			const response = await this.#options.awsClient.send(new GetObjectCommand({Bucket: this.#options.awsBucket, Key: this.#options.awsKey}));
 			if (!response || !response.Body) {
 				return undefined;
 			}
@@ -62,11 +62,15 @@ export class AwsS3StorageDriver<Input> extends StorageDriver<Input, Buffer> {
 	}
 
 	protected async handleClear(): Promise<void> {
-		await this._options.awsClient.send(
+		await this.#options.awsClient.send(
 			new DeleteObjectCommand({
-				Bucket: this._options.awsBucket,
-				Key: this._options.awsKey,
+				Bucket: this.#options.awsBucket,
+				Key: this.#options.awsKey,
 			}),
 		);
+	}
+
+	protected getDefaultBandwidth(): TachyonBandwidth {
+		return TachyonBandwidth.VerySmall;
 	}
 }

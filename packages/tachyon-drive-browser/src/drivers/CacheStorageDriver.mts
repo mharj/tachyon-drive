@@ -1,8 +1,7 @@
-import type {ILoggerLike} from '@avanio/logger-like';
 import {type Loadable, LoadableCore} from '@luolapeikko/ts-common';
-import {type IPersistSerializer, type IStoreProcessor, StorageDriver, TachyonBandwidth} from 'tachyon-drive';
+import {type IPersistSerializer, type IStoreProcessor, StorageDriver, type StorageDriverOptions, TachyonBandwidth} from 'tachyon-drive';
 
-export type CacheStorageDriverOptions = {
+export type CacheStorageDriverOptions = StorageDriverOptions & {
 	/** Cache Store name, defaults as 'tachyon' */
 	cache: Loadable<Cache>;
 	/** Cache Request url */
@@ -16,31 +15,22 @@ export type CacheStorageDriverOptions = {
  * @since v0.3.0
  */
 export class CacheStorageDriver<Input, Output extends ArrayBuffer | string> extends StorageDriver<Input, Output> {
-	public readonly bandwidth: TachyonBandwidth = TachyonBandwidth.Large;
 	#cache: Loadable<Cache>;
 	#req: Loadable<URL>;
 	/**
 	 * CacheStorageDriver constructor
-	 * @param {string} name Driver name
 	 * @param {CacheStorageDriverOptions} options CacheStorageDriver options which can be a value, promise or a function
 	 * @param {IPersistSerializer<Input, Output>} serializer Serializer object for the data, this can be string or ArrayBuffer serializer
 	 * @param {IStoreProcessor<Output>} processor optional Processor which can be used to modify the data before storing or after hydrating
-	 * @param {ILoggerLike} logger optional logger
 	 */
-	public constructor(
-		name: string,
-		options: CacheStorageDriverOptions,
-		serializer: IPersistSerializer<Input, Output>,
-		processor?: Loadable<IStoreProcessor<Output>>,
-		logger?: ILoggerLike,
-	) {
-		super(name, serializer, null, processor, logger);
+	public constructor(options: CacheStorageDriverOptions, serializer: IPersistSerializer<Input, Output>, processor?: Loadable<IStoreProcessor<Output>>) {
+		super(options, serializer, null, processor);
 		this.#cache = options.cache;
 		this.#req = options.url;
 	}
 
 	protected async handleInit(): Promise<boolean> {
-		await this.getCurrentCache();
+		await this.#getCurrentCache();
 		return true;
 	}
 
@@ -54,8 +44,8 @@ export class CacheStorageDriver<Input, Output extends ArrayBuffer | string> exte
 			size = buffer.byteLength;
 			contentType = 'application/octet-stream';
 		}
-		const cache = await this.getCurrentCache();
-		const request = await this.getRequest();
+		const cache = await this.#getCurrentCache();
+		const request = await this.#getRequest();
 		await cache.put(
 			request,
 			new Response(buffer, {
@@ -69,8 +59,8 @@ export class CacheStorageDriver<Input, Output extends ArrayBuffer | string> exte
 	}
 
 	protected async handleHydrate(): Promise<Output | undefined> {
-		const cache = await this.getCurrentCache();
-		const res = await cache.match(await this.getRequest());
+		const cache = await this.#getCurrentCache();
+		const res = await cache.match(await this.#getRequest());
 		if (res) {
 			const contentType = res.headers.get('Content-Type');
 			let data: Output;
@@ -95,22 +85,26 @@ export class CacheStorageDriver<Input, Output extends ArrayBuffer | string> exte
 	}
 
 	protected async handleClear(): Promise<void> {
-		const cache = await this.getCurrentCache();
-		await cache.delete(await this.getRequest());
+		const cache = await this.#getCurrentCache();
+		await cache.delete(await this.#getRequest());
 	}
 
 	protected handleUnload() {
 		return true;
 	}
 
-	private async getRequest(): Promise<Request> {
+	protected getDefaultBandwidth(): TachyonBandwidth {
+		return TachyonBandwidth.Large;
+	}
+
+	async #getRequest(): Promise<Request> {
 		if (typeof this.#req === 'function') {
 			this.#req = LoadableCore.resolve(this.#req);
 		}
 		return new Request(await this.#req);
 	}
 
-	private async getCurrentCache(): Promise<Cache> {
+	async #getCurrentCache(): Promise<Cache> {
 		if (typeof this.#cache === 'function') {
 			this.#cache = LoadableCore.resolve(this.#cache);
 		}

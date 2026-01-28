@@ -17,6 +17,10 @@ on:
       - "pnpm-lock.yaml"
       - ".github/workflows/module.yml"
 
+permissions:
+  id-token: write # Required for OIDC
+  contents: read
+
 jobs:
   module-flow:
     uses: ./.github/workflows/module.yml

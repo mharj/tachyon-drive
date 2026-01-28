@@ -6,8 +6,9 @@ import type {
 	BlockBlobUploadResponse,
 	HttpRequestBody,
 } from '@azure/storage-blob';
+import type {AzureBlockBlobClient} from '../../src/index';
 
-export class MockBlockBlobClient {
+export class MockBlockBlobClient implements AzureBlockBlobClient {
 	private static _memory = new Map<string, Buffer>();
 
 	public get name(): string {

@@ -36,10 +36,8 @@ To use this package, you first need to create an instance of the MemcachedStorag
 
 ```typescript
 const driver = new MemcachedStorageDriver(
-  "MemcachedStorageDriver",
-  "store-key",
-  0, // never expire
-  bufferSerializer
+  { name: "MemcachedStorageDriver", key: "store-key", timeout: 0 },
+  bufferSerializer,
 );
 ```
 

@@ -37,25 +37,28 @@ export const localStoreDriver = new LocalStorageDriver(
   "tachyon",
   stringSerializer,
   undefined,
-  console
+  console,
 );
 // cache storage driver can handle string and array buffer values.
 export const cacheStoreDriver = new CacheStorageDriver(
-  "CacheStorageDriver",
   {
+    name: "CacheStorageDriver",
     cache: window.caches.open("test-cache"),
     url: new URL("https://example.com/data"),
   },
   stringSerializer,
   undefined,
-  console
+  console,
 );
 export const cacheStoreDriver = new CacheStorageDriver(
-  "CacheStorageDriver",
-  { cache: window.caches.open("test-cache"), url: new URL("http://tachyon") },
+  {
+    name: "CacheStorageDriver",
+    cache: window.caches.open("test-cache"),
+    url: new URL("http://tachyon"),
+  },
   arrayBufferSerializer,
   undefined,
-  console
+  console,
 );
 // WebFS Api driver
 async function getFileHandle() {
@@ -64,27 +67,31 @@ async function getFileHandle() {
   });
 }
 export const webFsStoreDriver = new WebFsStorageDriver(
-  "WebFsStorageDriver",
-  getFileHandle,
-  arrayBufferSerializer
+  { name: "WebFsStorageDriver", fileHandle: getFileHandle },
+  arrayBufferSerializer,
 );
 // encrypted cache storage (ArrayBuffer)
 const processor = new CryptoBufferProcessor(() =>
-  new TextEncoder().encode("some-secret-key")
+  new TextEncoder().encode("some-secret-key"),
 );
 export const cacheStoreDriver = new CacheStorageDriver(
-  "CacheStorageDriver",
-  { cache: window.caches.open("test-cache"), url: new URL("http://tachyon") },
+  {
+    name: "CacheStorageDriver",
+    cache: window.caches.open("test-cache"),
+    url: new URL("http://tachyon"),
+    logger: console,
+  },
   arrayBufferSerializer,
   processor,
-  console
 );
 export const webFsStoreDriver = new WebFsStorageDriver(
-  "WebFsStorageDriver",
-  getFileHandle,
+  {
+    name: "WebFsStorageDriver",
+    fileHandle: getFileHandle,
+    logger: console,
+  },
   arrayBufferSerializer,
   processor,
-  console
 );
 ```
 

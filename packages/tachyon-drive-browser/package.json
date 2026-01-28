@@ -1,6 +1,6 @@
 {
   "name": "tachyon-drive-browser",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Browser module for tachyon storage driver implementation",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
@@ -31,10 +31,10 @@
     "tachyon-drive": "workspace:*"
   },
   "peerDependencies": {
-    "@avanio/logger-like": "^0.2.10",
+    "@avanio/logger-like": ">= 0.2.10",
     "@luolapeikko/ts-common": ">= 0.0.1",
     "@types/wicg-file-system-access": "^2023",
     "events": "^3.3",
-    "tachyon-drive": "^0.12.0"
+    "tachyon-drive": ">= 2.0.0"
   }
 }

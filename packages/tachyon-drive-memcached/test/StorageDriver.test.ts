@@ -20,8 +20,14 @@ const jsonSerialization: IPersistSerializer<Data, string> = {
 const bufferSerializer: IPersistSerializer<Data, Buffer> = nextSerializer<Data, string, Buffer>(jsonSerialization, strToBufferSerializer);
 
 const driverSet = new Set<IStorageDriver<Data>>([
-	new MemcachedStorageDriver('MemcachedStorageDriver - default URLs', 'test', 0, () => new Memcached('localhost:11211'), bufferSerializer),
-	new MemcachedStorageDriver('MemcachedStorageDriver - callback URLs', 'test', 0, new Memcached('localhost:11211'), bufferSerializer),
+	new MemcachedStorageDriver(
+		{key: 'test', lifetime: 0, memcached: () => new Memcached('localhost:11211'), name: 'MemcachedStorageDriver - default URLs'},
+		bufferSerializer,
+	),
+	new MemcachedStorageDriver(
+		{key: 'test', lifetime: 0, memcached: new Memcached('localhost:11211'), name: 'MemcachedStorageDriver - callback URLs'},
+		bufferSerializer,
+	),
 ]);
 
 const data = dataSchema.parse({test: 'demo'});

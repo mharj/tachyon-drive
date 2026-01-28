@@ -25,7 +25,8 @@ export default defineConfig({
 			{
 				test: {
 					environment: 'node',
-					include: ['packages/**/*.test.ts'],
+					exclude: ['packages/tachyon-drive-browser/**/*.test.mts'],
+					include: ['packages/**/*.test.ts', 'packages/**/*.test.mts'],
 					name: 'node',
 				},
 			},

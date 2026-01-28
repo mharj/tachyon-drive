@@ -83,15 +83,15 @@ class SimpleNotify extends EventEmitter<ExternalNotifyEventsMap> implements IExt
 const notifier = new SimpleNotify();
 const onUpdateEmitterSpy = vi.spyOn(notifier, 'notifyUpdate');
 
-const memoryObjectDriver = new MemoryStorageDriver('MemoryStorageDriver - Object', objectSerializer, notifier, nullProcessor);
+const memoryObjectDriver = new MemoryStorageDriver({name: 'MemoryStorageDriver - Object'}, objectSerializer, notifier, nullProcessor);
 
 const data = dataSchema.parse({test: 'demo'});
 
 const driverSet = new Set([
 	{driver: memoryObjectDriver, initValue: objectSerializer.serialize(data, undefined)},
-	{driver: new MemoryStorageDriver('MemoryStorageDriver - Buffer', bufferSerializer, notifier), initValue: bufferSerializer.serialize(data, undefined)},
+	{driver: new MemoryStorageDriver({name: 'MemoryStorageDriver - Buffer'}, bufferSerializer, notifier), initValue: bufferSerializer.serialize(data, undefined)},
 	{
-		driver: new MemoryStorageDriver('MemoryStorageDriver - Object', objectSerializer, notifier, () => nullProcessor),
+		driver: new MemoryStorageDriver({name: 'MemoryStorageDriver - Object'}, objectSerializer, notifier, () => nullProcessor),
 		initValue: objectSerializer.serialize(data, undefined),
 	},
 ]);

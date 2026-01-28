@@ -1,42 +1,36 @@
-import type {ILoggerLike} from '@avanio/logger-like';
 import {type Loadable, LoadableCore} from '@luolapeikko/ts-common';
 import type Memcached from 'memcached';
-import {type IExternalNotify, type IPersistSerializer, type IStoreProcessor, StorageDriver, TachyonBandwidth} from 'tachyon-drive';
+import {type IExternalNotify, type IPersistSerializer, type IStoreProcessor, StorageDriver, type StorageDriverOptions, TachyonBandwidth} from 'tachyon-drive';
 import {mcGet, mcRemove, mcSet, mcTouch} from './memcacheUtils';
 
-export type MemcachedStorageDriverOptions = {logger?: ILoggerLike; TachyonBandwidth?: TachyonBandwidth};
+export type MemcachedStorageDriverOptions = StorageDriverOptions & {
+	memcached: Loadable<Memcached>;
+	key: string;
+	lifetime: number;
+};
 
 export class MemcachedStorageDriver<Input> extends StorageDriver<Input, Buffer> {
-	public readonly bandwidth: TachyonBandwidth;
 	#memcached: Loadable<Memcached>;
 	#key: string;
 	#lifetime: number;
 
 	/**
 	 * MemcachedStorageDriver constructor
-	 * @param name - name of the driver
-	 * @param key - key to use for storage
-	 * @param lifetime - lifetime of the key in seconds or 0 for infinite
-	 * @param memcached - memcached instance to use
+	 * @param options - options to use
 	 * @param serializer - tachyon serializer to use
-	 * @param processor - tachyon processor to use (default: undefined)
-	 * @param opts - options to use
+	 * @param extNotify - external notify to use (default: undefined)
+	 * @param processor - processor to use (default: undefined)
 	 */
 	public constructor(
-		name: string,
-		key: string,
-		lifetime: number,
-		memcached: Loadable<Memcached>,
+		options: MemcachedStorageDriverOptions,
 		serializer: IPersistSerializer<Input, Buffer>,
 		extNotify?: IExternalNotify,
 		processor?: IStoreProcessor<Buffer>,
-		opts?: MemcachedStorageDriverOptions,
 	) {
-		super(name, serializer, extNotify ?? null, processor, opts?.logger);
-		this.#memcached = memcached;
-		this.#key = key;
-		this.#lifetime = lifetime;
-		this.bandwidth = opts?.TachyonBandwidth ?? TachyonBandwidth.Normal;
+		super(options, serializer, extNotify ?? null, processor);
+		this.#memcached = options.memcached;
+		this.#key = options.key;
+		this.#lifetime = options.lifetime;
 	}
 
 	protected async handleInit(): Promise<boolean> {
@@ -63,6 +57,10 @@ export class MemcachedStorageDriver<Input> extends StorageDriver<Input, Buffer> 
 
 	protected handleUnload(): boolean {
 		return true;
+	}
+
+	protected getDefaultBandwidth(): TachyonBandwidth {
+		return TachyonBandwidth.Normal;
 	}
 
 	async #getMemcached(): Promise<Memcached> {

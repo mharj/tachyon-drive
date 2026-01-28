@@ -41,6 +41,21 @@ export const defaultLogLevels: StorageDriverLogMapping = {
 	validator: LogLevel.Warn,
 };
 
+export type StorageDriverOptions = {
+	/**
+	 * Name of the driver
+	 */
+	name: string;
+	/**
+	 * Optional logger to log messages
+	 */
+	logger?: ILoggerLike;
+	/**
+	 * Optional speed of the storage driver (defaults from driver)
+	 */
+	bandwidth?: TachyonBandwidth;
+};
+
 /**
  * Abstract class that provides a simple interface for storing and retrieving data using a specified storage mechanism.
  * @template Input - The type of the data to store and retrieve.
@@ -48,7 +63,7 @@ export const defaultLogLevels: StorageDriverLogMapping = {
  * @since v0.11.0
  */
 export abstract class StorageDriver<Input, Output> extends EventEmitter<StorageDriverEventsMap<Input>> implements IStorageDriver<Input> {
-	public abstract readonly bandwidth: TachyonBandwidth;
+	#bandwidth: TachyonBandwidth | undefined;
 	public readonly name: string;
 	public readonly serializer: IPersistSerializer<Input, Output>;
 	public readonly logger: MapLogger<StorageDriverLogMapping>;
@@ -59,19 +74,17 @@ export abstract class StorageDriver<Input, Output> extends EventEmitter<StorageD
 
 	/**
 	 * Creates a new instance of the `StorageDriver` class.
-	 * @param {string} name - The name of the storage driver.
+	 * @param {StorageDriverOptions} options - options for the driver (name, logger)
 	 * @param {IPersistSerializer} serializer - The serializer to use for serializing and deserializing data.
 	 * @param {IExternalNotify | null} extNotify - If driver does not support onUpdate, use this to notify with external event.
 	 * @param {IStoreProcessor} [processor] - The store processor to use for processing data before it is written to storage and after it is loaded from storage.
-	 * @param {ILoggerLike} [logger] - The logger to use for logging messages.
 	 * @throws An error if the serializer or processor is invalid.
 	 */
 	public constructor(
-		name: string,
+		{name, logger, bandwidth}: StorageDriverOptions,
 		serializer: IPersistSerializer<Input, Output>,
 		extNotify: IExternalNotify | null,
 		processor?: Loadable<IStoreProcessor<Output>>,
-		logger?: ILoggerLike,
 	) {
 		super();
 		/* c8 ignore next 3 */
@@ -80,6 +93,7 @@ export abstract class StorageDriver<Input, Output> extends EventEmitter<StorageD
 		}
 		this.name = name;
 		this.serializer = serializer;
+		this.#bandwidth = bandwidth;
 		this.#loadableProcessor = processor;
 		this.logger = new MapLogger(logger, defaultLogLevels);
 		// bind update handler
@@ -90,6 +104,10 @@ export abstract class StorageDriver<Input, Output> extends EventEmitter<StorageD
 
 	public get isInitialized(): boolean {
 		return this.#isInitialized;
+	}
+
+	public get bandwidth(): TachyonBandwidth {
+		return this.#bandwidth ?? this.getDefaultBandwidth();
 	}
 
 	/**
@@ -415,4 +433,10 @@ export abstract class StorageDriver<Input, Output> extends EventEmitter<StorageD
 	 * @returns {Promise<boolean>} A promise that resolves to `true` if the storage driver was successfully unloaded, or `false` otherwise.
 	 */
 	protected abstract handleUnload(): Promise<boolean> | boolean;
+
+	/**
+	 * Get the default bandwidth for the storage driver.
+	 * @returns {TachyonBandwidth} The default bandwidth for the storage driver.
+	 */
+	protected abstract getDefaultBandwidth(): TachyonBandwidth;
 }

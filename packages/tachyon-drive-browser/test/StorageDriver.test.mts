@@ -34,15 +34,15 @@ async function getFileHandle() {
 }
 
 const driverSet = new Set<{driver: () => IStorageDriver<Data>; crypto?: boolean}>([
-	{driver: () => new LocalStorageDriver('LocalStorageDriver1', () => Promise.resolve('storageKey'), stringSerializer)},
-	{driver: () => new LocalStorageDriver('LocalStorageDriver2', 'storageKey', stringSerializer)},
+	{driver: () => new LocalStorageDriver({keyName: () => Promise.resolve('storageKey'), name: 'LocalStorageDriver1'}, stringSerializer)},
+	{driver: () => new LocalStorageDriver({keyName: 'storageKey', name: 'LocalStorageDriver2'}, stringSerializer)},
 	{
 		crypto: true,
 		driver: () =>
 			new CacheStorageDriver(
-				'CacheStorageDriver1',
 				{
 					cache: window.caches.open('test-cache'),
+					name: 'CacheStorageDriver1',
 					url: Promise.resolve(new URL('https://example.com/data')),
 				},
 				arrayBufferSerializer,
@@ -51,14 +51,20 @@ const driverSet = new Set<{driver: () => IStorageDriver<Data>; crypto?: boolean}
 	},
 	{
 		driver: () =>
-			new CacheStorageDriver('CacheStorageDriver2', {cache: window.caches.open('test-cache'), url: new URL('https://example.com/data')}, stringSerializer),
+			new CacheStorageDriver(
+				{cache: window.caches.open('test-cache'), name: 'CacheStorageDriver2', url: new URL('https://example.com/data')},
+				stringSerializer,
+			),
 	},
 	{
 		driver: () =>
-			new CacheStorageDriver('CacheStorageDriver3', {cache: window.caches.open('test-cache'), url: new URL('https://example.com/data')}, stringSerializer),
+			new CacheStorageDriver(
+				{cache: window.caches.open('test-cache'), name: 'CacheStorageDriver3', url: new URL('https://example.com/data')},
+				stringSerializer,
+			),
 	},
 	{
-		driver: () => new WebFsStorageDriver('WebFsStorageDriver', () => getFileHandle(), arrayBufferSerializer),
+		driver: () => new WebFsStorageDriver({fileHandle: () => getFileHandle(), name: 'WebFsStorageDriver'}, arrayBufferSerializer),
 	},
 ]);
 

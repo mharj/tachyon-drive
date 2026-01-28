@@ -1,6 +1,12 @@
-import type {ILoggerLike} from '@avanio/logger-like';
 import type {Loadable} from '@luolapeikko/ts-common';
-import {type IPersistSerializer, type IStoreProcessor, StorageDriver, TachyonBandwidth} from 'tachyon-drive';
+import {type IPersistSerializer, type IStoreProcessor, StorageDriver, type StorageDriverOptions, TachyonBandwidth} from 'tachyon-drive';
+
+export type LocalStorageDriverOptions = StorageDriverOptions & {
+	/** Local storage key name, can be a value, promise or a function */
+	keyName: Loadable<string>;
+	/** Optional local storage instance (for testing) */
+	localStorage?: Storage;
+};
 
 /**
  * LocalStorageDriver
@@ -10,28 +16,23 @@ import {type IPersistSerializer, type IStoreProcessor, StorageDriver, TachyonBan
  * @since v0.3.0
  */
 export class LocalStorageDriver<Input, Output extends string = string> extends StorageDriver<Input, Output> {
-	public readonly bandwidth: TachyonBandwidth = TachyonBandwidth.Large;
 	private keyName: Loadable<string>;
 	private localStorage: Storage;
 	private currentKey: string | undefined;
 	/**
 	 * LocalStorageDriver constructor
-	 * @param {string} name Driver name
-	 * @param {Loadable<string>} keyName local storage key name which can be a value, promise or a function
+	 * @param {LocalStorageDriverOptions} options LocalStorageDriver options which can be a value, promise or a function
 	 * @param {IPersistSerializer<Input, Output>} serializer Serializer object for the data, this can be string serializer
 	 * @param {IStoreProcessor<Output>} processor optional Processor which can be used to modify the data before storing or after hydrating
-	 * @param {ILoggerLike} logger optional logger
 	 * @param {Storage} localStorage override the local storage instance (for testing)
 	 */
 	public constructor(
-		name: string,
-		keyName: Loadable<string>,
+		options: LocalStorageDriverOptions,
 		serializer: IPersistSerializer<Input, Output>,
 		processor?: Loadable<IStoreProcessor<Output>>,
-		logger?: ILoggerLike,
 		localStorage?: Storage,
 	) {
-		super(name, serializer, null, processor, logger);
+		super(options, serializer, null, processor);
 		/* c8 ignore next 6 */
 		if (!localStorage && typeof window !== 'undefined') {
 			localStorage = window.localStorage;
@@ -39,7 +40,7 @@ export class LocalStorageDriver<Input, Output extends string = string> extends S
 		if (!localStorage) {
 			throw new Error('Local storage not supported');
 		}
-		this.keyName = keyName;
+		this.keyName = options.keyName;
 		this.localStorage = localStorage;
 		this.onStorageEvent = this.onStorageEvent.bind(this);
 	}
@@ -72,6 +73,10 @@ export class LocalStorageDriver<Input, Output extends string = string> extends S
 		this.logger.debug(`${this.name}: Unregister storage event listener for key '${await this.getKey()}'`);
 		window.removeEventListener('storage', this.onStorageEvent);
 		return true;
+	}
+
+	protected getDefaultBandwidth(): TachyonBandwidth {
+		return TachyonBandwidth.Large;
 	}
 
 	private async getKey(): Promise<string> {

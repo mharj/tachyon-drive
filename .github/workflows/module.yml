@@ -9,7 +9,6 @@ on:
 env:
   # Setting an environment variable with the value of a configuration variable
   PUBLISH_BRANCH: "refs/heads/main"
-  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
   PACKAGE_NAME: "unknown"
   PACKAGE_VERSION: "unknown"
   NPM_VERSION: "unknown"
@@ -60,8 +59,5 @@ jobs:
         working-directory: ${{ inputs.package-path }}
         if: |
           github.ref == env.PUBLISH_BRANCH &&
-          env.NPM_TOKEN != '' &&
           env.PACKAGE_VERSION != env.NPM_VERSION
-        run: pnpm publish --no-git-checks --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --access public

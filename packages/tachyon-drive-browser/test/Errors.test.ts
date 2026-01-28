@@ -25,17 +25,14 @@ const arrayBufferSerializer: IPersistSerializer<Data, ArrayBuffer> = {
 
 describe('StorageDriver Errors', () => {
 	it('should throw error on constructor', function () {
-		expect(() => new LocalStorageDriver('LocalStorageDriver', () => Promise.resolve('storageKey'), stringSerializer, undefined, undefined, undefined)).to.throw(
+		expect(() => new LocalStorageDriver({keyName: () => Promise.resolve('storageKey'), name: 'LocalStorageDriver'}, stringSerializer)).to.throw(
 			'Local storage not supported',
 		);
 		expect(
 			() =>
 				new CacheStorageDriver(
-					'CacheStorageDriver',
-					{cache: window.caches.open('test-cache'), url: new URL('https://example.com/data')},
+					{cache: window.caches.open('test-cache'), name: 'CacheStorageDriver', url: new URL('https://example.com/data')},
 					arrayBufferSerializer,
-					undefined,
-					undefined,
 				),
 		).to.throw('window is not defined');
 	});

@@ -43,18 +43,16 @@ const processor = new CryptoBufferProcessor(Buffer.from('some-secret-key'));
 
 const driverSet = new Set<IStorageDriver<Data>>([
 	new AzureBlobStorageDriver(
-		'AzureBlobStorageDriver',
 		{
-			// @ts-expect-error - mock client
 			blockBlobClient: new MockBlockBlobClient(),
+			name: 'AzureBlobStorageDriver',
 		},
 		bufferSerializer,
 	),
 	new AzureBlobStorageDriver(
-		'CryptAzureBlobStorageDriver',
 		{
-			// @ts-expect-error - mock client
 			blockBlobClient: new MockBlockBlobClient(),
+			name: 'CryptAzureBlobStorageDriver',
 		},
 		bufferSerializer,
 		new SimpleNotify(),

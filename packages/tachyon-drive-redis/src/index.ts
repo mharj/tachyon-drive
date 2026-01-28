@@ -1,38 +1,35 @@
-import type {ILoggerLike} from '@avanio/logger-like';
 import {RESP_TYPES, type RedisClientType, type RedisFunctions, type RedisModules, type RedisScripts, type RespVersions} from '@redis/client';
-import {type IExternalNotify, type IPersistSerializer, type IStoreProcessor, StorageDriver, TachyonBandwidth} from 'tachyon-drive';
+import {type IExternalNotify, type IPersistSerializer, type IStoreProcessor, StorageDriver, type StorageDriverOptions, TachyonBandwidth} from 'tachyon-drive';
 
 export type RedisClient = RedisClientType<RedisModules, RedisFunctions, RedisScripts, RespVersions, {[RESP_TYPES.BLOB_STRING]: BufferConstructor}>;
 
-export type RedisStorageDriverOptions = {logger?: ILoggerLike; TachyonBandwidth?: TachyonBandwidth; redis: RedisClient};
+export type RedisClientInstance = Pick<RedisClient, 'hSet' | 'hGet' | 'hDel' | 'quit'>;
+
+export type RedisStorageDriverOptions = StorageDriverOptions & {
+	key: string;
+	redis: RedisClientInstance;
+};
 
 export class RedisStorageDriver<Input> extends StorageDriver<Input, Buffer> {
-	public readonly bandwidth: TachyonBandwidth;
-	private readonly redis: RedisClient;
-	private key: string;
+	readonly #redis: RedisClientInstance;
+	readonly #key: string;
 
 	/**
 	 * RedisStorageDriver constructor
-	 * @param name - name of the driver
-	 * @param key - key to use for storage
-	 * @param options - redis client options
+	 * @param options - redis client options (name, key, logger, bandwidth, redis)
 	 * @param serializer - tachyon serializer to use
 	 * @param extNotify - optional external notify service to notify store update events
 	 * @param processor - tachyon processor to use (default: undefined)
-	 * @param opts - options to use
 	 */
 	public constructor(
-		name: string,
-		key: string,
+		options: RedisStorageDriverOptions,
 		serializer: IPersistSerializer<Input, Buffer>,
-		opts: RedisStorageDriverOptions,
 		extNotify?: IExternalNotify,
 		processor?: IStoreProcessor<Buffer>,
 	) {
-		super(name, serializer, extNotify ?? null, processor, opts?.logger);
-		this.key = key;
-		this.bandwidth = opts.TachyonBandwidth ?? TachyonBandwidth.Normal;
-		this.redis = opts.redis;
+		super(options, serializer, extNotify ?? null, processor);
+		this.#key = options.key;
+		this.#redis = options.redis;
 	}
 
 	protected handleInit(): boolean {
@@ -40,19 +37,23 @@ export class RedisStorageDriver<Input> extends StorageDriver<Input, Buffer> {
 	}
 
 	protected async handleStore(buffer: Buffer): Promise<void> {
-		await this.redis.hSet(this.key, 'value', buffer);
+		await this.#redis.hSet(this.#key, 'value', buffer);
 	}
 
 	protected async handleHydrate(): Promise<Buffer | undefined> {
-		const data = await this.redis.hGet(this.key, 'value');
+		const data = await this.#redis.hGet(this.#key, 'value');
 		return data ?? undefined;
 	}
 
 	protected async handleClear(): Promise<void> {
-		await this.redis.hDel(this.key, 'value');
+		await this.#redis.hDel(this.#key, 'value');
 	}
 
 	protected handleUnload(): boolean {
 		return true;
+	}
+
+	protected getDefaultBandwidth(): TachyonBandwidth {
+		return TachyonBandwidth.Normal;
 	}
 }

@@ -1,6 +1,10 @@
-import type {ILoggerLike} from '@avanio/logger-like';
 import {type Loadable, LoadableCore} from '@luolapeikko/ts-common';
-import {type IPersistSerializer, type IStoreProcessor, StorageDriver, TachyonBandwidth} from 'tachyon-drive';
+import {type IPersistSerializer, type IStoreProcessor, StorageDriver, type StorageDriverOptions, TachyonBandwidth} from 'tachyon-drive';
+
+export type WebFsStorageDriverOptions = StorageDriverOptions & {
+	/** File system file handle which can be a value, promise or a function */
+	fileHandle: Loadable<FileSystemFileHandle>;
+};
 
 /**
  * WebFsStorageDriver which uses `FileSystemFileHandle` to read and write store data (permission need to be handled before using this)
@@ -15,18 +19,15 @@ import {type IPersistSerializer, type IStoreProcessor, StorageDriver, TachyonBan
  * @since v0.10.3
  */
 export class WebFsStorageDriver<Input> extends StorageDriver<Input, ArrayBuffer> {
-	public readonly bandwidth: TachyonBandwidth = TachyonBandwidth.VeryLarge;
 	private fileHandle: Loadable<FileSystemFileHandle>;
 
 	public constructor(
-		name: string,
-		fileHandle: Loadable<FileSystemFileHandle>,
+		options: WebFsStorageDriverOptions,
 		serializer: IPersistSerializer<Input, ArrayBuffer>,
 		processor?: Loadable<IStoreProcessor<ArrayBuffer>>,
-		logger?: ILoggerLike,
 	) {
-		super(name, serializer, null, processor, logger);
-		this.fileHandle = fileHandle;
+		super(options, serializer, null, processor);
+		this.fileHandle = options.fileHandle;
 	}
 
 	protected async handleInit(): Promise<boolean> {
@@ -83,6 +84,10 @@ export class WebFsStorageDriver<Input> extends StorageDriver<Input, ArrayBuffer>
 
 	protected handleUnload(): Promise<boolean> | boolean {
 		return true;
+	}
+
+	protected getDefaultBandwidth(): TachyonBandwidth {
+		return TachyonBandwidth.VeryLarge;
 	}
 
 	private async getFileHandle(): Promise<FileSystemFileHandle> {

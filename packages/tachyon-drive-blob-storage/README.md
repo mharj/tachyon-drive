@@ -15,9 +15,8 @@ const blockBlobClient = BlobServiceClient.fromConnectionString(connectionString)
   .getContainerClient("container")
   .getBlockBlobClient("store.json");
 const driver = new AzureBlobStorageDriver(
-  "AzureBlobStorageDriver",
-  { blockBlobClient },
-  bufferSerializer
+  { name: "AzureBlobStorageDriver", blockBlobClient },
+  bufferSerializer,
 );
 ```
 
@@ -29,10 +28,9 @@ const blockBlobClient = BlobServiceClient.fromConnectionString(connectionString)
   .getBlockBlobClient("store.aes");
 const processor = new CryptoBufferProcessor(Buffer.from("some-secret-key"));
 const driver = new AzureBlobStorageDriver(
-  "CryptAzureBlobStorageDriver",
-  { blockBlobClient },
+  { name: "CryptAzureBlobStorageDriver", blockBlobClient },
   bufferSerializer,
-  processor
+  processor,
 );
 ```
 

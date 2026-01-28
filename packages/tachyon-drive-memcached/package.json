@@ -1,6 +1,6 @@
 {
   "name": "tachyon-drive-memcached",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Tachyon drive implementation for Memcached",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
@@ -52,6 +52,6 @@
     "@luolapeikko/ts-common": ">= 0.2.0",
     "@types/memcached": ">= 2.2.10",
     "memcached": "^2.2.2",
-    "tachyon-drive": ">=0.12.0"
+    "tachyon-drive": ">= 2.0.0"
   }
 }

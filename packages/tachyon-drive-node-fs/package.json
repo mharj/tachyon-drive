@@ -1,6 +1,6 @@
 {
   "name": "tachyon-drive-node-fs",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Nodejs fs module storage driver implementation",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
@@ -33,6 +33,6 @@
   "peerDependencies": {
     "@avanio/logger-like": "^0.1 || ^0.2",
     "@luolapeikko/ts-common": ">= 1.0.0",
-    "tachyon-drive": "^0.12.0"
+    "tachyon-drive": ">= 2.0.0"
   }
 }

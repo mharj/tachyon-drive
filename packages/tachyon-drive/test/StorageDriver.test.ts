@@ -100,15 +100,15 @@ class SimpleNotify extends EventEmitter<ExternalNotifyEventsMap> implements IExt
 const notifier = new SimpleNotify();
 const onUpdateEmitterSpy = vi.spyOn(notifier, 'notifyUpdate');
 
-const memoryObjectDriver = new MemoryStorageDriver('MemoryStorageDriver - Object', objectSerializer, notifier, nullProcessor);
+const memoryObjectDriver = new MemoryStorageDriver({name: 'MemoryStorageDriver - Object'}, objectSerializer, notifier, nullProcessor);
 
 const data = dataSchema.parse({test: 'demo'});
 
 const driverSet = new Set([
 	{driver: memoryObjectDriver, initValue: objectSerializer.serialize(data, undefined), processor: true},
-	{driver: new MemoryStorageDriver('MemoryStorageDriver - Buffer', bufferSerializer, notifier), initValue: bufferSerializer.serialize(data, undefined)},
+	{driver: new MemoryStorageDriver({name: 'MemoryStorageDriver - Buffer'}, bufferSerializer, notifier), initValue: bufferSerializer.serialize(data, undefined)},
 	{
-		driver: new MemoryStorageDriver('MemoryStorageDriver - Object', objectSerializer, notifier, () => nullProcessor),
+		driver: new MemoryStorageDriver({name: 'MemoryStorageDriver - Object'}, objectSerializer, notifier, () => nullProcessor),
 		initValue: objectSerializer.serialize(data, undefined),
 		processor: true,
 	},
@@ -254,7 +254,7 @@ describe('StorageDriver', () => {
 	describe('broken processor', () => {
 		it('should throw error when broken processor', async () => {
 			const brokenProcessor = {} as IStoreProcessor<Data>;
-			const brokenDriver = new MemoryStorageDriver('BrokenProcessor', objectSerializer, notifier, brokenProcessor);
+			const brokenDriver = new MemoryStorageDriver({name: 'BrokenProcessor'}, objectSerializer, notifier, brokenProcessor);
 			await expect(brokenDriver.getProcessor()).to.rejects.toThrow(Error);
 			const processor = await brokenDriver.getProcessorResult();
 			expect(processor.isOk).equals(false);
@@ -262,7 +262,7 @@ describe('StorageDriver', () => {
 	});
 	describe('broken driver', () => {
 		beforeEach(function () {
-			brokenTestDriver = new TestMemoryStorageDriver<Data, Buffer>('BrokenDriver', brokenTestSerializer, notifier, undefined);
+			brokenTestDriver = new TestMemoryStorageDriver<Data, Buffer>({name: 'BrokenDriver'}, brokenTestSerializer, notifier, undefined);
 		});
 		it('should throw error when init', async () => {
 			brokenTestDriver.setThrows('init');

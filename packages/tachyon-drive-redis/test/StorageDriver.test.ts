@@ -20,13 +20,11 @@ const jsonSerialization: IPersistSerializer<Data, string> = {
 
 const bufferSerializer: IPersistSerializer<Data, Buffer> = nextSerializer<Data, string, Buffer>(jsonSerialization, strToBufferSerializer);
 
-const options = {
-	redis: createClient(),
-};
+const redis = createClient();
 
 const driverSet = new Set<IStorageDriver<Data>>([
-	new RedisStorageDriver('MemcachedStorageDriver - default options', 'test', bufferSerializer, options),
-	new RedisStorageDriver('MemcachedStorageDriver - callback options', 'test', bufferSerializer, options),
+	new RedisStorageDriver({key: 'test', name: 'MemcachedStorageDriver - default options', redis}, bufferSerializer),
+	new RedisStorageDriver({key: 'test', name: 'MemcachedStorageDriver - callback options', redis}, bufferSerializer),
 ]);
 
 const data = dataSchema.parse({test: 'demo'});
@@ -63,6 +61,6 @@ describe('StorageDriver', () => {
 		});
 	});
 	afterAll(() => {
-		options.redis.quit();
+		redis.quit();
 	});
 });

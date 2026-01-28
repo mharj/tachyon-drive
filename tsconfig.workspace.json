@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "paths": {
+      "quantum-sequence": ["packages/quantum-sequence/src/index.mts"],
       "tachyon-drive": ["packages/tachyon-drive/src/index.ts"],
       "tachyon-drive-blob-storage": ["packages/tachyon-drive-blob-storage/src/index.ts"],
       "tachyon-drive-browser": ["packages/tachyon-drive-browser/src/index.mts"],
