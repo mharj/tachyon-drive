@@ -19,7 +19,7 @@
   "files": [
     "dist"
   ],
-  "repository": "github:mharj/tachyon-drive-blob-storage",
+  "repository": "github:mharj/tachyon-drive",
   "keywords": [
     "tachyon",
     "storage",
