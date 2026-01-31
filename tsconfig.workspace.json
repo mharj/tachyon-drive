@@ -8,7 +8,8 @@
       "tachyon-drive-memcached": ["packages/tachyon-drive-memcached/src/index.ts"],
       "tachyon-drive-node-fs": ["packages/tachyon-drive-node-fs/src/index.ts"],
       "tachyon-drive-redis": ["packages/tachyon-drive-redis/src/index.ts"],
-      "tachyon-drive-s3": ["packages/tachyon-drive-s3/src/index.ts"]
+      "tachyon-drive-s3": ["packages/tachyon-drive-s3/src/index.ts"],
+      "tachyon-expire-cache": ["packages/tachyon-expire-cache/src/index.mts"]
     }
   },
   "extends": "./tsconfig.base.json"

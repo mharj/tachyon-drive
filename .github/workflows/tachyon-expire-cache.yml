@@ -1,0 +1,29 @@
+name: tachyon-expire-cache to npmjs
+on:
+  push:
+    branches: [main]
+    paths:
+      - "packages/tachyon-expire-cache/**"
+      - ".github/workflows/tachyon-expire-cache.yml"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/module.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "packages/tachyon-expire-cache/**"
+      - ".github/workflows/tachyon-expire-cache.yml"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/module.yml"
+
+permissions:
+  id-token: write # Required for OIDC
+  contents: read
+
+jobs:
+  module-flow:
+    uses: ./.github/workflows/module.yml
+    secrets: inherit
+    with:
+      package-path: packages/tachyon-expire-cache

@@ -211,6 +211,25 @@ importers:
         specifier: workspace:*
         version: link:../tachyon-drive-node-fs
 
+  packages/tachyon-expire-cache:
+    dependencies:
+      '@avanio/logger-like':
+        specifier: '>= 0.2.10'
+        version: 0.2.12
+      '@luolapeikko/cache-types':
+        specifier: '>= 0.0.8'
+        version: 0.0.9
+      '@luolapeikko/ts-common':
+        specifier: '>= 0.3.4'
+        version: 1.1.4
+    devDependencies:
+      tachyon-drive:
+        specifier: workspace:*
+        version: link:../tachyon-drive
+      tachyon-drive-node-fs:
+        specifier: workspace:*
+        version: link:../tachyon-drive-node-fs
+
 packages:
 
   '@avanio/logger-like@0.2.12':
@@ -697,6 +716,9 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
+
+  '@luolapeikko/cache-types@0.0.9':
+    resolution: {integrity: sha512-MV6kUFsyd5xiE6Bwjd9GXazo4/kCHcvJoMe7nnLPx9jdjKnDE9dhboMOfFMoZfD5Ea5LO8XNZuNo7XMSoDImPQ==}
 
   '@luolapeikko/core-ts-error@0.0.4':
     resolution: {integrity: sha512-RAtpaoIqZvuwX4lv2uPLWhbfgI5f9m+8VWP5DzuLPcmQhQ0vJCpiF2roDfeQZboncVA19Xul1RaUxZqc50va3A==}
@@ -2918,6 +2940,8 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
+
+  '@luolapeikko/cache-types@0.0.9': {}
 
   '@luolapeikko/core-ts-error@0.0.4': {}
 

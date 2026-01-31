@@ -8,6 +8,7 @@
     { "path": "./packages/tachyon-drive-memcached" },
     { "path": "./packages/tachyon-drive-redis" },
     { "path": "./packages/tachyon-drive-s3" },
-    { "path": "./packages/quantum-sequence" }
+    { "path": "./packages/quantum-sequence" },
+    { "path": "./packages/tachyon-expire-cache" }
   ]
 }
