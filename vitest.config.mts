@@ -9,7 +9,7 @@ export default defineConfig({
 		alias: {
 			events: 'events',
 		},
-		tsconfigPaths: true
+		tsconfigPaths: true,
 	},
 	test: {
 		coverage: {

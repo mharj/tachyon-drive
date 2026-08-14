@@ -49,7 +49,7 @@ export class AwsS3StorageDriver<Input> extends StorageDriver<Input, Buffer> {
 	protected async handleHydrate(): Promise<Buffer | undefined> {
 		try {
 			const response = await this.#options.awsClient.send(new GetObjectCommand({Bucket: this.#options.awsBucket, Key: this.#options.awsKey}));
-			if (!response || !response.Body) {
+			if (!response?.Body) {
 				return undefined;
 			}
 			return Buffer.from(await response.Body.transformToByteArray());
