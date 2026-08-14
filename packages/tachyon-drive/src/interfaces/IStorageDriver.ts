@@ -1,7 +1,5 @@
 import type {IResult} from '@luolapeikko/result-option';
-import type {AsJson} from '@luolapeikko/ts-common';
 import type EventEmitter from 'events';
-import type {StorageDriverJson} from '../types/StorageDriverJson.js';
 import type {TachyonBandwidth} from '../types/TachyonBandwidth.js';
 
 /**
@@ -33,7 +31,7 @@ export interface IHydrateOptions {
  * @template JsonOutput - The type of the data from the JSON representation of the storage driver.
  * @since v0.11.0
  */
-export interface IStorageDriver<Input, JsonOutput extends StorageDriverJson = StorageDriverJson> extends EventEmitter<StorageDriverEventsMap<Input>> {
+export interface IStorageDriver<Input> extends EventEmitter<StorageDriverEventsMap<Input>> {
 	/**
 	 * Indicates the speed of the storage driver.
 	 */
@@ -122,7 +120,12 @@ export interface IStorageDriver<Input, JsonOutput extends StorageDriverJson = St
 	/**
 	 * Returns a JSON representation of the storage driver
 	 */
-	toJSON(): AsJson<JsonOutput>;
+	toJSON(): {
+		name: string;
+		bandwidth: TachyonBandwidth;
+		processor?: string;
+		serializer: string;
+	};
 
 	/**
 	 * Returns a string representation of the storage driver.

@@ -1,7 +1,7 @@
 import {existsSync, type FSWatcher, watch} from 'node:fs';
 import {readFile, unlink, writeFile} from 'node:fs/promises';
-import type {ILoggerLike} from '@avanio/logger-like';
-import {type Loadable, toError} from '@luolapeikko/ts-common';
+import type {Loadable} from '@luolapeikko/core-ts-type';
+import type {ILoggerLike} from '@luolapeikko/logger-type';
 import {EventEmitter} from 'events';
 import type {ExternalNotifyEventsMap, IExternalNotify} from 'tachyon-drive';
 
@@ -111,7 +111,7 @@ export class FileUpdateNotify extends EventEmitter<ExternalNotifyEventsMap> impl
 					}
 				} catch (e) {
 					/* c8 ignore next 2 */
-					this.logger?.error(`FileUpdateNotify: fileWatcher: ${toError(e).message}`);
+					this.logger?.error(`FileUpdateNotify: fileWatcher:`, e instanceof Error ? e : new Error(String(e)));
 				}
 			}, 100);
 		}

@@ -1,4 +1,4 @@
-import type {Loadable} from '@luolapeikko/ts-common';
+import type {Loadable} from '@luolapeikko/core-ts-type';
 import {type IPersistSerializer, type IStoreProcessor, StorageDriver, type StorageDriverOptions, TachyonBandwidth} from 'tachyon-drive';
 
 export type LocalStorageDriverOptions = StorageDriverOptions & {

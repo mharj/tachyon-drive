@@ -1,5 +1,5 @@
 import type {BlockBlobClient} from '@azure/storage-blob';
-import type {Loadable} from '@luolapeikko/ts-common';
+import type {Loadable} from '@luolapeikko/core-ts-type';
 import {type IExternalNotify, type IPersistSerializer, type IStoreProcessor, StorageDriver, type StorageDriverOptions, TachyonBandwidth} from 'tachyon-drive';
 
 export type AzureBlockBlobClient = Pick<BlockBlobClient, 'upload' | 'downloadToBuffer' | 'deleteIfExists' | 'exists' | 'name' | 'containerName' | 'url'>;

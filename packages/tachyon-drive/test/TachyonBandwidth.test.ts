@@ -1,17 +1,14 @@
 import {describe, expect, it} from 'vitest';
-import {getTachyonBandwidthName, TachyonBandwidth} from '../src/index.js';
+import {TachyonBandwidth} from '../src/index.js';
 
 describe('TachyonBandwidth', function () {
 	describe('getTachyonBandwidthName', function () {
 		it('should get value for enum', function () {
-			expect(getTachyonBandwidthName(TachyonBandwidth.VeryLarge)).to.equal('VeryLarge');
-			expect(getTachyonBandwidthName(TachyonBandwidth.Large)).to.equal('Large');
-			expect(getTachyonBandwidthName(TachyonBandwidth.Normal)).to.equal('Normal');
-			expect(getTachyonBandwidthName(TachyonBandwidth.Small)).to.equal('Small');
-			expect(getTachyonBandwidthName(TachyonBandwidth.VerySmall)).to.equal('VerySmall');
-		});
-		it('should throw error for unknown value', function () {
-			expect(() => getTachyonBandwidthName('' as unknown as TachyonBandwidth)).to.throw(TypeError, 'Unknown TachyonBandwidth: ');
+			expect(TachyonBandwidth.VeryLarge).to.equal('VeryLarge');
+			expect(TachyonBandwidth.Large).to.equal('Large');
+			expect(TachyonBandwidth.Normal).to.equal('Normal');
+			expect(TachyonBandwidth.Small).to.equal('Small');
+			expect(TachyonBandwidth.VerySmall).to.equal('VerySmall');
 		});
 	});
 });

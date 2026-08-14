@@ -1,4 +1,3 @@
-import {ErrorCore} from '@luolapeikko/ts-common';
 import type Memcached from 'memcached';
 
 export async function mcSet(memcache: Memcached | Promise<Memcached>, key: string, buffer: Buffer, lifetime: number): Promise<void> {
@@ -7,7 +6,7 @@ export async function mcSet(memcache: Memcached | Promise<Memcached>, key: strin
 		mc.set(key, buffer, lifetime, (err) => {
 			/* c8 ignore next 2 */
 			if (err) {
-				reject(ErrorCore.from(err));
+				reject(err instanceof Error ? err : new Error(`Memcached error: ${String(err)}`));
 			} else {
 				resolve();
 			}
@@ -21,7 +20,7 @@ export async function mcGet(memcache: Memcached | Promise<Memcached>, key: strin
 		mc.get(key, (err, data: string | Buffer | undefined) => {
 			/* c8 ignore next 2 */
 			if (err) {
-				reject(ErrorCore.from(err));
+				reject(err instanceof Error ? err : new Error(`Memcached error: ${String(err)}`));
 			} else {
 				resolve(typeof data === 'string' ? Buffer.from(data) : data);
 			}
@@ -35,7 +34,7 @@ export async function mcTouch(memcache: Memcached | Promise<Memcached>, key: str
 		mc.touch(key, lifetime, (err) => {
 			/* c8 ignore next 2 */
 			if (err) {
-				reject(ErrorCore.from(err));
+				reject(err instanceof Error ? err : new Error(`Memcached error: ${String(err)}`));
 			} else {
 				resolve(undefined);
 			}
@@ -49,7 +48,7 @@ export async function mcRemove(memcache: Memcached | Promise<Memcached>, key: st
 		mc.del(key, (err) => {
 			/* c8 ignore next 2 */
 			if (err) {
-				reject(ErrorCore.from(err));
+				reject(err instanceof Error ? err : new Error(`Memcached error: ${String(err)}`));
 			} else {
 				resolve(undefined);
 			}

@@ -31,8 +31,8 @@
     "tachyon-drive": "workspace:*"
   },
   "peerDependencies": {
-    "@avanio/logger-like": "^0.1 || ^0.2",
-    "@luolapeikko/ts-common": ">= 1.0.0",
+    "@luolapeikko/core-ts-type": ">= 0.0.7",
+    "@luolapeikko/logger-type": ">= 0.1.0",
     "tachyon-drive": ">= 2.0.0"
   }
 }

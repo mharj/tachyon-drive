@@ -1,4 +1,3 @@
-import type {ILoggerLike} from '@avanio/logger-like';
 import type {IPersistSerializer} from './interfaces/IPersistSerializer.js';
 
 /**
@@ -32,19 +31,19 @@ export function nextSerializer<CurrentInput, CurrentOutput, TargetOutput>(
 	nextSer: IPersistSerializer<CurrentOutput, TargetOutput>,
 ): IPersistSerializer<CurrentInput, TargetOutput> {
 	return {
-		deserialize: (data: TargetOutput, logger: ILoggerLike | undefined): CurrentInput => {
-			return current.deserialize(nextSer.deserialize(data, logger), logger);
+		deserialize: (data: TargetOutput): CurrentInput => {
+			return current.deserialize(nextSer.deserialize(data));
 		},
 		name: `${current.name} => ${nextSer.name}`,
-		serialize: (data: CurrentInput, logger: ILoggerLike | undefined): TargetOutput => {
-			return nextSer.serialize(current.serialize(data, logger), logger);
+		serialize: (data: CurrentInput): TargetOutput => {
+			return nextSer.serialize(current.serialize(data));
 		},
-		validator: async (data: CurrentInput, logger: ILoggerLike | undefined): Promise<boolean> => {
-			const firstValidation = await current.validator?.(data, logger);
+		validator: async (data: CurrentInput): Promise<boolean> => {
+			const firstValidation = await current.validator?.(data);
 			if (firstValidation === false) {
 				return false;
 			}
-			const secondValidation = await nextSer.validator?.(current.serialize(data, logger), logger); // double serialization to ensure the data is in the correct format
+			const secondValidation = await nextSer.validator?.(current.serialize(data)); // double serialization to ensure the data is in the correct format
 			return secondValidation !== false; // undefined = no validation = true
 		},
 	};

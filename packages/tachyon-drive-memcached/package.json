@@ -48,8 +48,7 @@
     "tachyon-drive-node-fs": "workspace:*"
   },
   "peerDependencies": {
-    "@avanio/logger-like": ">= 0.1.1",
-    "@luolapeikko/ts-common": ">= 0.2.0",
+    "@luolapeikko/core-ts-type": ">= 0.0.7",
     "@types/memcached": ">= 2.2.10",
     "memcached": "^2.2.2",
     "tachyon-drive": ">= 2.0.0"

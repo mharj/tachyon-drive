@@ -1,5 +1,5 @@
 import {existsSync, type FSWatcher, watch} from 'node:fs';
-import {type Loadable, LoadableCore, StringCore, toError} from '@luolapeikko/ts-common';
+import type {Loadable} from '@luolapeikko/core-ts-type';
 import {readFile, unlink, writeFile} from 'fs/promises';
 import {type IPersistSerializer, type IStoreProcessor, StorageDriver, type StorageDriverOptions, TachyonBandwidth} from 'tachyon-drive';
 
@@ -132,9 +132,9 @@ export class FileStorageDriver<Input> extends StorageDriver<Input, Buffer> {
 				this.#fileChangeTimeout = undefined;
 				try {
 					await this.handleUpdate();
-				} catch (error) {
+				} catch (cause) {
 					/* c8 ignore next 2 */
-					this.logger.error(`FileStorageDriver '${this.name}' failed to update data: ${toError(error).message}`);
+					this.logger.error(`FileStorageDriver '${this.name}' failed to update data:`, cause instanceof Error ? cause : new Error(String(cause)));
 				}
 			}, 100);
 		}
@@ -147,12 +147,12 @@ export class FileStorageDriver<Input> extends StorageDriver<Input, Buffer> {
 	private async getFileName(): Promise<string> {
 		// lock down file name as this can't be changed after change events
 		if (typeof this.#fileName === 'function') {
-			this.#fileName = LoadableCore.resolve(this.#fileName);
+			this.#fileName = await this.#fileName();
 		}
 		if (typeof this.#fileName === 'object') {
 			this.#fileName = await this.#fileName;
 		}
-		if (StringCore.isNot(this.#fileName)) {
+		if (typeof this.#fileName !== 'string' || this.#fileName === '') {
 			throw new TypeError(`FileStorageDriver '${this.name}' fileName argument must return a string, value: ${JSON.stringify(this.#fileName)}`);
 		}
 		return this.#fileName;

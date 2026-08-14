@@ -33,7 +33,6 @@
     "tachyon-drive-node-fs": "workspace:*"
   },
   "peerDependencies": {
-    "@avanio/logger-like": ">= 0.1.1",
     "@redis/client": "^5.1",
     "tachyon-drive": ">= 2.0.0"
   }

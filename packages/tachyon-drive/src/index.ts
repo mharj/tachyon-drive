@@ -5,5 +5,4 @@ export * from './interfaces/IPersistSerializer.js';
 export * from './interfaces/IStorageDriver.js';
 export * from './interfaces/IStoreProcessor.js';
 export * from './serializer.js';
-export * from './types/StorageDriverJson.js';
 export * from './types/TachyonBandwidth.js';

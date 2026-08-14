@@ -1,6 +1,6 @@
-import {type ILoggerLike, LogLevel, type LogLevelValue, MapLogger} from '@avanio/logger-like';
 import type {CacheEventsMap, IAsyncCache} from '@luolapeikko/cache-types';
-import {ErrorCore, type Nullish} from '@luolapeikko/ts-common';
+import {KeyLogger, type KeyLoggerMapInfer} from '@luolapeikko/key-logger';
+import type {ILoggerLike} from '@luolapeikko/logger-type';
 import {EventEmitter} from 'events';
 import {type IStorageDriver, TachyonBandwidth} from 'tachyon-drive';
 
@@ -20,50 +20,31 @@ function toAsyncIterableIterator<T>(callIterable: () => IterableIterator<T>, ini
 	})();
 }
 
-export type ExpireCacheLogMapType = {
-	cleanExpired: LogLevelValue;
-	clear: LogLevelValue;
-	close: LogLevelValue;
-	constructor: LogLevelValue;
-	delete: LogLevelValue;
-	entries: LogLevelValue;
-	expires: LogLevelValue;
-	get: LogLevelValue;
-	has: LogLevelValue;
-	hydrate: LogLevelValue;
-	init: LogLevelValue;
-	keys: LogLevelValue;
-	rebuild: LogLevelValue;
-	set: LogLevelValue;
-	size: LogLevelValue;
-	store: LogLevelValue;
-	update: LogLevelValue;
-	values: LogLevelValue;
-};
-
 /**
  * Default log map for ExpireCache method calls (no logs)
  */
-const defaultLogMap: ExpireCacheLogMapType = {
-	cleanExpired: LogLevel.None,
-	clear: LogLevel.None,
-	close: LogLevel.None,
-	constructor: LogLevel.None,
-	delete: LogLevel.None,
-	entries: LogLevel.None,
-	expires: LogLevel.None,
-	get: LogLevel.None,
-	has: LogLevel.None,
-	hydrate: LogLevel.None,
-	init: LogLevel.None,
-	keys: LogLevel.None,
-	rebuild: LogLevel.None,
-	set: LogLevel.None,
-	size: LogLevel.None,
-	store: LogLevel.None,
-	update: LogLevel.None,
-	values: LogLevel.None,
+const defaultLogMap = {
+	cleanExpired: 'none',
+	clear: 'none',
+	close: 'none',
+	constructor: 'none',
+	delete: 'none',
+	entries: 'none',
+	expires: 'none',
+	get: 'none',
+	has: 'none',
+	hydrate: 'none',
+	init: 'none',
+	keys: 'none',
+	rebuild: 'none',
+	set: 'none',
+	size: 'none',
+	store: 'none',
+	update: 'none',
+	values: 'none',
 } as const;
+
+export type ExpireCacheLogMapType = KeyLoggerMapInfer<typeof defaultLogMap>;
 
 export type CachePayload<Payload> = {data: Payload; expires: number | undefined};
 
@@ -92,11 +73,11 @@ export class TachyonExpireCache<Payload, Key extends string = string> extends Ev
 	#isHydrated = false;
 	#isWriting = false;
 	#hydratePromise: Promise<CacheMap<Payload, Key> | undefined> | CacheMap<Payload, Key> | undefined;
-	public readonly logger: MapLogger<ExpireCacheLogMapType>;
+	public readonly logger: KeyLogger<ExpireCacheLogMapType>;
 
 	public constructor({name, logger, logMapping, defaultExpireMs}: TachyonExpireCacheOptions, driver: IStorageDriver<CacheMap<Payload, Key>>) {
 		super();
-		this.logger = new MapLogger(logger, Object.assign({}, defaultLogMap, logMapping));
+		this.logger = new KeyLogger(Object.assign({}, defaultLogMap, logMapping), logger);
 		this.name = name;
 		this.#driver = driver;
 		this.#defaultExpireMs = defaultExpireMs;
@@ -300,7 +281,7 @@ export class TachyonExpireCache<Payload, Key extends string = string> extends Ev
 	 * Handle the update event from the driver and merge the data into the cache
 	 * @param {Nullish<CacheMap<Payload, Key>>} data - the data to update the cache with
 	 */
-	async #handleUpdate(data: Nullish<CacheMap<Payload, Key>>) {
+	async #handleUpdate(data?: CacheMap<Payload, Key> | null) {
 		if (!this.#isWriting && data) {
 			try {
 				let isModified = false;
@@ -316,8 +297,9 @@ export class TachyonExpireCache<Payload, Key extends string = string> extends Ev
 					this.#logMessage('update', 'update Cache Map');
 					await this.#handleStore(TachyonBandwidth.VerySmall);
 				}
-			} catch (error) {
-				this.#logMessage('update', `update error: ${ErrorCore.from(error).message}`);
+			} catch (cause) {
+				const err = cause instanceof Error ? cause : new Error(String(cause));
+				this.#logMessage('update', `update error: ${err.message}`);
 			}
 		}
 	}
@@ -388,6 +370,6 @@ export class TachyonExpireCache<Payload, Key extends string = string> extends Ev
 	}
 
 	#logMessage(key: keyof ExpireCacheLogMapType, message: string): void {
-		this.logger.logKey(key, `TachyonExpireCache[${this.name}]: ${message}`);
+		this.logger.key(key, `TachyonExpireCache[${this.name}]: ${message}`);
 	}
 }

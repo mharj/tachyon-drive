@@ -32,10 +32,8 @@
     "tachyon-drive-node-fs": "workspace:*"
   },
   "peerDependencies": {
-    "@avanio/logger-like": ">= 0.1.1",
     "@aws-sdk/client-s3": ">= 3.900.0",
     "@aws-sdk/types": ">= 3.900.0",
-    "@luolapeikko/ts-common": ">= 0.1.0",
     "tachyon-drive": ">= 2.0.0"
   }
 }

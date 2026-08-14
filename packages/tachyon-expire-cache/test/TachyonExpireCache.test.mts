@@ -1,4 +1,4 @@
-import {type ILoggerLike, LogLevel} from '@avanio/logger-like';
+import type {ILoggerLike} from '@luolapeikko/logger-type';
 import {type IPersistSerializer, TachyonBandwidth} from 'tachyon-drive';
 import {FileStorageDriver} from 'tachyon-drive-node-fs';
 import {afterAll, beforeAll, beforeEach, describe, expect, it, vi} from 'vitest';
@@ -10,24 +10,24 @@ function sleep(ms: number) {
 }
 
 const testLogMap = {
-	cleanExpired: LogLevel.Debug,
-	clear: LogLevel.Debug,
-	close: LogLevel.Debug,
-	constructor: LogLevel.Debug,
-	delete: LogLevel.Debug,
-	entries: LogLevel.Debug,
-	expires: LogLevel.Debug,
-	get: LogLevel.Debug,
-	has: LogLevel.Debug,
-	hydrate: LogLevel.Debug,
-	init: LogLevel.Debug,
-	keys: LogLevel.Debug,
-	rebuild: LogLevel.Debug,
-	set: LogLevel.Debug,
-	size: LogLevel.Debug,
-	store: LogLevel.Debug,
-	update: LogLevel.Debug,
-	values: LogLevel.Debug,
+	cleanExpired: 'debug',
+	clear: 'debug',
+	close: 'debug',
+	constructor: 'debug',
+	delete: 'debug',
+	entries: 'debug',
+	expires: 'debug',
+	get: 'debug',
+	has: 'debug',
+	hydrate: 'debug',
+	init: 'debug',
+	keys: 'debug',
+	rebuild: 'debug',
+	set: 'debug',
+	size: 'debug',
+	store: 'debug',
+	update: 'debug',
+	values: 'debug',
 } satisfies ExpireCacheLogMapType;
 
 const logSpy = vi.fn();

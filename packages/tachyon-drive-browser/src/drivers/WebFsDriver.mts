@@ -1,4 +1,4 @@
-import {type Loadable, LoadableCore} from '@luolapeikko/ts-common';
+import type {Loadable} from '@luolapeikko/core-ts-type';
 import {type IPersistSerializer, type IStoreProcessor, StorageDriver, type StorageDriverOptions, TachyonBandwidth} from 'tachyon-drive';
 
 export type WebFsStorageDriverOptions = StorageDriverOptions & {
@@ -92,7 +92,7 @@ export class WebFsStorageDriver<Input> extends StorageDriver<Input, ArrayBuffer>
 
 	private async getFileHandle(): Promise<FileSystemFileHandle> {
 		if (typeof this.fileHandle === 'function') {
-			this.fileHandle = LoadableCore.resolve(this.fileHandle);
+			this.fileHandle = this.fileHandle();
 		}
 		return await this.fileHandle;
 	}

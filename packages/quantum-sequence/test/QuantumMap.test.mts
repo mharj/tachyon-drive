@@ -1,4 +1,4 @@
-import {type ILoggerLike, LogLevel} from '@avanio/logger-like';
+import type {ILoggerLike} from '@luolapeikko/logger-type';
 import {type IPersistSerializer, MemoryStorageDriver} from 'tachyon-drive';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
 import {z} from 'zod';
@@ -32,15 +32,15 @@ const spyLogger: ILoggerLike = {
 };
 
 const debugLogMapping = {
-	clear: LogLevel.Debug,
-	deserialize: LogLevel.Debug,
-	driver_update_event: LogLevel.Debug,
-	hydrate: LogLevel.Debug,
-	init: LogLevel.Debug,
-	store: LogLevel.Debug,
-	unload: LogLevel.Debug,
-	update: LogLevel.Debug,
-	validator: LogLevel.Debug,
+	clear: 'debug',
+	deserialize: 'debug',
+	driver_update_event: 'debug',
+	hydrate: 'debug',
+	init: 'debug',
+	store: 'debug',
+	unload: 'debug',
+	update: 'debug',
+	validator: 'debug',
 };
 
 let driver: MemoryStorageDriver<Map<string, {test: string}>, Buffer>;
@@ -55,17 +55,17 @@ describe('QuantumMap', () => {
 	});
 	it('should create a new instance', async () => {
 		driver = new MemoryStorageDriver({logger: spyLogger, name: 'MemoryStorageDriver'}, bufferSerializer, null);
-		driver.logger.setLogMapping(debugLogMapping);
+		driver.logger.logMap = debugLogMapping;
 		map = new QuantumMap<string, Data>(driver, {
 			logger: spyLogger,
 			logMapping: {
-				clear: LogLevel.Debug,
-				constructor: LogLevel.Debug,
-				driver_update_event: LogLevel.Debug,
-				init: LogLevel.Debug,
-				notify_hydrate: LogLevel.Debug,
-				register_hydrate_callback: LogLevel.Debug,
-				store: LogLevel.Debug,
+				clear: 'debug',
+				constructor: 'debug',
+				driver_update_event: 'debug',
+				init: 'debug',
+				notify_hydrate: 'debug',
+				register_hydrate_callback: 'debug',
+				store: 'debug',
 			},
 		});
 		await map.init();

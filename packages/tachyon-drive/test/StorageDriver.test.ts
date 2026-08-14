@@ -1,4 +1,3 @@
-import {LogLevel} from '@avanio/logger-like';
 import {EventEmitter} from 'events';
 import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from 'vitest';
 import {z} from 'zod';
@@ -18,15 +17,15 @@ import {TestMemoryStorageDriver} from './lib/testDriver.js';
 import {ControlledJsonSerializer} from './lib/testSerializer.js';
 
 const unitTestLogMap: StorageDriverLogMapping = {
-	clear: LogLevel.Debug,
-	deserialize: LogLevel.Debug,
-	hydrate: LogLevel.Debug,
-	init: LogLevel.Debug,
-	processor: LogLevel.Debug,
-	store: LogLevel.Debug,
-	unload: LogLevel.Debug,
-	update: LogLevel.Debug,
-	validator: LogLevel.Debug,
+	clear: 'debug',
+	deserialize: 'debug',
+	hydrate: 'debug',
+	init: 'debug',
+	processor: 'debug',
+	store: 'debug',
+	unload: 'debug',
+	update: 'debug',
+	validator: 'debug',
 };
 
 const dataSchema = z.object({
@@ -105,11 +104,11 @@ const memoryObjectDriver = new MemoryStorageDriver({name: 'MemoryStorageDriver -
 const data = dataSchema.parse({test: 'demo'});
 
 const driverSet = new Set([
-	{driver: memoryObjectDriver, initValue: objectSerializer.serialize(data, undefined), processor: true},
-	{driver: new MemoryStorageDriver({name: 'MemoryStorageDriver - Buffer'}, bufferSerializer, notifier), initValue: bufferSerializer.serialize(data, undefined)},
+	{driver: memoryObjectDriver, initValue: objectSerializer.serialize(data), processor: true},
+	{driver: new MemoryStorageDriver({name: 'MemoryStorageDriver - Buffer'}, bufferSerializer, notifier), initValue: bufferSerializer.serialize(data)},
 	{
 		driver: new MemoryStorageDriver({name: 'MemoryStorageDriver - Object'}, objectSerializer, notifier, () => nullProcessor),
-		initValue: objectSerializer.serialize(data, undefined),
+		initValue: objectSerializer.serialize(data),
 		processor: true,
 	},
 ]);
@@ -135,8 +134,8 @@ describe('StorageDriver', () => {
 			});
 			beforeAll(() => {
 				if (driver instanceof StorageDriver) {
-					driver.logger.setLogger(sinonLoggerSpy);
-					driver.logger.setLogMapping(unitTestLogMap);
+					driver.logger.logger = sinonLoggerSpy;
+					driver.logger.logMap = unitTestLogMap;
 				}
 				driver.on('init', onInitSpy);
 				driver.on('hydrate', onHydrateSpy);

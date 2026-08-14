@@ -34,9 +34,9 @@
     "tachyon-drive-node-fs": "workspace:*"
   },
   "peerDependencies": {
-    "@avanio/logger-like": ">= 0.0.1",
     "@azure/storage-blob": "^12",
-    "@luolapeikko/ts-common": ">= 0.0.1",
+    "@luolapeikko/core-ts-type": ">= 0.0.7",
+    "@luolapeikko/logger-type": ">= 0.1.0",
     "tachyon-drive": ">= 2.0.0"
   }
 }

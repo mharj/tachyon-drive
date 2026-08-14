@@ -1,5 +1,3 @@
-import type {ILoggerLike} from '@avanio/logger-like';
-
 /**
  * Interface for a serializer that can serialize and deserialize data for persistence.
  * @template Input - The type of the data that is serialized and deserialized.
@@ -12,15 +10,15 @@ export interface IPersistSerializer<Input, Output, ValidateInput = Input> {
 	/**
 	 * Serialize data for store.
 	 */
-	serialize: (data: Input, logger: ILoggerLike | undefined) => Output;
+	serialize: (data: Input) => Output;
 	/**
 	 * Deserialize data from store.
 	 */
-	deserialize: (value: Output, logger: ILoggerLike | undefined) => ValidateInput;
+	deserialize: (value: Output) => ValidateInput;
 	/**
 	 * Optional validator callback to validate the data after hydrate.
 	 */
-	validator?: (data: ValidateInput, logger: ILoggerLike | undefined) => boolean | Promise<boolean>;
+	validator?: (data: ValidateInput) => boolean | Promise<boolean>;
 }
 
 /**

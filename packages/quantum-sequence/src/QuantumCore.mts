@@ -1,4 +1,5 @@
-import {type ILoggerLike, type ISetOptionalLogger, MapLogger} from '@avanio/logger-like';
+import {KeyLogger} from '@luolapeikko/key-logger';
+import type {ILoggerLike} from '@luolapeikko/logger-type';
 import EventEmitter from 'events';
 import type {IStorageDriver} from 'tachyon-drive';
 import {defaultQuantumCoreLogLevels, type QuantumCoreLogMap} from './QuantumCoreLogMapping.mjs';
@@ -16,13 +17,13 @@ export interface QuantumCoreOptions {
 	logMapping?: Partial<QuantumCoreLogMap>;
 }
 
-export abstract class QuantumCore<TStore> extends EventEmitter<QuantumCoreEventsMap> implements ISetOptionalLogger {
+export abstract class QuantumCore<TStore> extends EventEmitter<QuantumCoreEventsMap> {
 	public abstract readonly name: string;
 	private isInitialized = false;
 	private readonly driver: IStorageDriver<TStore>;
 	protected data: TStore;
 	private readonly initialData: TStore;
-	protected logger: MapLogger<QuantumCoreLogMap>;
+	protected logger: KeyLogger<QuantumCoreLogMap>;
 	protected readonly options: QuantumCoreOptions;
 
 	public constructor(driver: IStorageDriver<TStore>, initialData: TStore, options: QuantumCoreOptions = {}) {
@@ -31,9 +32,9 @@ export abstract class QuantumCore<TStore> extends EventEmitter<QuantumCoreEvents
 		this.initialData = initialData;
 		this.data = this.driver.clone(this.initialData);
 		this.driver.on('update', this.onUpdateCallback.bind(this)); // hook into the driver to update the data when it changes
-		this.logger = new MapLogger(options.logger, Object.assign({}, defaultQuantumCoreLogLevels, options.logMapping));
+		this.logger = new KeyLogger(Object.assign({}, defaultQuantumCoreLogLevels, options.logMapping), options.logger);
 		this.options = options;
-		this.logger.logKey('constructor', `QuantumCore: constructor()`);
+		this.logger.key('constructor', `QuantumCore: constructor()`);
 	}
 
 	/**
@@ -41,7 +42,7 @@ export abstract class QuantumCore<TStore> extends EventEmitter<QuantumCoreEvents
 	 * @param logger - the logger to use
 	 */
 	public setLogger(logger: ILoggerLike | undefined): void {
-		this.logger.setLogger(logger);
+		this.logger.logger = logger;
 	}
 
 	/**
@@ -49,7 +50,7 @@ export abstract class QuantumCore<TStore> extends EventEmitter<QuantumCoreEvents
 	 * @param map - The log key mapping to use for logging messages.
 	 */
 	public setLogMapping(map: Partial<QuantumCoreLogMap>): void {
-		this.logger.setLogMapping(map);
+		this.logger.logMap = map;
 	}
 
 	public toString(): string {
@@ -60,7 +61,7 @@ export abstract class QuantumCore<TStore> extends EventEmitter<QuantumCoreEvents
 	 * Initialize the storage driver and hydrate the data if it exists
 	 */
 	protected async coreInit(): Promise<void> {
-		this.logger.logKey('init', `QuantumCore: coreInit()`);
+		this.logger.key('init', `QuantumCore: coreInit()`);
 		if (!this.isInitialized) {
 			await this.driver.init();
 			const data = await this.driver.hydrate();
@@ -79,7 +80,7 @@ export abstract class QuantumCore<TStore> extends EventEmitter<QuantumCoreEvents
 	 * Store the current data to the storage driver
 	 */
 	protected async coreStore(): Promise<void> {
-		this.logger.logKey('store', `QuantumCore: coreStore()`);
+		this.logger.key('store', `QuantumCore: coreStore()`);
 		await this.driver.store(this.data);
 	}
 
@@ -87,7 +88,7 @@ export abstract class QuantumCore<TStore> extends EventEmitter<QuantumCoreEvents
 	 * Reset data to initial and clear the storage driver
 	 */
 	protected async coreClear(): Promise<void> {
-		this.logger.logKey('clear', `QuantumCore: coreClear()`);
+		this.logger.key('clear', `QuantumCore: coreClear()`);
 		this.data = this.driver.clone(this.initialData);
 		await this.driver.clear();
 		this.isInitialized = false;
@@ -96,7 +97,7 @@ export abstract class QuantumCore<TStore> extends EventEmitter<QuantumCoreEvents
 	}
 
 	private onUpdateCallback(data: TStore | undefined): void {
-		this.logger.logKey('driver_update_event', `QuantumCore: onUpdateCallback()`);
+		this.logger.key('driver_update_event', `QuantumCore: onUpdateCallback()`);
 		this.data = data ?? this.driver.clone(this.initialData);
 		// notify all the onHydrate callbacks about data changes
 		this.emit('hydrate');

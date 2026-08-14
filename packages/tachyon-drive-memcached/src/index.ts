@@ -1,4 +1,4 @@
-import {type Loadable, LoadableCore} from '@luolapeikko/ts-common';
+import type {Loadable} from '@luolapeikko/core-ts-type';
 import type Memcached from 'memcached';
 import {type IExternalNotify, type IPersistSerializer, type IStoreProcessor, StorageDriver, type StorageDriverOptions, TachyonBandwidth} from 'tachyon-drive';
 import {mcGet, mcRemove, mcSet, mcTouch} from './memcacheUtils';
@@ -64,6 +64,6 @@ export class MemcachedStorageDriver<Input> extends StorageDriver<Input, Buffer> 
 	}
 
 	async #getMemcached(): Promise<Memcached> {
-		return await LoadableCore.resolve(this.#memcached);
+		return await (typeof this.#memcached === 'function' ? this.#memcached() : this.#memcached);
 	}
 }

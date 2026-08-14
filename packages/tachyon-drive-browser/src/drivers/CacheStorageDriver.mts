@@ -1,4 +1,4 @@
-import {type Loadable, LoadableCore} from '@luolapeikko/ts-common';
+import type {Loadable} from '@luolapeikko/core-ts-type';
 import {type IPersistSerializer, type IStoreProcessor, StorageDriver, type StorageDriverOptions, TachyonBandwidth} from 'tachyon-drive';
 
 export type CacheStorageDriverOptions = StorageDriverOptions & {
@@ -99,14 +99,14 @@ export class CacheStorageDriver<Input, Output extends ArrayBuffer | string> exte
 
 	async #getRequest(): Promise<Request> {
 		if (typeof this.#req === 'function') {
-			this.#req = LoadableCore.resolve(this.#req);
+			this.#req = this.#req();
 		}
 		return new Request(await this.#req);
 	}
 
 	async #getCurrentCache(): Promise<Cache> {
 		if (typeof this.#cache === 'function') {
-			this.#cache = LoadableCore.resolve(this.#cache);
+			this.#cache = this.#cache();
 		}
 		return await this.#cache;
 	}

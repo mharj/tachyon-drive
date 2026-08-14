@@ -27,8 +27,9 @@
   "author": "mharj",
   "license": "MIT",
   "peerDependencies": {
-    "@avanio/logger-like": ">= 0.2.10",
+    "@luolapeikko/core-ts-type": ">= 0.0.7",
+    "@luolapeikko/key-logger": ">= 0.1.0",
     "@luolapeikko/result-option": ">= 1.0.0",
-    "@luolapeikko/ts-common": ">= 0.1.0"
+    "@luolapeikko/logger-type": ">= 0.1.0"
   }
 }

@@ -1,45 +1,35 @@
-import {type ILoggerLike, LogLevel, type LogLevelValue, MapLogger} from '@avanio/logger-like';
+import type {Loadable} from '@luolapeikko/core-ts-type';
+import {KeyLogger, type KeyLoggerMapInfer} from '@luolapeikko/key-logger';
+import type {ILoggerLike} from '@luolapeikko/logger-type';
 import {Err, type IResult, Ok} from '@luolapeikko/result-option';
-import type {Loadable} from '@luolapeikko/ts-common';
 import {EventEmitter} from 'events';
 import type {IExternalNotify} from '../interfaces/IExternalUpdateNotify.js';
 import {type IPersistSerializer, isValidPersistSerializer} from '../interfaces/IPersistSerializer.js';
 import type {IHydrateOptions, IStorageDriver, StorageDriverEventsMap} from '../interfaces/IStorageDriver.js';
 import {type IStoreProcessor, isValidStoreProcessor} from '../interfaces/IStoreProcessor.js';
-import type {StorageDriverJson} from '../types/StorageDriverJson.js';
-import {getTachyonBandwidthName, type TachyonBandwidth} from '../types/TachyonBandwidth.js';
-
-/**
- * The log key mapping for the storage driver.
- * @since v0.11.0
- */
-export type StorageDriverLogMapping = {
-	clear: LogLevelValue;
-	deserialize: LogLevelValue;
-	hydrate: LogLevelValue;
-	init: LogLevelValue;
-	processor: LogLevelValue;
-	store: LogLevelValue;
-	unload: LogLevelValue;
-	update: LogLevelValue;
-	validator: LogLevelValue;
-};
+import type {TachyonBandwidth} from '../types/TachyonBandwidth.js';
 
 /**
  * The default log levels for the storage driver.
  * @since v0.4.0
  */
-export const defaultLogLevels: StorageDriverLogMapping = {
-	clear: LogLevel.None,
-	deserialize: LogLevel.Warn,
-	hydrate: LogLevel.Debug,
-	init: LogLevel.None,
-	processor: LogLevel.Debug,
-	store: LogLevel.Debug,
-	unload: LogLevel.None,
-	update: LogLevel.None,
-	validator: LogLevel.Warn,
-};
+export const defaultLogLevels = {
+	clear: 'none',
+	deserialize: 'warn',
+	hydrate: 'debug',
+	init: 'none',
+	processor: 'debug',
+	store: 'debug',
+	unload: 'none',
+	update: 'none',
+	validator: 'warn',
+} as const;
+
+/**
+ * The log key mapping for the storage driver.
+ * @since v0.11.0
+ */
+export type StorageDriverLogMapping = KeyLoggerMapInfer<typeof defaultLogLevels>;
 
 export type StorageDriverOptions = {
 	/**
@@ -66,7 +56,7 @@ export abstract class StorageDriver<Input, Output> extends EventEmitter<StorageD
 	#bandwidth: TachyonBandwidth | undefined;
 	public readonly name: string;
 	public readonly serializer: IPersistSerializer<Input, Output>;
-	public readonly logger: MapLogger<StorageDriverLogMapping>;
+	public readonly logger: KeyLogger<StorageDriverLogMapping>;
 	#loadableProcessor: Loadable<IStoreProcessor<Output>> | undefined;
 	#processor: IStoreProcessor<Output> | undefined;
 	#extNotify: IExternalNotify | null;
@@ -95,7 +85,7 @@ export abstract class StorageDriver<Input, Output> extends EventEmitter<StorageD
 		this.serializer = serializer;
 		this.#bandwidth = bandwidth;
 		this.#loadableProcessor = processor;
-		this.logger = new MapLogger(logger, defaultLogLevels);
+		this.logger = new KeyLogger(defaultLogLevels, logger);
 		// bind update handler
 		this.handleUpdate = this.handleUpdate.bind(this);
 		// hook external notifier to handle update
@@ -118,7 +108,7 @@ export abstract class StorageDriver<Input, Output> extends EventEmitter<StorageD
 		if (!this.#isInitialized) {
 			this.#extNotify?.removeListener('update', this.handleUpdate);
 			this.#extNotify?.addListener('update', this.handleUpdate);
-			this.logger.logKey('init', `${this.name}: init()`);
+			this.logger.key('init', `${this.name}: init()`);
 			this.emit('init', true);
 			try {
 				this.#isInitialized = await this.handleInit();
@@ -144,7 +134,7 @@ export abstract class StorageDriver<Input, Output> extends EventEmitter<StorageD
 	 * @returns {Promise<boolean>} A promise that resolves to `true` if the storage driver was successfully unloaded, or `false` otherwise.
 	 */
 	public async unload(): Promise<boolean> {
-		this.logger.logKey('unload', `${this.name}: unload()`);
+		this.logger.key('unload', `${this.name}: unload()`);
 		await this.init();
 		this.#isInitialized = false;
 		this.emit('unload', true);
@@ -174,9 +164,9 @@ export abstract class StorageDriver<Input, Output> extends EventEmitter<StorageD
 	 * @param {Input} data - The data to store.
 	 */
 	public async store(data: Input): Promise<void> {
-		this.logger.logKey('store', `${this.name}: store()`);
+		this.logger.key('store', `${this.name}: store()`);
 		await this.init();
-		let output = this.serializer.serialize(data, this.logger);
+		let output = this.serializer.serialize(data);
 		const processor = await this.getProcessor();
 		if (processor) {
 			output = await processor.preStore(output);
@@ -211,7 +201,7 @@ export abstract class StorageDriver<Input, Output> extends EventEmitter<StorageD
 	 * @throws An error if the data fails validation.
 	 */
 	public async hydrate({validationThrowsError, deserializationThrowsError}: IHydrateOptions = {}): Promise<Input | undefined> {
-		this.logger.logKey('hydrate', `${this.name}: hydrate()`);
+		this.logger.key('hydrate', `${this.name}: hydrate()`);
 		await this.init();
 		this.emit('hydrate', true);
 		let data: Awaited<Input> | undefined;
@@ -220,11 +210,11 @@ export abstract class StorageDriver<Input, Output> extends EventEmitter<StorageD
 		} finally {
 			this.emit('hydrate', false);
 		}
-		if (data && this.serializer.validator && !(await this.serializer.validator(data, this.logger))) {
+		if (data && this.serializer.validator && !(await this.serializer.validator(data))) {
 			if (validationThrowsError) {
 				throw new Error(`${this.name}: hydrate() validator failed`);
 			}
-			this.logger.logKey('validator', `${this.name}: hydrate() validator failed`);
+			this.logger.key('validator', `${this.name}: hydrate() validator failed`);
 			return undefined;
 		}
 		return data;
@@ -247,7 +237,7 @@ export abstract class StorageDriver<Input, Output> extends EventEmitter<StorageD
 	 * Clear the stored data
 	 */
 	public async clear(): Promise<void> {
-		this.logger.logKey('clear', `${this.name}: clear()`);
+		this.logger.key('clear', `${this.name}: clear()`);
 		this.#isInitialized = false;
 		this.emit('clear', true);
 		try {
@@ -277,7 +267,7 @@ export abstract class StorageDriver<Input, Output> extends EventEmitter<StorageD
 	 * @returns {Input} The cloned data.
 	 */
 	public clone(data: Input): Input {
-		return this.serializer.deserialize(this.serializer.serialize(data, this.logger), this.logger);
+		return this.serializer.deserialize(this.serializer.serialize(data));
 	}
 
 	/**
@@ -324,7 +314,7 @@ export abstract class StorageDriver<Input, Output> extends EventEmitter<StorageD
 			throw new TypeError('Invalid processor');
 		}
 		this.#processor = this.#loadableProcessor;
-		this.logger.logKey('processor', `${this.name}: processor (${this.#processor.name}) loaded`);
+		this.logger.key('processor', `${this.name}: processor (${this.#processor.name}) loaded`);
 		return this.#loadableProcessor;
 	}
 
@@ -349,7 +339,7 @@ export abstract class StorageDriver<Input, Output> extends EventEmitter<StorageD
 	}
 
 	public override toString(): string {
-		return `${this.name}(serializer=${this.serializer.name}, processor=${this.#processor?.name ?? 'undefined'}, bandwidth=${getTachyonBandwidthName(this.bandwidth)})`;
+		return `${this.name}(serializer=${this.serializer.name}, processor=${this.#processor?.name ?? 'undefined'}, bandwidth=${this.bandwidth})`;
 	}
 
 	/**
@@ -364,7 +354,12 @@ export abstract class StorageDriver<Input, Output> extends EventEmitter<StorageD
 	 * 	};
 	 * }
 	 */
-	public toJSON(): StorageDriverJson {
+	public toJSON(): {
+		bandwidth: TachyonBandwidth;
+		name: string;
+		processor: string | undefined;
+		serializer: string;
+	} {
 		return {
 			bandwidth: this.bandwidth,
 			name: this.name,
@@ -377,7 +372,7 @@ export abstract class StorageDriver<Input, Output> extends EventEmitter<StorageD
 	 * Use this to indicate that the data has been updated.
 	 */
 	protected async handleUpdate(): Promise<void> {
-		this.logger.logKey('update', `${this.name}: onUpdate()`);
+		this.logger.key('update', `${this.name}: onUpdate()`);
 		const data = await this.#doHydrate();
 		this.emit('update', data);
 	}
@@ -395,12 +390,12 @@ export abstract class StorageDriver<Input, Output> extends EventEmitter<StorageD
 				output = await processor.postHydrate(output);
 			}
 			try {
-				return this.serializer.deserialize(output, this.logger);
+				return this.serializer.deserialize(output);
 			} catch (err) {
 				if (deserializationThrowsError) {
 					throw err;
 				}
-				this.logger.logKey('deserialize', this.name, err);
+				this.logger.key('deserialize', this.name, err);
 			}
 		}
 		return undefined;
