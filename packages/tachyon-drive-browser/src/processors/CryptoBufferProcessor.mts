@@ -1,5 +1,5 @@
-import type { Loadable } from '@luolapeikko/core-ts-type';
-import type { ILoggerLike } from '@luolapeikko/logger-type';
+import type {Loadable} from '@luolapeikko/core-ts-type';
+import type {ILoggerLike} from '@luolapeikko/logger-type';
 import type {IStoreProcessor} from 'tachyon-drive';
 
 function mergeArrayBuffers(a: ArrayBuffer, b: ArrayBuffer): ArrayBuffer {
