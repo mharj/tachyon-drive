@@ -1,16 +1,20 @@
 {
   "name": "tachyon-drive-blob-storage",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Azure Blob storage driver implementation",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.mts",
   "exports": {
-    ".": {
+    "import": {
       "types": "./dist/index.d.mts",
-      "require": "./dist/index.cjs",
-      "import": "./dist/index.mjs"
-    }
+      "default": "./dist/index.mjs"
+    },
+    "require": {
+      "types": "./dist/index.d.cts",
+      "default": "./dist/index.cjs"
+    },
+    "default": "./dist/index.mjs"
   },
   "scripts": {
     "build": "tsdown src/index.ts --sourcemap --format cjs,esm --dts --clean -c tsconfig.build.json",
@@ -37,6 +41,6 @@
     "@azure/storage-blob": "^12",
     "@luolapeikko/core-ts-type": ">= 0.0.7",
     "@luolapeikko/logger-type": ">= 0.1.0",
-    "tachyon-drive": ">= 2.0.0"
+    "tachyon-drive": ">= 2.1.0"
   }
 }

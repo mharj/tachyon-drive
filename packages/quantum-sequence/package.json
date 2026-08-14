@@ -1,21 +1,20 @@
 {
   "name": "quantum-sequence",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Map and Set implementations which uses tachyon-drive as storage backend",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
-  "types": "./dist/index.d.cts",
+  "types": "./dist/index.d.mts",
   "exports": {
-    ".": {
-      "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs"
-      },
-      "import": {
-        "types": "./dist/index.d.mts",
-        "default": "./dist/index.mjs"
-      }
-    }
+    "import": {
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
+    },
+    "require": {
+      "types": "./dist/index.d.cts",
+      "default": "./dist/index.cjs"
+    },
+    "default": "./dist/index.mjs"
   },
   "scripts": {
     "build": "tsdown src/index.mts --sourcemap --format cjs,esm --dts --clean -c tsconfig.build.json",
@@ -40,6 +39,6 @@
     "@luolapeikko/key-logger": ">= 0.1.0",
     "@luolapeikko/logger-type": ">= 0.1.0",
     "@luolapeikko/loglevel-type": ">= 0.1.0",
-    "tachyon-drive": ">= 2.0.0"
+    "tachyon-drive": ">= 2.1.0"
   }
 }

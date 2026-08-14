@@ -1,16 +1,15 @@
 import {playwright} from '@vitest/browser-playwright';
-import tsconfigPaths from 'vite-tsconfig-paths';
 import {defineConfig} from 'vitest/config';
 
 export default defineConfig({
 	optimizeDeps: {
 		include: ['@luolapeikko/logger-type', '@luolapeikko/result-option', '@luolapeikko/core-ts-type', '@luolapeikko/key-logger', 'events', 'zod'],
 	},
-	plugins: [tsconfigPaths()],
 	resolve: {
 		alias: {
 			events: 'events',
 		},
+		tsconfigPaths: true
 	},
 	test: {
 		coverage: {
@@ -44,6 +43,7 @@ export default defineConfig({
 				},
 			},
 		],
+		reporters: ['github-actions', 'minimal'],
 		typecheck: {include: ['**/*.test-d.ts']},
 	},
 });
