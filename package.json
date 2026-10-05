@@ -6,30 +6,30 @@
     "packages/*"
   ],
   "devDependencies": {
-    "@aws-sdk/client-s3": "^3.1110.0",
-    "@aws-sdk/types": "^3.974.3",
-    "@biomejs/biome": "^2.5.8",
-    "@luolapeikko/core-ts-type": "^0.0.7",
+    "@aws-sdk/client-s3": "^3.1146.0",
+    "@aws-sdk/types": "^3.974.6",
+    "@biomejs/biome": "^2.5.15",
+    "@luolapeikko/core-ts-type": "^0.0.8",
     "@luolapeikko/key-logger": "^0.1.0",
     "@luolapeikko/logger-type": "^0.1.0",
     "@luolapeikko/memcached": "^0.0.5",
     "@luolapeikko/result-option": "^2.4.0",
-    "@playwright/test": "^1.62.1",
-    "@redis/client": "^6.2.1",
-    "@types/node": "^25.9.5",
-    "@vitest/browser-playwright": "^4.1.10",
-    "@vitest/coverage-v8": "^4.1.10",
+    "@playwright/test": "^1.63.0",
+    "@redis/client": "^6.3.0",
+    "@types/node": "^25.9.9",
+    "@vitest/browser-playwright": "^5.0.3",
+    "@vitest/coverage-v8": "^5.0.3",
     "c8": "^12.0.0",
     "events": "^3.3.0",
     "memcached": "^2.2.2",
-    "tsdown": "^0.22.14",
+    "tsdown": "^0.23.0",
     "typedoc": "^0.28.20",
-    "typedoc-plugin-dt-links": "^2.0.67",
+    "typedoc-plugin-dt-links": "^2.0.75",
     "typedoc-plugin-mdn-links": "^5.1.1",
-    "typescript": "^5.9.3",
-    "vite": "^8.2.1",
-    "vitest": "^4.1.10",
-    "zod": "^4.4.3"
+    "typescript": "^6.0.3",
+    "vite": "^8.3.2",
+    "vitest": "^5.0.3",
+    "zod": "^4.6.5"
   },
   "scripts": {
     "build": "pnpm -r run build",
@@ -52,5 +52,5 @@
     "url": "https://github.com/mharj/tachyon-drive/issues"
   },
   "homepage": "https://github.com/mharj/tachyon-drive#readme",
-  "packageManager": "pnpm@10.27.0+sha512.72d699da16b1179c14ba9e64dc71c9a40988cbdc65c264cb0e489db7de917f20dcf4d64d8723625f2969ba52d4b7e2a1170682d9ac2a5dcaeaab732b7e16f04a"
+  "packageManager": "pnpm@12.9.1+sha512.06b055fff5cd20dc12781de173ced3310ce0951bf2ec620211a16045d5444d5c93a663210764ef29a653a610459ba0368f0e74f84d80c54723cf95aae7bc0d6d"
 }

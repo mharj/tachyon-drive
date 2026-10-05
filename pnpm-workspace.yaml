@@ -1,6 +1,5 @@
 packages:
   - packages/*
 
-onlyBuiltDependencies:
-  - esbuild
-  - unrs-resolver
+allowBuilds:
+  esbuild: true
