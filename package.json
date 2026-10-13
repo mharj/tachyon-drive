@@ -6,7 +6,7 @@
     "packages/*"
   ],
   "devDependencies": {
-    "@aws-sdk/client-s3": "^3.1146.0",
+    "@aws-sdk/client-s3": "^3.1148.0",
     "@aws-sdk/types": "^3.974.6",
     "@biomejs/biome": "^2.5.15",
     "@luolapeikko/core-ts-type": "^0.0.8",
@@ -14,7 +14,7 @@
     "@luolapeikko/logger-type": "^0.1.0",
     "@luolapeikko/memcached": "^0.0.5",
     "@luolapeikko/result-option": "^2.4.0",
-    "@playwright/test": "^1.63.0",
+    "@playwright/test": "^1.64.0",
     "@redis/client": "^6.3.0",
     "@types/node": "^25.9.9",
     "@vitest/browser-playwright": "^5.0.3",
@@ -27,7 +27,7 @@
     "typedoc-plugin-dt-links": "^2.0.75",
     "typedoc-plugin-mdn-links": "^5.1.1",
     "typescript": "^6.0.3",
-    "vite": "^8.3.2",
+    "vite": "^8.3.4",
     "vitest": "^5.0.3",
     "zod": "^4.6.5"
   },
