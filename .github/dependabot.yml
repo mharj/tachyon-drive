@@ -3,9 +3,9 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
     groups:
-      weekly-batch:
+      actions-batch:
         patterns:
           - "*"
   - package-ecosystem: "npm"
@@ -13,7 +13,7 @@ updates:
       - "/"
       - "/packages/*"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
     groups:
       dev-dependencies:
         dependency-type: "development"
